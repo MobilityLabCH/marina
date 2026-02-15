@@ -1,253 +1,357 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>MARINA — Vision Board</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root{
-            --bg:#0b0c0e;
-            --card:rgba(255,255,255,.05);
-            --line:rgba(255,255,255,.12);
-            --txt:rgba(255,255,255,.95);
-            --muted:rgba(255,255,255,.5);
-            --accent:#ffffff;
-            --radius:24px;
-            --shadow:0 25px 80px rgba(0,0,0,.6);
-        }
-        *{box-sizing:border-box; transition: all 0.3s ease;}
-        body{
-            margin:0;
-            font-family:'Inter',-apple-system,system-ui,sans-serif;
-            background:var(--bg);
-            color:var(--txt);
-            overflow-x: hidden;
-        }
-        .wrap{
-            min-height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            padding:20px;
-        }
-        .card{
-            width:min(700px,100%);
-            background:linear-gradient(165deg, var(--card), rgba(255,255,255,0.01));
-            border:1px solid var(--line);
-            border-radius:var(--radius);
-            box-shadow:var(--shadow);
-            padding:40px;
-            backdrop-filter: blur(10px);
-        }
-        .top{ display:flex; justify-content:space-between; margin-bottom:30px; }
-        .lang button{
-            background:none; border:none; color:var(--muted);
-            font-weight:600; cursor:pointer; padding:5px 10px;
-        }
-        .lang button.active{ color:var(--accent); text-decoration: underline; }
-        h1{ font-size:36px; font-weight:700; letter-spacing:-1px; margin:0 0 15px; }
-        h2{ font-size:18px; color:var(--muted); margin-bottom:25px; font-weight:400; line-height:1.6; }
-        p.narrative{ font-size:20px; line-height:1.6; margin-bottom:30px; }
-        
-        input[type=text]{
-            width:100%; padding:18px; border-radius:15px; border:1px solid var(--line);
-            background:rgba(255,255,255,.03); color:var(--txt); font-size:18px;
-        }
-        input[type=text]:focus{ outline:none; border-color:var(--accent); background:rgba(255,255,255,.07); }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Project Snapshot — Marina</title>
 
-        .choices, .checks{ display:grid; gap:12px; margin:20px 0; }
-        .choice, .check{
-            border:1px solid var(--line); border-radius:16px; padding:18px;
-            cursor:pointer; background:rgba(255,255,255,.02);
-        }
-        .choice:hover, .check:hover{ background:rgba(255,255,255,.08); border-color:var(--muted); }
-        .sel{ background:rgba(255,255,255,.12) !important; border-color:var(--accent) !important; }
-
-        .slider-group{ margin:30px 0; }
-        .slider-label{ display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
-        .slider-desc{ font-size:12px; color:rgba(255,255,255,0.3); margin-top:5px; }
-        input[type=range]{ width:100%; cursor:pointer; accent-color: var(--accent); }
-
-        button.primary{
-            background:var(--accent); color:#000; border:none; padding:16px 32px;
-            border-radius:999px; font-weight:700; cursor:pointer; font-size:16px;
-        }
-        button.primary:hover{ transform:scale(1.05); box-shadow:0 10px 20px rgba(255,255,255,0.1); }
-        
-        .fade{ animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
-        
-        canvas{ max-width: 100%; margin: 20px 0; }
-    </style>
+<style>
+:root{
+  --bg:#0e0f11;
+  --card:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.14);
+  --txt:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.62);
+  --accent:#ffffff;
+  --radius:22px;
+  --shadow:0 18px 50px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+}
+.wrap{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px 14px;
+}
+.card{
+  width:min(900px,100%);
+  background:linear-gradient(180deg,var(--card),rgba(255,255,255,.03));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+.lang button{
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-weight:600;
+  cursor:pointer;
+  margin-left:8px;
+}
+.lang button.active{color:var(--txt)}
+h1{font-size:32px; margin:0 0 12px}
+h2{font-size:18px; color:var(--muted); margin:0 0 14px; font-weight:500}
+p{line-height:1.55}
+input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--txt);
+  margin-top:8px;
+}
+.choices,.checks{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.choice,.check{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  cursor:pointer;
+}
+.choice.sel,.check.sel{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.3);
+}
+.meta{font-size:13px;color:var(--muted);margin-top:8px}
+.btns{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+button{
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  color:var(--txt);
+  padding:11px 18px;
+  font-weight:600;
+  cursor:pointer;
+}
+button.primary{
+  background:var(--accent);
+  color:#0e0f11;
+}
+.slider{
+  margin-top:14px;
+}
+.slider label{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--muted);
+}
+input[type=range]{width:100%}
+.bar{
+  margin-top:10px;
+}
+.track{
+  height:10px;
+  background:rgba(255,255,255,.08);
+  border-radius:999px;
+  overflow:hidden;
+}
+.fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:999px;
+}
+.fade{animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+</style>
 </head>
-<body>
 
+<body>
 <div class="wrap">
-    <div class="card fade">
-        <div class="top">
-            <div style="font-weight:900; letter-spacing:2px;">MARINA</div>
-            <div class="lang">
-                <button onclick="setLang('en')" id="en">EN</button>
-                <button onclick="setLang('fr')" id="fr">FR</button>
-            </div>
-        </div>
-        <div id="app"></div>
+  <div class="card fade">
+    <div class="top">
+      <div></div>
+      <div class="lang">
+        <button onclick="setLang('en')" id="en">EN</button>
+        <button onclick="setLang('fr')" id="fr">FR</button>
+        <button onclick="setLang('es')" id="es">ES</button>
+      </div>
     </div>
+
+    <div id="app"></div>
+  </div>
 </div>
 
 <script>
 const t = {
-    en: {
-        intro_h1: "Your project has a soul.",
-        intro_p: "Even if it's not fully defined yet, let's capture its essence together.",
-        start: "Begin the Journey",
-        name_h1: "Who are you?",
-        project_h1: "Project Name",
-        core_h1: "The heart of this project is...",
-        intent_h1: "What should people feel?",
-        sliders_h1: "Define the atmosphere",
-        labels: ["Vibe", "Presence", "Texture"],
-        hints: ["Calm vs Lively", "Discreet vs Bold", "Simple vs Rich"],
-        report_h1: "Project Snapshot",
-        report_h2: "A photographic vision",
-        cta: "Let's bring this to life",
-        loading: "Generating your vision..."
-    },
-    fr: {
-        intro_h1: "Chaque projet a une âme.",
-        intro_p: "Même si elle est encore floue, prenons un instant pour capturer son essence.",
-        start: "Commencer l'expérience",
-        name_h1: "Comment vous appelez-vous ?",
-        project_h1: "Quel est le nom du projet ?",
-        core_h1: "Au fond, ce projet est...",
-        intent_h1: "Quelle émotion doit rester ?",
-        sliders_h1: "Ajustez l'atmosphère",
-        labels: ["Énergie", "Présence", "Détails"],
-        hints: ["Calme vs Vivant", "Discret vs Affirmé", "Épuré vs Riche"],
-        report_h1: "Lecture du Projet",
-        report_h2: "Une vision photographique",
-        cta: "Donner vie à ce projet",
-        loading: "Analyse de votre vision..."
-    }
+en:{
+ intro_h1:"I know what an image means to you.",
+ intro_p:"Even when it’s not entirely clear yet.\nThis is simply a way to take a moment and understand it together.",
+ start:"Start",
+
+ name_h1:"How should I refer to you?",
+ name_meta:"This helps me keep things human.",
+
+ project_h1:"How would you call this project?",
+ project_meta:"It doesn’t have to be final. Just something to hold onto.",
+
+ core_h1:"At its core, this project feels more like…",
+ core_opts:["A place that needs to be felt","A story that needs to be told","A moment you want to remember"],
+
+ intent_h1:"When someone encounters these images for the first time, what should stay with them?",
+ intent_opts:["A natural feeling","A strong atmosphere","A sense of truth","A quiet elegance"],
+
+ time_h1:"How long do you feel these images need to be there for you?",
+ time_opts:["For a specific moment","Over time","As something that grows with the project"],
+
+ where_h1:"Where do you imagine seeing these images most often?",
+ where_opts:["On a website","On social media","In editorial or press contexts","In printed or physical spaces"],
+
+ sliders_h1:"Instinctively, where would you place this project?",
+
+ report_h1:"Project Snapshot",
+ report_h2:"A first photographic reading",
+
+ cta:"Let’s talk about this project"
+},
+fr:{
+ intro_h1:"Je sais ce que représente une image pour vous.",
+ intro_p:"Même quand ce n’est pas encore très clair.\nPrenons simplement un moment pour le comprendre ensemble.",
+ start:"Commencer",
+
+ name_h1:"Comment dois-je m’adresser à vous ?",
+ name_meta:"Pour garder les choses humaines.",
+
+ project_h1:"Comment appelleriez-vous ce projet ?",
+ project_meta:"Ce n’est pas définitif. Juste un point d’ancrage.",
+
+ core_h1:"Au fond, ce projet ressemble plutôt à…",
+ core_opts:["Un lieu à ressentir","Une histoire à raconter","Un moment à garder en mémoire"],
+
+ intent_h1:"Quand quelqu’un découvre ces images, qu’est-ce qui devrait rester ?",
+ intent_opts:["Une sensation naturelle","Une atmosphère forte","Un sentiment de vérité","Une élégance discrète"],
+
+ time_h1:"Combien de temps sentez-vous que ces images doivent vous accompagner ?",
+ time_opts:["Pour un moment précis","Dans le temps","En évoluant avec le projet"],
+
+ where_h1:"Où imaginez-vous voir ces images le plus souvent ?",
+ where_opts:["Sur un site web","Sur les réseaux sociaux","Dans un contexte éditorial / presse","Dans des espaces imprimés ou physiques"],
+
+ sliders_h1:"Instinctivement, où placeriez-vous ce projet ?",
+
+ report_h1:"Lecture du projet",
+ report_h2:"Une première lecture photographique",
+
+ cta:"Parlons de ce projet"
+},
+es:{
+ intro_h1:"Sé lo que significa una imagen para ti.",
+ intro_p:"Incluso cuando aún no está del todo claro.\nTomemos un momento para entenderlo juntos.",
+ start:"Empezar",
+
+ name_h1:"¿Cómo debería dirigirme a ti?",
+ name_meta:"Para mantener las cosas humanas.",
+
+ project_h1:"¿Cómo llamarías a este proyecto?",
+ project_meta:"No tiene que ser definitivo. Solo un punto de apoyo.",
+
+ core_h1:"En esencia, este proyecto se siente más como…",
+ core_opts:["Un lugar que hay que sentir","Una historia que contar","Un momento que recordar"],
+
+ intent_h1:"Cuando alguien se encuentra con estas imágenes, ¿qué debería permanecer?",
+ intent_opts:["Una sensación natural","Una atmósfera fuerte","Una sensación de verdad","Una elegancia silenciosa"],
+
+ time_h1:"¿Durante cuánto tiempo sientes que estas imágenes deben acompañarte?",
+ time_opts:["Para un momento concreto","A lo largo del tiempo","Creciendo con el proyecto"],
+
+ where_h1:"¿Dónde imaginas ver estas imágenes con más frecuencia?",
+ where_opts:["En una web","En redes sociales","En contextos editoriales / prensa","En espacios impresos o físicos"],
+
+ sliders_h1:"Instintivamente, ¿dónde situarías este proyecto?",
+
+ report_h1:"Lectura del proyecto",
+ report_h2:"Una primera lectura fotográfica",
+
+ cta:"Hablemos de este proyecto"
+}
 };
 
-let lang = "fr";
-let step = 0;
-const state = {
-    name: "",
-    project: "",
-    core: "",
-    intent: [],
-    sliders: { calm: 50, present: 50, rich: 50 }
+let lang="en";
+let step=0;
+const state={
+ name:"",
+ project:"",
+ core:"",
+ intent:[],
+ time:"",
+ where:[],
+ sliders:{calm:50,present:50,rich:50}
 };
 
-function setLang(l) {
-    lang = l;
-    document.querySelectorAll(".lang button").forEach(b => b.classList.remove("active"));
-    document.getElementById(l).classList.add("active");
-    render();
+function setLang(l){
+ lang=l;
+ document.querySelectorAll(".lang button").forEach(b=>b.classList.remove("active"));
+ document.getElementById(l).classList.add("active");
+ render();
 }
 
-function next() { step++; render(); }
+function render(){
+ const a=document.getElementById("app");
+ a.innerHTML="";
+ const tr=t[lang];
 
-function toggleIntent(o) {
-    if (state.intent.includes(o)) state.intent = state.intent.filter(x => x !== o);
-    else if (state.intent.length < 2) state.intent.push(o);
-    render();
+ if(step===0){
+  a.innerHTML=`<h1>${tr.intro_h1}</h1><p>${tr.intro_p.replace(/\n/g,"<br>")}</p>
+  <div class="btns"><button class="primary" onclick="next()">${tr.start}</button></div>`;
+ }
+ if(step===1){
+  a.innerHTML=`<h1>${tr.name_h1}</h1>
+  <input oninput="state.name=this.value" placeholder="…">
+  <div class="meta">${tr.name_meta}</div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===2){
+  a.innerHTML=`<h1>${tr.project_h1}</h1>
+  <input oninput="state.project=this.value" placeholder="…">
+  <div class="meta">${tr.project_meta}</div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===3){
+  a.innerHTML=`<h1>${tr.core_h1}</h1>
+  <div class="choices">
+   ${tr.core_opts.map(o=>`<div class="choice ${state.core===o?"sel":""}" onclick="state.core='${o}';render()">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===4){
+  a.innerHTML=`<h1>${tr.intent_h1}</h1>
+  <div class="checks">
+   ${tr.intent_opts.map(o=>`<div class="check ${state.intent.includes(o)?"sel":""}" onclick="toggleIntent('${o}')">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===5){
+  a.innerHTML=`<h1>${tr.time_h1}</h1>
+  <div class="choices">
+   ${tr.time_opts.map(o=>`<div class="choice ${state.time===o?"sel":""}" onclick="state.time='${o}';render()">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===6){
+  a.innerHTML=`<h1>${tr.where_h1}</h1>
+  <div class="checks">
+   ${tr.where_opts.map(o=>`<div class="check ${state.where.includes(o)?"sel":""}" onclick="toggleWhere('${o}')">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===7){
+  a.innerHTML=`<h1>${tr.sliders_h1}</h1>
+  ${slider("Calm","Lively","calm")}
+  ${slider("Discreet","Present","present")}
+  ${slider("Simple","Rich","rich")}
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===8){
+  a.innerHTML=`<h1>${tr.report_h1}</h1>
+  <h2>${tr.report_h2}</h2>
+  <p><strong>${state.project||"This project"}</strong> seems to be about <em>${state.core.toLowerCase()}</em>.
+  It’s meant to exist <em>${state.time.toLowerCase()}</em>, with an emphasis on
+  <em>${state.intent.join(", ").toLowerCase()}</em>.</p>
+
+  <div class="bar"><div class="track"><div class="fill" style="width:${state.sliders.calm}%"></div></div></div>
+  <div class="bar"><div class="track"><div class="fill" style="width:${state.sliders.present}%"></div></div></div>
+  <div class="bar"><div class="track"><div class="fill" style="width:${state.sliders.rich}%"></div></div></div>
+
+  <p>This suggests images that are less about effect, and more about presence —
+  images that can stay with you and continue to make sense.</p>
+
+  <div class="btns"><button class="primary">${tr.cta}</button></div>`;
+ }
 }
 
-function render() {
-    const a = document.getElementById("app");
-    const tr = t[lang];
-    a.className = "fade";
-    
-    if (step === 0) {
-        a.innerHTML = `<h1>${tr.intro_h1}</h1><p>${tr.intro_p}</p>
-        <button class="primary" onclick="next()">${tr.start}</button>`;
-    } else if (step === 1) {
-        a.innerHTML = `<h1>${tr.name_h1}</h1><input type="text" onchange="state.name=this.value" placeholder="...">
-        <div class="btns" style="margin-top:20px"><button class="primary" onclick="next()">→</button></div>`;
-    } else if (step === 2) {
-        a.innerHTML = `<h1>${tr.project_h1}</h1><input type="text" onchange="state.project=this.value" placeholder="...">
-        <div class="btns" style="margin-top:20px"><button class="primary" onclick="next()">→</button></div>`;
-    } else if (step === 3) {
-        const opts = lang === 'fr' ? ["Un lieu à ressentir", "Une histoire à raconter", "Un moment à graver"] : ["A place to feel", "A story to tell", "A moment to remember"];
-        a.innerHTML = `<h1>${tr.core_h1}</h1><div class="choices">
-        ${opts.map(o => `<div class="choice ${state.core === o ? "sel" : ""}" onclick="state.core='${o}';next();">${o}</div>`).join("")}
-        </div>`;
-    } else if (step === 4) {
-        const opts = lang === 'fr' ? ["Sensation naturelle", "Atmosphère forte", "Vérité brute", "Élégance discrète"] : ["Natural feeling", "Strong atmosphere", "Raw truth", "Quiet elegance"];
-        a.innerHTML = `<h1>${tr.intent_h1}</h1><div class="checks">
-        ${opts.map(o => `<div class="check ${state.intent.includes(o) ? "sel" : ""}" onclick="toggleIntent('${o}')">${o}</div>`).join("")}
-        </div><button class="primary" onclick="next()">Continuer</button>`;
-    } else if (step === 5) {
-        a.innerHTML = `<h1>${tr.sliders_h1}</h1>
-        ${renderSlider(tr.labels[0], tr.hints[0], 'calm')}
-        ${renderSlider(tr.labels[1], tr.hints[1], 'present')}
-        ${renderSlider(tr.labels[2], tr.hints[2], 'rich')}
-        <button class="primary" onclick="next()" style="margin-top:20px">Générer le rapport</button>`;
-    } else if (step === 6) {
-        renderReport();
-    }
+function slider(l,r,k){
+ return `<div class="slider">
+ <label><span>${l}</span><span>${r}</span></label>
+ <input type="range" min="0" max="100" value="${state.sliders[k]}" 
+ oninput="state.sliders['${k}']=this.value">
+ </div>`;
 }
 
-function renderSlider(label, hint, key) {
-    return `<div class="slider-group">
-        <div class="slider-label"><span>${label}</span></div>
-        <input type="range" min="0" max="100" value="${state.sliders[key]}" oninput="state.sliders['${key}']=this.value">
-        <div class="slider-desc">${hint}</div>
-    </div>`;
+function toggleIntent(o){
+ if(state.intent.includes(o)) state.intent=state.intent.filter(x=>x!==o);
+ else if(state.intent.length<2) state.intent.push(o);
+ render();
 }
-
-function renderReport() {
-    const a = document.getElementById("app");
-    const tr = t[lang];
-    
-    const narrative = lang === 'fr' 
-        ? `Cher ${state.name}, votre projet <strong>${state.project}</strong> se dessine comme <em>${state.core.toLowerCase()}</em>. Vous cherchez à capturer une <em>${state.intent.join(" et ").toLowerCase()}</em>.`
-        : `Dear ${state.name}, your project <strong>${state.project}</strong> is envisioned as <em>${state.core.toLowerCase()}</em>, with a focus on <em>${state.intent.join(" and ").toLowerCase()}</em>.`;
-
-    a.innerHTML = `
-        <h1>${tr.report_h1}</h1>
-        <h2>${tr.report_h2}</h2>
-        <p class="narrative">${narrative}</p>
-        <canvas id="radarChart"></canvas>
-        <p style="color:var(--muted); font-size:14px; margin: 20px 0;">Ce profil suggère des images à haute valeur émotionnelle, privilégiant l'authenticité à la mise en scène.</p>
-        <button class="primary" onclick="window.location.href='mailto:contact@votre-email.ch?subject=Projet MARINA - ${state.project}'">${tr.cta}</button>
-    `;
-
-    const ctx = document.getElementById('radarChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: tr.labels,
-            datasets: [{
-                label: 'Vision',
-                data: [state.sliders.calm, state.sliders.present, state.sliders.rich],
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                borderColor: '#ffffff',
-                borderWidth: 2,
-                pointBackgroundColor: '#ffffff'
-            }]
-        },
-        options: {
-            scales: {
-                r: {
-                    angleLines: { color: 'rgba(255,255,255,0.1)' },
-                    grid: { color: 'rgba(255,255,255,0.1)' },
-                    pointLabels: { color: '#fff', font: { size: 12 } },
-                    ticks: { display: false },
-                    suggestedMin: 0, suggestedMax: 100
-                }
-            },
-            plugins: { legend: { display: false } }
-        }
-    });
+function toggleWhere(o){
+ if(state.where.includes(o)) state.where=state.where.filter(x=>x!==o);
+ else if(state.where.length<2) state.where.push(o);
+ render();
 }
-
-setLang('fr');
+function next(){step++; render();}
+setLang("en");
 </script>
-
 </body>
 </html>
