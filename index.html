@@ -4,54 +4,236 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Marinaphoto 4 you — Snapshot</title>
+  <meta name="description" content="A playful, simple photo-brief that generates an instant, beautiful snapshot." />
+
   <style>
-    /* Tes styles originaux */
     :root{
-      --bg:#0b0d10; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.14);
-      --txt:rgba(255,255,255,.92); --muted:rgba(255,255,255,.62); --muted2:rgba(255,255,255,.48);
-      --accent:rgba(255,255,255,.92); --shadow:0 18px 60px rgba(0,0,0,.60); --r:26px;
+      --bg:#0b0d10;
+      --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.14);
+      --txt:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.48);
+      --accent:rgba(255,255,255,.92);
+      --shadow:0 18px 60px rgba(0,0,0,.60);
+      --r:26px;
     }
     *{box-sizing:border-box}
-    html,body{height:100%; margin:0; font-family: ui-sans-serif, system-ui, sans-serif; color:var(--txt); background:var(--bg); overflow-x:hidden;}
-    .bg{ position:fixed; inset:0; z-index:-3; background: radial-gradient(980px 520px at 18% 18%, rgba(255,255,255,.11), transparent 62%), linear-gradient(180deg, #0b0d10 0%, #090a0d 100%); }
-    .grain{ position:fixed; inset:-40px; z-index:-2; opacity:.10; pointer-events:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>'); mix-blend-mode:overlay; }
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--txt);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    .bg{
+      position:fixed; inset:0; z-index:-3;
+      background:
+        radial-gradient(980px 520px at 18% 18%, rgba(255,255,255,.11), transparent 62%),
+        radial-gradient(860px 520px at 85% 28%, rgba(255,255,255,.085), transparent 65%),
+        radial-gradient(980px 560px at 52% 96%, rgba(255,255,255,.065), transparent 60%),
+        linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
+      transition:filter .25s ease;
+    }
+    .grain{
+      position:fixed; inset:-40px; z-index:-2; opacity:.10; pointer-events:none;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>');
+      mix-blend-mode:overlay;
+    }
+
     .wrap{min-height:100vh; display:flex; justify-content:center; align-items:center; padding:26px 14px;}
     .shell{ width:min(1100px,100%); }
-    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 6px; color:var(--muted); font-size:13px; }
-    .pill{ display:inline-flex; align-items:center; gap:10px; padding:7px 10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.04); min-height:34px; }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:950; color:rgba(255,255,255,.86); letter-spacing:.01em; white-space:nowrap; }
+
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; flex-wrap:wrap;
+      padding:10px 6px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      min-height:34px;
+    }
+    .brand{
+      display:flex; align-items:baseline; gap:10px;
+      font-weight:950; color:rgba(255,255,255,.86);
+      letter-spacing:.01em;
+    }
     .brand small{font-weight:750; color:rgba(255,255,255,.55)}
-    .progress{ width:260px; height:10px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.10); }
-    .progress > div{ height:100%; width:0%; background:rgba(255,255,255,.86); border-radius:999px; transition:width .35s ease; }
-    .lang{ display:inline-flex; gap:6px; align-items:center; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03); padding:4px; border-radius:999px; }
-    .lang button{ border:none; background:transparent; color:var(--muted); font-weight:900; cursor:pointer; padding:6px 10px; border-radius:999px; }
+    .progress{
+      width:260px; height:10px; border-radius:999px; overflow:hidden;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .progress > div{
+      height:100%; width:0%;
+      background:rgba(255,255,255,.86);
+      border-radius:999px;
+      transition:width .35s ease;
+    }
+    @media(max-width:720px){ .progress{ width:180px; } }
+
+    .lang{
+      display:inline-flex; gap:6px; align-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      padding:4px; border-radius:999px;
+    }
+    .lang button{
+      border:none; background:transparent; color:var(--muted);
+      font-weight:900; cursor:pointer; padding:6px 10px; border-radius:999px;
+      letter-spacing:.02em;
+    }
     .lang button.active{ color:#0c0e11; background:var(--accent); }
-    .card{ border:1px solid var(--line); background:linear-gradient(180deg, var(--card), rgba(255,255,255,.035)); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden; }
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.035));
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
     .content{padding:28px}
+    @media (max-width:720px){ .content{padding:20px} }
+
     .fade{animation:fade .32s ease both}
     @keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:translateY(0)}}
+
     .kicker{font-size:12px; letter-spacing:.11em; text-transform:uppercase; color:rgba(255,255,255,.56)}
     h1{font-size:34px; margin:10px 0 10px; letter-spacing:-.02em}
+    h2{font-size:20px; margin:0 0 10px; letter-spacing:-.01em}
     p{margin:0 0 12px; line-height:1.55}
     .lead{color:var(--muted); font-size:16px}
+    .hint{color:var(--muted2); font-size:13px; margin-top:10px; line-height:1.45}
+    .micro{color:var(--muted2); font-size:12px; margin-top:10px}
     .divider{height:1px; background:rgba(255,255,255,.12); margin:18px 0}
-    input[type="text"], textarea{ width:100%; padding:12px 14px; border-radius:14px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.04); color:var(--txt); outline:none; margin-top:10px; font-size:15px; }
-    .choices{display:grid; gap:10px; margin-top:14px}
-    .choice{ border:1px solid rgba(255,255,255,.16); border-radius:18px; padding:14px; background:rgba(255,255,255,.04); cursor:pointer; transition:all .15s ease; }
-    .choice.sel{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.28);}
+
+    input[type="text"], textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.04);
+      color:var(--txt);
+      outline:none;
+      margin-top:10px;
+      font-size:15px;
+    }
+    textarea{min-height:90px; resize:vertical}
+
+    .choices,.checks{display:grid; gap:10px; margin-top:14px}
+    .choice,.check{
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+      transition:background .15s ease, border-color .15s ease, transform .08s ease;
+    }
+    .choice:hover,.check:hover{background:rgba(255,255,255,.06)}
+    .choice:active,.check:active{transform:scale(.997)}
+    .choice.sel,.check.sel{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.28);}
+    .optTitle{font-weight:950}
+    .optDesc{margin-top:6px; font-size:12px; color:var(--muted); line-height:1.35}
+
     .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
-    button{ border-radius:999px; border:1px solid rgba(255,255,255,.18); padding:11px 16px; background:rgba(255,255,255,.06); color:var(--txt); cursor:pointer; font-weight:950; }
-    button.primary{ background:var(--accent); color:#0c0e11; }
-    .hint{color:var(--muted2); font-size:13px; margin-top:10px;}
+    button{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      padding:11px 16px;
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      cursor:pointer;
+      font-weight:950;
+    }
+    button.primary{ background:var(--accent); color:#0c0e11; border-color:rgba(255,255,255,.18); }
+    button.ghost{ background:transparent; }
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:900px){ .grid2{grid-template-columns:1fr} }
+
+    .box{
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+    }
+
+    .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.05);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:13px;
+      color:rgba(255,255,255,.86);
+      white-space:nowrap;
+    }
+
+    .bar{margin-top:12px}
+    .barhead{display:flex; justify-content:space-between; font-size:13px; color:var(--muted)}
+    .track{height:10px; border-radius:999px; background:rgba(255,255,255,.10); margin-top:8px; overflow:hidden}
+    .fill{height:100%; border-radius:999px; background:rgba(255,255,255,.86); width:40%}
+
+    .slider{
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+      margin-top:12px;
+    }
+    .slab{display:flex; justify-content:space-between; color:var(--muted); font-size:13px}
+    input[type="range"]{width:100%; margin-top:10px}
+    .sliderHelp{display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:12px; color:var(--muted2)}
+
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.18);
+      color:rgba(255,255,255,.9);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      max-width:min(92vw,700px);
+      text-align:center;
+    }
+    .toast.show{opacity:1}
+
+    .noPrint{ }
+    @media print{
+      body{background:#fff; color:#111}
+      .bg,.grain,.topbar,.toast,.noPrint{display:none !important}
+      .wrap{padding:0}
+      .card{box-shadow:none; border:1px solid #ddd}
+      .content{padding:22px}
+      .tag{border-color:#ddd; color:#111}
+      .box{border-color:#ddd}
+      .track{background:#eee}
+      .fill{background:#111}
+    }
   </style>
 </head>
+
 <body>
   <div class="bg" id="bg"></div>
   <div class="grain"></div>
+
   <div class="wrap">
     <div class="shell">
       <div class="topbar">
-        <div class="pill"><div class="brand" id="brandText">Marinaphoto 4 you <small>—</small></div></div>
+        <div class="pill">
+          <div class="brand" id="brandText">Marinaphoto 4 you <small>—</small></div>
+        </div>
+
         <div class="pill" style="gap:12px">
           <div class="progress"><div id="progFill"></div></div>
           <span id="stepPill">—</span>
@@ -62,77 +244,966 @@
           </span>
         </div>
       </div>
-      <div class="card"><div class="content fade" id="app"></div></div>
+
+      <div class="card">
+        <div class="content fade" id="app"></div>
+      </div>
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
+  <!-- I18N as JSON (anti-SyntaxError) -->
+  <script id="i18n_json" type="application/json">
+  {
+    "fr":{
+      "toolName":"Marinaphoto 4 you",
+      "toolTagline":"« Je sais ce qu’une image signifie pour vous. »",
+      "acts":{"intro":"Intro","who":"Vous & le projet","core":"Essence","use":"Usage","vibe":"Ambiance","extra":"Détails","report":"Rapport"},
+      "ui":{
+        "start":"Commencer",
+        "continue":"Continuer",
+        "back":"Retour",
+        "pickOne":"Choisissez une option 🙂",
+        "pickAtLeastOne":"Choisissez au moins une option 🙂",
+        "maxTwo":"Max 2 choix",
+        "copied":"Copié ✨",
+        "copy":"Copier le rapport",
+        "pdf":"Exporter en PDF",
+        "emailMarina":"Envoyer à Marina",
+        "restart":"Recommencer",
+        "ifHesitate":"Si vous hésitez : choisissez ce qui vous semble le plus vrai aujourd’hui."
+      },
+      "intro":{
+        "kicker":"Un brief photo (pas un brief de marque)",
+        "h1":"3 minutes. Zéro jargon. Un rapport clair.",
+        "p":"Vous répondez à l’instinct. Je transforme vos réponses en un snapshot lisible :\\nce qu’il faut raconter, où ça va vivre, et comment le rendre juste (sans changer mon style)."
+      },
+      "who":{
+        "nameH1":"Quel est votre prénom ?",
+        "nameHelp":"Prénom ou pseudo — comme vous préférez.",
+        "namePh":"Ex : Alex",
+        "projH1":"Nom du projet",
+        "projHelp":"Même provisoire. Ça m’aide à personnaliser le rapport.",
+        "projPh":"Ex : Clinica Vinyet / Nouveau menu / Opening…"
+      },
+      "core":{
+        "h1":"En une phrase, votre projet, c’est plutôt…",
+        "help":"Choisissez l’option la plus évidente.",
+        "opts":{
+          "place":{"t":"🏠 Un lieu","d":"Faire ressentir : lumière, matière, atmosphère."},
+          "story":{"t":"📖 Une histoire","d":"Des gens, des gestes, une narration."},
+          "moment":{"t":"⏳ Un moment","d":"Aller à l’essentiel, sans surjouer."}
+        },
+        "intentH1":"Quand quelqu’un voit ces images, vous voulez qu’il se dise…",
+        "intentHelp":"Choisissez 1 ou 2.",
+        "intent":{
+          "notAI":{"t":"« Ce ne sont pas des images IA. »","d":"On sent du vrai : présence, matière, lumière."},
+          "brand":{"t":"« Ça reflète parfaitement ma marque. »","d":"Cohérent, reconnaissable, aligné."},
+          "fresh":{"t":"« C’est un regard artistique, neuf. »","d":"Pas du déjà-vu. Une vraie signature."},
+          "trust":{"t":"« Ça me donne confiance. »","d":"Crédible, humain, juste (pas “trop pub”)."}
+        }
+      },
+      "use":{
+        "timeH1":"Ces images doivent surtout servir…",
+        "timeHelp":"Ça aide à doser le rythme et la quantité.",
+        "time":{
+          "moment":{"t":"📆 Un moment précis","d":"Lancement, campagne, événement."},
+          "overtime":{"t":"🔁 Une base réutilisable","d":"Des visuels qui durent et se déclinent."},
+          "grow":{"t":"🌱 Une continuité","d":"Série + suivi : ça évolue dans le temps."}
+        },
+        "whereH1":"Où ces images vont vivre le plus souvent ?",
+        "whereHelp":"Max 2. Là où vous allez vraiment les utiliser.",
+        "where":{
+          "website":{"t":"Site web","d":"Lecture posée, crédibilité."},
+          "social":{"t":"Réseaux","d":"Rythme, répétition, série."},
+          "editorial":{"t":"Presse / editorial","d":"Contexte, narration, détails."},
+          "print":{"t":"Print","d":"Impact, matière, permanence."}
+        }
+      },
+      "vibe":{
+        "h1":"Ambiance (réponse rapide).",
+        "help":"Ça ne change pas mon style. Ça règle juste le tempo.",
+        "s":{
+          "calm":{"l":"😌 Calme","r":"⚡ Vivant","hl":"posé","hr":"énergique"},
+          "present":{"l":"👀 Discret","r":"🤍 Proche","hl":"observer","hr":"être dedans"},
+          "rich":{"l":"✂️ Épuré","r":"🧱 Texturé","hl":"simple","hr":"matière"}
+        }
+      },
+      "extra":{"h1":"Une chose à éviter absolument ?","help":"Même un mot suffit.","ph":"Ex : trop lisse / trop “pub” / trop sombre / trop figé…"},
+      "report":{
+        "kicker":"Rapport",
+        "sub":"Voilà comment je comprends votre projet (et comment je le traduirais en images).",
+        "sections":{"reading":"Lecture","usage":"Usage","vibe":"Ambiance","plan":"Plan","next":"Prochaine étape"},
+        "closing":"Mon rôle : traduire votre intention en images justes — avec ma signature (sans mode caméléon).",
+        "nextLead":"Si vous le souhaitez : exportez en PDF, ou envoyez ce rapport à Marina."
+      }
+    },
+    "en":{
+      "toolName":"Marinaphoto 4 you",
+      "toolTagline":"“I know what an image means to you.”",
+      "acts":{"intro":"Intro","who":"You & project","core":"Essence","use":"Use","vibe":"Vibe","extra":"Details","report":"Report"},
+      "ui":{
+        "start":"Start",
+        "continue":"Continue",
+        "back":"Back",
+        "pickOne":"Pick one 🙂",
+        "pickAtLeastOne":"Pick at least one 🙂",
+        "maxTwo":"Max 2",
+        "copied":"Copied ✨",
+        "copy":"Copy report",
+        "pdf":"Export PDF",
+        "emailMarina":"Send to Marina",
+        "restart":"Restart",
+        "ifHesitate":"If you hesitate: pick what feels most true today."
+      },
+      "intro":{
+        "kicker":"A photo brief (not a brand deck)",
+        "h1":"3 minutes. No jargon. A clear report.",
+        "p":"Answer by instinct. I turn it into a readable snapshot:\\nwhat to say, where it will live, and how to make it feel true (without changing my style)."
+      },
+      "who":{
+        "nameH1":"What’s your first name?",
+        "nameHelp":"First name or nickname — your choice.",
+        "namePh":"e.g. Alex",
+        "projH1":"Project name",
+        "projHelp":"Even temporary. Helps personalize the report.",
+        "projPh":"e.g. Clinica Vinyet / New menu / Opening…"
+      },
+      "core":{
+        "h1":"In one sentence, your project is mostly…",
+        "help":"Pick the most obvious option.",
+        "opts":{
+          "place":{"t":"🏠 A place","d":"Make people feel it: light, texture, atmosphere."},
+          "story":{"t":"📖 A story","d":"People, gestures, a narrative thread."},
+          "moment":{"t":"⏳ A moment","d":"Keep what matters, no overacting."}
+        },
+        "intentH1":"When people see these images, you want them to think…",
+        "intentHelp":"Pick 1 or 2.",
+        "intent":{
+          "notAI":{"t":"“These are not AI images.”","d":"It feels real: presence, texture, light."},
+          "brand":{"t":"“This perfectly matches my brand.”","d":"Consistent, recognizable, aligned."},
+          "fresh":{"t":"“It’s a fresh artistic eye.”","d":"Not generic. A real signature."},
+          "trust":{"t":"“This makes me trust you.”","d":"Credible, human, true (not ‘too ad’)."}
+        }
+      },
+      "use":{
+        "timeH1":"These images should mainly serve…",
+        "timeHelp":"Helps set tempo and scope.",
+        "time":{
+          "moment":{"t":"📆 A specific moment","d":"Launch, campaign, event."},
+          "overtime":{"t":"🔁 A reusable base","d":"Visuals that last and can be reused."},
+          "grow":{"t":"🌱 Continuity","d":"Series + follow-up over time."}
+        },
+        "whereH1":"Where will these images live most often?",
+        "whereHelp":"Max 2. Where you’ll really use them.",
+        "where":{
+          "website":{"t":"Website","d":"Calm reading, credibility."},
+          "social":{"t":"Social","d":"Rhythm, repetition, series."},
+          "editorial":{"t":"Editorial / press","d":"Context, narrative, detail."},
+          "print":{"t":"Print","d":"Impact, materiality, permanence."}
+        }
+      },
+      "vibe":{
+        "h1":"Vibe (quick answer).",
+        "help":"This doesn’t change my style. It sets the tempo.",
+        "s":{
+          "calm":{"l":"😌 Calm","r":"⚡ Lively","hl":"quiet","hr":"energetic"},
+          "present":{"l":"👀 Discreet","r":"🤍 Close","hl":"observe","hr":"in it"},
+          "rich":{"l":"✂️ Minimal","r":"🧱 Textured","hl":"simple","hr":"material"}
+        }
+      },
+      "extra":{"h1":"One thing to avoid at all costs?","help":"Even one word is enough.","ph":"e.g. too polished / too ‘ad’ / too dark / too stiff…"},
+      "report":{
+        "kicker":"Report",
+        "sub":"Here’s how I read your project (and how I’d translate it into images).",
+        "sections":{"reading":"Reading","usage":"Usage","vibe":"Vibe","plan":"Plan","next":"Next step"},
+        "closing":"My role: translate your intent into honest images — with my signature (no chameleon mode).",
+        "nextLead":"If you want: export as PDF, or send this report to Marina."
+      }
+    },
+    "es":{
+      "toolName":"Marinaphoto 4 you",
+      "toolTagline":"« Sé lo que una imagen significa para usted. »",
+      "acts":{"intro":"Intro","who":"Usted & proyecto","core":"Esencia","use":"Uso","vibe":"Vibra","extra":"Detalles","report":"Informe"},
+      "ui":{
+        "start":"Empezar",
+        "continue":"Continuar",
+        "back":"Atrás",
+        "pickOne":"Elija una 🙂",
+        "pickAtLeastOne":"Elija al menos una 🙂",
+        "maxTwo":"Máx 2",
+        "copied":"Copiado ✨",
+        "copy":"Copiar informe",
+        "pdf":"Exportar PDF",
+        "emailMarina":"Enviar a Marina",
+        "restart":"Reiniciar",
+        "ifHesitate":"Si duda: elija lo que se sienta más verdadero hoy."
+      },
+      "intro":{
+        "kicker":"Un brief de foto (no un dossier de marca)",
+        "h1":"3 minutos. Sin jerga. Un informe claro.",
+        "p":"Usted responde por instinto. Yo lo convierto en un snapshot legible:\\nqué contar, dónde vivirá, y cómo hacerlo verdadero (sin cambiar mi estilo)."
+      },
+      "who":{
+        "nameH1":"¿Cuál es su nombre?",
+        "nameHelp":"Nombre o apodo — como prefiera.",
+        "namePh":"p.ej. Alex",
+        "projH1":"Nombre del proyecto",
+        "projHelp":"Aunque sea provisional. Me ayuda a personalizar el informe.",
+        "projPh":"p.ej. Clinica Vinyet / Nuevo menú / Opening…"
+      },
+      "core":{
+        "h1":"En una frase, su proyecto es sobre todo…",
+        "help":"Elija la opción más evidente.",
+        "opts":{
+          "place":{"t":"🏠 Un lugar","d":"Sentir: luz, textura, atmósfera."},
+          "story":{"t":"📖 Una historia","d":"Personas, gestos, un hilo narrativo."},
+          "moment":{"t":"⏳ Un momento","d":"Lo esencial, sin exagerar."}
+        },
+        "intentH1":"Cuando alguien vea estas imágenes, usted quiere que piense…",
+        "intentHelp":"Elija 1 o 2.",
+        "intent":{
+          "notAI":{"t":"« No son imágenes IA. »","d":"Se siente lo real: presencia, materia, luz."},
+          "brand":{"t":"« Refleja perfectamente mi marca. »","d":"Coherente, reconocible, alineado."},
+          "fresh":{"t":"« Es una mirada artística, nueva. »","d":"No genérico. Una firma real."},
+          "trust":{"t":"« Me da confianza. »","d":"Creíble, humano, verdadero (no ‘demasiado anuncio’)."}
+        }
+      },
+      "use":{
+        "timeH1":"Estas imágenes deben servir sobre todo para…",
+        "timeHelp":"Ayuda a definir ritmo y alcance.",
+        "time":{
+          "moment":{"t":"📆 Un momento concreto","d":"Lanzamiento, campaña, evento."},
+          "overtime":{"t":"🔁 Una base reutilizable","d":"Visuales que duran y se reutilizan."},
+          "grow":{"t":"🌱 Continuidad","d":"Serie + seguimiento con el tiempo."}
+        },
+        "whereH1":"¿Dónde vivirán estas imágenes la mayor parte del tiempo?",
+        "whereHelp":"Máx 2. Donde realmente las usará.",
+        "where":{
+          "website":{"t":"Web","d":"Lectura calmada, credibilidad."},
+          "social":{"t":"Redes","d":"Ritmo, repetición, serie."},
+          "editorial":{"t":"Editorial / prensa","d":"Contexto, relato, detalle."},
+          "print":{"t":"Print","d":"Impacto, materia, permanencia."}
+        }
+      },
+      "vibe":{
+        "h1":"Vibra (respuesta rápida).",
+        "help":"No cambia mi estilo. Ajusta el tempo.",
+        "s":{
+          "calm":{"l":"😌 Calmo","r":"⚡ Vivo","hl":"sereno","hr":"enérgico"},
+          "present":{"l":"👀 Discreto","r":"🤍 Cercano","hl":"observar","hr":"dentro"},
+          "rich":{"l":"✂️ Limpio","r":"🧱 Texturado","hl":"simple","hr":"materia"}
+        }
+      },
+      "extra":{"h1":"¿Una cosa a evitar sí o sí?","help":"Incluso una palabra basta.","ph":"p.ej. demasiado pulido / ‘anuncio’ / oscuro / rígido…"},
+      "report":{
+        "kicker":"Informe",
+        "sub":"Así entiendo su proyecto (y así lo traduciría en imágenes).",
+        "sections":{"reading":"Lectura","usage":"Uso","vibe":"Vibra","plan":"Plan","next":"Siguiente paso"},
+        "closing":"Mi trabajo: traducir su intención en imágenes honestas — con mi firma (sin modo camaleón).",
+        "nextLead":"Si quiere: exporte en PDF, o envíe este informe a Marina."
+      }
+    }
+  }
+  </script>
+
   <script>
-    (function(){
-      'use strict';
-      var lang = 'fr';
-      var step = 0;
-      var state = { name:'', project:'', core:null, intent:[], time:null, where:[], avoid:'', sliders:{ calm:55, present:45, rich:50 } };
+  (function(){
+    var MARINA_MAIL = "hello@marinaphoto.es";
 
-      var I18N = {
-        fr:{
-          toolName:'Marinaphoto 4 you', toolTagline:'« Je sais ce qu’une image signifie pour vous. »',
-          acts:{ intro:'Intro', who:'Vous & le projet', core:'Essence', report:'Rapport' },
-          ui:{ start:'Commencer', continue:'Continuer', back:'Retour' },
-          intro:{ kicker:'Un brief photo', h1:'3 minutes. Zéro jargon.', p:'Vous répondez à l’instinct. Je transforme vos réponses en snapshot.' },
-          who:{ nameH1:'Quel est votre prénom ?', nameHelp:'Prénom ou pseudo.', namePh:'Ex : Alex' }
-        },
-        en:{
-          toolName:'Marinaphoto 4 you', toolTagline:'“I know what an image means to you.”',
-          acts:{ intro:'Intro', who:'You & project', core:'Essence', report:'Report' },
-          ui:{ start:'Start', continue:'Continue', back:'Back' },
-          intro:{ kicker:'A photo brief', h1:'3 minutes. No jargon.', p:'Answer by instinct. I turn it into a readable snapshot.' },
-          who:{ nameH1:'What’s your name?', nameHelp:'First name or nickname.', namePh:'e.g. Alex' }
-        },
-        es:{
-          toolName:'Marinaphoto 4 you', toolTagline:'« Sé lo que una imagen significa para usted. »',
-          acts:{ intro:'Intro', who:'Usted & proyecto', core:'Esencia', report:'Informe' },
-          ui:{ start:'Empezar', continue:'Continuar', back:'Atrás' },
-          intro:{ kicker:'Un brief de foto', h1:'3 minutos. Sin jerga.', p:'Usted responde por instinto. Yo lo convierto en un informe.' },
-          who:{ nameH1:'¿Su nombre?', nameHelp:'Nombre o apodo.', namePh:'p.ej. Alex' }
-        }
-      };
+    var app = document.getElementById("app");
+    var brandText = document.getElementById("brandText");
+    var stepPill = document.getElementById("stepPill");
+    var progFill = document.getElementById("progFill");
+    var toast = document.getElementById("toast");
+    var bg = document.getElementById("bg");
+    var btnEN = document.getElementById("btnEN");
+    var btnFR = document.getElementById("btnFR");
+    var btnES = document.getElementById("btnES");
 
-      var app = document.getElementById('app');
-      var brandText = document.getElementById('brandText');
-      var stepPill = document.getElementById('stepPill');
-      var progFill = document.getElementById('progFill');
+    function esc(s){
+      s = String(s || "");
+      return s.replace(/[&<>"']/g, function(m){
+        return ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]);
+      });
+    }
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(function(){ toast.classList.remove("show"); }, 1200);
+    }
 
-      function tr(){ return I18N[lang]; }
-      function esc(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+    // Parse JSON i18n safely
+    var I18N;
+    try{
+      var raw = document.getElementById("i18n_json").textContent;
+      I18N = JSON.parse(raw);
+    }catch(e){
+      app.innerHTML =
+        '<div class="kicker">JS ERROR</div>' +
+        '<h1>Oups 😅</h1>' +
+        '<p class="lead">Le JSON de traduction est invalide. Détail :</p>' +
+        '<pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">'+esc(String(e))+'</pre>';
+      console.error(e);
+      return;
+    }
 
-      function render() {
-        var a = tr();
-        brandText.innerHTML = esc(a.toolName) + ' <small>' + esc(a.toolTagline) + '</small>';
-        stepPill.textContent = (step+1) + '/2';
-        progFill.style.width = ((step+1)/2*100) + '%';
+    var lang = "fr";
+    var state = {
+      name:"",
+      project:"",
+      core:null,
+      intent:[],
+      time:null,
+      where:[],
+      avoid:"",
+      sliders:{ calm:55, present:45, rich:50 }
+    };
 
-        if(step === 0) {
-          app.innerHTML = '<div class="kicker">'+esc(a.intro.kicker)+'</div>' +
-            '<h1>'+esc(a.intro.h1)+'</h1>' +
-            '<p class="lead">'+esc(a.intro.p)+'</p>' +
-            '<div class="btnrow"><button class="primary" id="nextBtn">'+esc(a.ui.start)+'</button></div>';
-          document.getElementById('nextBtn').onclick = function(){ step++; render(); };
-        } else {
-          app.innerHTML = '<h1>'+esc(a.who.nameH1)+'</h1>' +
-            '<p class="hint">'+esc(a.who.nameHelp)+'</p>' +
-            '<input type="text" id="nameInp" placeholder="'+esc(a.who.namePh)+'" value="'+esc(state.name)+'">' +
-            '<div class="btnrow"><button class="primary" id="finishBtn">'+esc(a.ui.continue)+'</button><button id="backBtn">'+esc(a.ui.back)+'</button></div>';
-          document.getElementById('finishBtn').onclick = function(){ state.name = document.getElementById('nameInp').value; alert('Terminé, ' + state.name); };
-          document.getElementById('backBtn').onclick = function(){ step--; render(); };
-        }
+    function tr(){ return I18N[lang]; }
+
+    function setLang(l){
+      if(!I18N[l]) return;
+      lang = l;
+      btnEN.classList.remove("active");
+      btnFR.classList.remove("active");
+      btnES.classList.remove("active");
+      if(l==="en") btnEN.classList.add("active");
+      if(l==="fr") btnFR.classList.add("active");
+      if(l==="es") btnES.classList.add("active");
+      safeRender(false);
+    }
+    btnEN.addEventListener("click", function(){ setLang("en"); });
+    btnFR.addEventListener("click", function(){ setLang("fr"); });
+    btnES.addEventListener("click", function(){ setLang("es"); });
+
+    var steps = [
+      { act:"intro",  render: renderIntro },
+      { act:"who",    render: renderName },
+      { act:"who",    render: renderProject },
+      { act:"core",   render: renderCore },
+      { act:"core",   render: renderIntent },
+      { act:"use",    render: renderTime },
+      { act:"use",    render: renderWhere },
+      { act:"vibe",   render: renderVibe },
+      { act:"extra",  render: renderExtra },
+      { act:"report", render: renderReport }
+    ];
+    var step = 0;
+
+    function setHeader(){
+      var a = tr();
+      brandText.innerHTML = esc(a.toolName) + ' <small>' + esc(a.toolTagline) + '</small>';
+      stepPill.textContent = (step+1) + "/" + steps.length + " · " + a.acts[steps[step].act];
+      progFill.style.width = Math.round(((step+1)/steps.length)*100) + "%";
+    }
+    function next(){ if(step < steps.length-1){ step++; safeRender(true); } }
+    function prev(){ if(step > 0){ step--; safeRender(true); } }
+
+    function btnRow(primaryLabel, onPrimary, extraButtonsHtml){
+      var a = tr();
+      var html = '<div class="btnrow noPrint">' +
+        '<button class="primary" id="primaryBtn" type="button">' + esc(primaryLabel) + '</button>' +
+        (extraButtonsHtml || "") +
+        (step>0 ? '<button class="ghost" id="backBtn" type="button">' + esc(a.ui.back) + '</button>' : '') +
+        '</div>';
+      return { html: html, bind: function(){
+        var p = document.getElementById("primaryBtn");
+        if(p) p.onclick = onPrimary;
+        var b = document.getElementById("backBtn");
+        if(b) b.onclick = prev;
+      }};
+    }
+
+    function clamp(v){ return Math.max(0, Math.min(100, v)); }
+
+    function sliderSentence(){
+      var c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
+      if(lang==="fr") return "Rythme " + (c>60?"posé":"énergique") + " · distance " + (p>55?"proche":"discrète") + " · matière " + (r>55?"présente":"minimaliste") + ".";
+      if(lang==="es") return "Ritmo " + (c>60?"sereno":"enérgico") + " · distancia " + (p>55?"cercana":"discreta") + " · materia " + (r>55?"presente":"minimal") + ".";
+      return "Tempo " + (c>60?"calm":"energetic") + " · distance " + (p>55?"close":"discreet") + " · material " + (r>55?"present":"minimal") + ".";
+    }
+
+    function usageScores(){
+      var base = { website:26, social:26, editorial:26, print:26 };
+      for(var i=0;i<state.where.length;i++) base[state.where[i]] += 34;
+
+      var longevity = 55;
+      if(state.time==="moment") longevity = 38;
+      if(state.time==="overtime") longevity = 74;
+      if(state.time==="grow") longevity = 88;
+
+      base.website = clamp(base.website);
+      base.social = clamp(base.social);
+      base.editorial = clamp(base.editorial);
+      base.print = clamp(base.print);
+      longevity = clamp(longevity);
+
+      return { base:base, longevity:longevity };
+    }
+
+    function mailtoLink(to, subject, body){
+      return "mailto:" + encodeURIComponent(to) +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+    }
+
+    function radarSVG(values, labels){
+      var w=320, h=250, cx=w/2, cy=h/2+14, R=92;
+      var axes = [
+        { key:"calm", angle:-90 },
+        { key:"present", angle:30 },
+        { key:"rich", angle:150 }
+      ];
+      function pt(key, val){
+        var ang=0;
+        for(var i=0;i<axes.length;i++){ if(axes[i].key===key) ang=axes[i].angle; }
+        var rad = ang*Math.PI/180;
+        var rr = R*(val/100);
+        return { x: cx + Math.cos(rad)*rr, y: cy + Math.sin(rad)*rr };
+      }
+      function polyAt(v){
+        var q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
+        return '<polygon points="'+q1.x+','+q1.y+' '+q2.x+','+q2.y+' '+q3.x+','+q3.y+'" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>';
+      }
+      var grid = polyAt(30)+polyAt(60)+polyAt(100);
+      var p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
+      var poly = '<polygon points="'+p1.x+','+p1.y+' '+p2.x+','+p2.y+' '+p3.x+','+p3.y+'" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>';
+      var labelSvg =
+        '<text x="'+(cx)+'" y="'+(cy-R-8)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="middle">'+esc(labels[0])+'</text>' +
+        '<text x="'+(cx+R+10)+'" y="'+(cy+6)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="start">'+esc(labels[1])+'</text>' +
+        '<text x="'+(cx-R-10)+'" y="'+(cy+6)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="end">'+esc(labels[2])+'</text>';
+      return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="vibe radar">'+grid+poly+labelSvg+'</svg>';
+    }
+
+    function bar(label, v){
+      v = clamp(Math.round(v));
+      return '' +
+        '<div class="bar">' +
+          '<div class="barhead"><span>'+esc(label)+'</span><span>'+v+'%</span></div>' +
+          '<div class="track"><div class="fill" style="width:'+v+'%"></div></div>' +
+        '</div>';
+    }
+
+    function tags(){
+      var a = tr();
+      var out = [];
+      if(state.core) out.push(a.core.opts[state.core].t);
+      for(var i=0;i<state.intent.length;i++) out.push(a.core.intent[state.intent[i]].t);
+      out.push(sliderSentence());
+      var uniq = [];
+      for(var j=0;j<out.length;j++){ if(uniq.indexOf(out[j])===-1) uniq.push(out[j]); }
+      return uniq.slice(0,3);
+    }
+
+    function storyLines(){
+      var who = (state.name||"").trim();
+      var proj = (state.project||"").trim();
+
+      var hello =
+        (lang==="fr") ? ("Bonjour"+(who?(" "+who):"") +" — voici la lecture de « "+(proj||"votre projet")+" ».") :
+        (lang==="es") ? ("Hola"+(who?(" "+who):"") +" — aquí va la lectura de « "+(proj||"su proyecto")+" ».") :
+                        ("Hi"+(who?(" "+who):"") +" — here’s the reading of “"+(proj||"your project")+"”.");
+
+      var core =
+        (state.core==="place") ? ((lang==="fr")?"Cœur : un lieu à faire ressentir.":(lang==="es")?"Corazón: un lugar para sentir.":"Core: a place to feel.") :
+        (state.core==="story") ? ((lang==="fr")?"Cœur : une histoire à suivre.":(lang==="es")?"Corazón: una historia que seguir.":"Core: a story to follow.") :
+                                 ((lang==="fr")?"Cœur : un moment à rendre juste.":(lang==="es")?"Corazón: un momento que hacer verdadero.":"Core: a moment to make true.");
+
+      var intentMapFR = { notAI:"On doit sentir du vrai (pas du « généré »).", brand:"Aligné à votre image.", fresh:"Un regard artistique, neuf.", trust:"De la confiance : crédible, humain, juste." };
+      var intentMapEN = { notAI:"It should feel real (not ‘generated’).", brand:"Perfectly aligned with your brand.", fresh:"A fresh artistic eye.", trust:"Trust: credible, human, true." };
+      var intentMapES = { notAI:"Debe sentirse real (no ‘generado’).", brand:"Alineado con su marca.", fresh:"Una mirada artística, nueva.", trust:"Confianza: creíble, humano, verdadero." };
+      var intentMap = (lang==="fr") ? intentMapFR : (lang==="es" ? intentMapES : intentMapEN);
+
+      var intentLine;
+      if(state.intent.length){
+        var prefix = (lang==="fr")?"Ce qui doit rester : ":(lang==="es")?"Lo que debe quedar: ":"What should remain: ";
+        var parts = [];
+        for(var i=0;i<state.intent.length;i++) parts.push(intentMap[state.intent[i]]);
+        intentLine = prefix + parts.join(" ");
+      } else {
+        intentLine = (lang==="fr")?"Ce qui doit rester : du vrai et du sens.":(lang==="es")?"Lo que debe quedar: verdad y sentido.":"What should remain: truth and meaning.";
       }
 
-      document.getElementById('btnEN').onclick = function(){ lang='en'; render(); };
-      document.getElementById('btnFR').onclick = function(){ lang='fr'; render(); };
-      document.getElementById('btnES').onclick = function(){ lang='es'; render(); };
+      var timeLine =
+        (state.time==="moment") ? ((lang==="fr")?"Usage : un moment précis (impact + efficacité).":(lang==="es")?"Uso: un momento concreto (impacto + eficacia).":"Use: a specific moment (impact + efficiency).") :
+        (state.time==="overtime") ? ((lang==="fr")?"Usage : une base réutilisable (cohérence + long terme).":(lang==="es")?"Uso: una base reutilizable (coherencia + largo plazo).":"Use: a reusable base (coherence + long-term).") :
+                                    ((lang==="fr")?"Usage : une continuité (série + évolution).":(lang==="es")?"Uso: continuidad (serie + evolución).":"Use: continuity (series + evolution).");
 
-      render();
-    })();
+      return [hello, core, intentLine, timeLine];
+    }
+
+    function sliderBlock(key, left, right, hl, hr, value){
+      return '' +
+        '<div class="slider">' +
+          '<div class="slab"><span>'+esc(left)+'</span><span>'+esc(right)+'</span></div>' +
+          '<input type="range" min="0" max="100" value="'+value+'" data-key="'+key+'">' +
+          '<div class="sliderHelp"><span>'+esc(hl)+'</span><span>'+esc(hr)+'</span></div>' +
+        '</div>';
+    }
+
+    function copyText(text){
+      try{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(function(){ showToast(tr().ui.copied); })
+            .catch(function(){ legacyCopy(text); });
+        } else legacyCopy(text);
+      }catch(e){ legacyCopy(text); }
+
+      function legacyCopy(t){
+        var ta = document.createElement("textarea");
+        ta.value = t;
+        ta.setAttribute("readonly","");
+        ta.style.position="fixed";
+        ta.style.left="-9999px";
+        ta.style.top="0";
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand("copy"); }catch(_e){}
+        document.body.removeChild(ta);
+        showToast(tr().ui.copied);
+      }
+    }
+
+    // ---------------- RENDERERS
+    function renderIntro(){
+      var a = tr();
+      var row = btnRow(a.ui.start, function(){ next(); });
+      app.innerHTML =
+        '<div class="kicker">'+esc(a.intro.kicker)+'</div>' +
+        '<h1>'+esc(a.intro.h1)+'</h1>' +
+        '<p class="lead">'+esc(a.intro.p).replace(/\\n/g,"<br/>")+'</p>' +
+        '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>' +
+        row.html;
+      row.bind();
+    }
+
+    function renderName(){
+      var a = tr();
+      var row = btnRow(a.ui.continue, function(){
+        state.name = (document.getElementById("nameInput").value||"").trim();
+        next();
+      });
+      app.innerHTML =
+        '<div class="kicker">'+esc(a.acts.who)+'</div>' +
+        '<h1>'+esc(a.who.nameH1)+'</h1>' +
+        '<p class="lead">'+esc(a.who.nameHelp)+'</p>' +
+        '<input id="nameInput" type="text" value="'+esc(state.name)+'" placeholder="'+esc(a.who.namePh)+'" />' +
+        row.html;
+      row.bind();
+    }
+
+    function renderProject(){
+      var a = tr();
+      var row = btnRow(a.ui.continue, function(){
+        state.project = (document.getElementById("projInput").value||"").trim();
+        next();
+      });
+      app.innerHTML =
+        '<div class="kicker">'+esc(a.acts.who)+'</div>' +
+        '<h1>'+esc(a.who.projH1)+'</h1>' +
+        '<p class="lead">'+esc(a.who.projHelp)+'</p>' +
+        '<input id="projInput" type="text" value="'+esc(state.project)+'" placeholder="'+esc(a.who.projPh)+'" />' +
+        row.html;
+      row.bind();
+    }
+
+    function renderCore(){
+      var a = tr();
+      var c = a.core.opts;
+      var row = btnRow(a.ui.continue, function(){
+        if(!state.core){ showToast(a.ui.pickOne); return; }
+        next();
+      });
+
+      var items = [
+        ["place", c.place.t, c.place.d],
+        ["story", c.story.t, c.story.d],
+        ["moment", c.moment.t, c.moment.d]
+      ];
+
+      var html = '';
+      html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
+      html += '<h1>'+esc(a.core.h1)+'</h1>';
+      html += '<p class="lead">'+esc(a.core.help)+'</p>';
+      html += '<div class="choices">';
+      for(var i=0;i<items.length;i++){
+        var id=items[i][0], t=items[i][1], d=items[i][2];
+        html += '<div class="choice '+(state.core===id?'sel':'')+'" data-id="'+id+'">' +
+          '<div class="optTitle">'+esc(t)+'</div>' +
+          '<div class="optDesc">'+esc(d)+'</div>' +
+        '</div>';
+      }
+      html += '</div>';
+      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+      html += row.html;
+
+      app.innerHTML = html;
+
+      var els = app.querySelectorAll(".choice");
+      for(var j=0;j<els.length;j++){
+        els[j].onclick = function(){
+          state.core = this.getAttribute("data-id");
+          safeRender(false);
+        };
+      }
+      row.bind();
+    }
+
+    function renderIntent(){
+      var a = tr();
+      var o = a.core.intent;
+      var row = btnRow(a.ui.continue, function(){
+        if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+        next();
+      });
+
+      var items = [
+        ["notAI", o.notAI.t, o.notAI.d],
+        ["brand", o.brand.t, o.brand.d],
+        ["fresh", o.fresh.t, o.fresh.d],
+        ["trust", o.trust.t, o.trust.d]
+      ];
+
+      var html = '';
+      html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
+      html += '<h1>'+esc(a.core.intentH1)+'</h1>';
+      html += '<p class="lead">'+esc(a.core.intentHelp)+'</p>';
+      html += '<div class="checks">';
+      for(var i=0;i<items.length;i++){
+        var id=items[i][0], t=items[i][1], d=items[i][2];
+        var sel = state.intent.indexOf(id)!==-1;
+        html += '<div class="check '+(sel?'sel':'')+'" data-id="'+id+'">' +
+          '<div class="optTitle">'+esc(t)+'</div>' +
+          '<div class="optDesc">'+esc(d)+'</div>' +
+        '</div>';
+      }
+      html += '</div>';
+      html += '<div class="micro">'+esc(a.ui.maxTwo)+'</div>';
+      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+      html += row.html;
+
+      app.innerHTML = html;
+
+      var els = app.querySelectorAll(".check");
+      for(var j=0;j<els.length;j++){
+        els[j].onclick = function(){
+          var id = this.getAttribute("data-id");
+          var idx = state.intent.indexOf(id);
+          if(idx!==-1){
+            state.intent.splice(idx,1);
+          } else {
+            if(state.intent.length>=2){ showToast(a.ui.maxTwo); return; }
+            state.intent.push(id);
+          }
+          safeRender(false);
+        };
+      }
+      row.bind();
+    }
+
+    function renderTime(){
+      var a = tr();
+      var t = a.use.time;
+      var row = btnRow(a.ui.continue, function(){
+        if(!state.time){ showToast(a.ui.pickOne); return; }
+        next();
+      });
+
+      var items = [
+        ["moment", t.moment.t, t.moment.d],
+        ["overtime", t.overtime.t, t.overtime.d],
+        ["grow", t.grow.t, t.grow.d]
+      ];
+
+      var html = '';
+      html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
+      html += '<h1>'+esc(a.use.timeH1)+'</h1>';
+      html += '<p class="lead">'+esc(a.use.timeHelp)+'</p>';
+      html += '<div class="choices">';
+      for(var i=0;i<items.length;i++){
+        var id=items[i][0], ti=items[i][1], de=items[i][2];
+        html += '<div class="choice '+(state.time===id?'sel':'')+'" data-id="'+id+'">' +
+          '<div class="optTitle">'+esc(ti)+'</div>' +
+          '<div class="optDesc">'+esc(de)+'</div>' +
+        '</div>';
+      }
+      html += '</div>';
+      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+      html += row.html;
+
+      app.innerHTML = html;
+
+      var els = app.querySelectorAll(".choice");
+      for(var j=0;j<els.length;j++){
+        els[j].onclick = function(){
+          state.time = this.getAttribute("data-id");
+          safeRender(false);
+        };
+      }
+      row.bind();
+    }
+
+    function renderWhere(){
+      var a = tr();
+      var w = a.use.where;
+      var row = btnRow(a.ui.continue, function(){
+        if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+        next();
+      });
+
+      var items = [
+        ["website", w.website.t, w.website.d],
+        ["social", w.social.t, w.social.d],
+        ["editorial", w.editorial.t, w.editorial.d],
+        ["print", w.print.t, w.print.d]
+      ];
+
+      var html = '';
+      html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
+      html += '<h1>'+esc(a.use.whereH1)+'</h1>';
+      html += '<p class="lead">'+esc(a.use.whereHelp)+'</p>';
+      html += '<div class="checks">';
+      for(var i=0;i<items.length;i++){
+        var id=items[i][0], ti=items[i][1], de=items[i][2];
+        var sel = state.where.indexOf(id)!==-1;
+        html += '<div class="check '+(sel?'sel':'')+'" data-id="'+id+'">' +
+          '<div class="optTitle">'+esc(ti)+'</div>' +
+          '<div class="optDesc">'+esc(de)+'</div>' +
+        '</div>';
+      }
+      html += '</div>';
+      html += '<div class="micro">'+esc(a.ui.maxTwo)+'</div>';
+      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+      html += row.html;
+
+      app.innerHTML = html;
+
+      var els = app.querySelectorAll(".check");
+      for(var j=0;j<els.length;j++){
+        els[j].onclick = function(){
+          var id = this.getAttribute("data-id");
+          var idx = state.where.indexOf(id);
+          if(idx!==-1){
+            state.where.splice(idx,1);
+          } else {
+            if(state.where.length>=2){ showToast(a.ui.maxTwo); return; }
+            state.where.push(id);
+          }
+          safeRender(false);
+        };
+      }
+      row.bind();
+    }
+
+    function renderVibe(){
+      var a = tr();
+      var s = a.vibe.s;
+      var row = btnRow(a.ui.continue, function(){ next(); });
+
+      app.innerHTML =
+        '<div class="kicker">'+esc(a.acts.vibe)+'</div>' +
+        '<h1>'+esc(a.vibe.h1)+'</h1>' +
+        '<p class="lead">'+esc(a.vibe.help)+'</p>' +
+        sliderBlock("calm", s.calm.l, s.calm.r, s.calm.hl, s.calm.hr, state.sliders.calm) +
+        sliderBlock("present", s.present.l, s.present.r, s.present.hl, s.present.hr, state.sliders.present) +
+        sliderBlock("rich", s.rich.l, s.rich.r, s.rich.hl, s.rich.hr, state.sliders.rich) +
+        '<div class="hint" id="liveSentence">'+esc(sliderSentence())+'</div>' +
+        row.html;
+
+      var inputs = app.querySelectorAll('input[type="range"]');
+      for(var i=0;i<inputs.length;i++){
+        inputs[i].addEventListener("input", function(){
+          var k = this.getAttribute("data-key");
+          state.sliders[k] = Number(this.value);
+          var live = document.getElementById("liveSentence");
+          if(live) live.textContent = sliderSentence();
+          var calm01 = state.sliders.calm/100;
+          bg.style.filter = "saturate("+(0.95 + calm01*0.25)+")";
+        });
+      }
+      row.bind();
+    }
+
+    function renderExtra(){
+      var a = tr();
+      var row = btnRow(a.ui.continue, function(){
+        state.avoid = (document.getElementById("avoidInput").value||"").trim();
+        next();
+      });
+
+      app.innerHTML =
+        '<div class="kicker">'+esc(a.acts.extra)+'</div>' +
+        '<h1>'+esc(a.extra.h1)+'</h1>' +
+        '<p class="lead">'+esc(a.extra.help)+'</p>' +
+        '<textarea id="avoidInput" placeholder="'+esc(a.extra.ph)+'">'+esc(state.avoid)+'</textarea>' +
+        '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>' +
+        row.html;
+
+      row.bind();
+    }
+
+    function renderReport(){
+      var a = tr();
+      var proj = (state.project||"").trim() || (lang==="fr"?"Votre projet":lang==="es"?"Su proyecto":"Your project");
+      var who = (state.name||"").trim();
+      var score = usageScores();
+      var tgs = tags();
+      var story = storyLines();
+
+      var whereLabels = {
+        website: a.use.where.website.t,
+        social: a.use.where.social.t,
+        editorial: a.use.where.editorial.t,
+        print: a.use.where.print.t
+      };
+
+      var radarLabels =
+        (lang==="fr") ? ["Rythme","Proximité","Matière"] :
+        (lang==="es") ? ["Ritmo","Cercanía","Materia"] :
+                        ["Tempo","Closeness","Material"];
+
+      var subject = "Project Snapshot — " + proj;
+
+      var bodyLines = [];
+      bodyLines.push(a.toolName + " — " + proj);
+      bodyLines.push(a.toolTagline);
+      bodyLines.push("");
+      if(who){
+        bodyLines.push((lang==="fr"?"Prénom: ":(lang==="es"?"Nombre: ":"Name: ")) + who);
+      }
+      bodyLines.push("");
+      for(var i=0;i<story.length;i++) bodyLines.push("• " + story[i]);
+      bodyLines.push("");
+      bodyLines.push((lang==="fr")?"Usage:":(lang==="es")?"Uso:":"Use:");
+      bodyLines.push("- " + whereLabels.website + ": " + Math.round(score.base.website) + "%");
+      bodyLines.push("- " + whereLabels.social + ": " + Math.round(score.base.social) + "%");
+      bodyLines.push("- " + whereLabels.editorial + ": " + Math.round(score.base.editorial) + "%");
+      bodyLines.push("- " + whereLabels.print + ": " + Math.round(score.base.print) + "%");
+      bodyLines.push("- " + ((lang==="fr")?"Durée de vie":(lang==="es")?"Vida útil":"Longevity") + ": " + Math.round(score.longevity) + "%");
+      if(state.avoid) bodyLines.push(((lang==="fr")?"À éviter: ":(lang==="es")?"Evitar: ":"Avoid: ") + state.avoid);
+      bodyLines.push("");
+      bodyLines.push("— marinaphoto.es");
+
+      var mailBody = bodyLines.join("\n");
+      var mailto = mailtoLink(MARINA_MAIL, subject, mailBody);
+
+      var extraBtns =
+        '<button class="ghost" id="copyBtn" type="button">'+esc(a.ui.copy)+'</button>' +
+        '<button class="ghost" id="pdfBtn" type="button">'+esc(a.ui.pdf)+'</button>' +
+        '<button class="ghost" id="mailBtn" type="button">'+esc(a.ui.emailMarina)+'</button>' +
+        '<button class="ghost" id="restartBtn" type="button">'+esc(a.ui.restart)+'</button>';
+
+      var row = btnRow(
+        (lang==="fr")?"Parler à Marina":(lang==="es")?"Hablar con Marina":"Talk to Marina",
+        function(){ window.location.href = mailto; },
+        extraBtns
+      );
+
+      app.innerHTML =
+        '<div class="kicker">'+esc(a.report.kicker)+'</div>' +
+        '<h1>'+esc(proj)+'</h1>' +
+        '<p class="lead">'+esc(a.report.sub)+(who?(" · "+esc(who)):"")+'</p>' +
+        '<div class="tags">'+tgs.map(function(x){ return '<div class="tag">'+esc(x)+'</div>'; }).join("")+'</div>' +
+
+        '<div class="divider"></div>' +
+
+        '<div class="box">' +
+          '<div class="kicker">'+esc(a.report.sections.reading)+'</div>' +
+          '<div style="margin-top:10px">' +
+            story.map(function(x){ return '<p class="lead" style="margin:0 0 8px">• '+esc(x)+'</p>'; }).join("") +
+          '</div>' +
+          '<p class="hint">'+esc(a.report.closing)+'</p>' +
+        '</div>' +
+
+        '<div class="divider"></div>' +
+
+        '<div class="grid2">' +
+          '<div class="box">' +
+            '<div class="kicker">'+esc(a.report.sections.usage)+'</div>' +
+            bar(whereLabels.website, score.base.website) +
+            bar(whereLabels.social, score.base.social) +
+            bar(whereLabels.editorial, score.base.editorial) +
+            bar(whereLabels.print, score.base.print) +
+            bar((lang==="fr")?"Durée de vie":(lang==="es")?"Vida útil":"Longevity", score.longevity) +
+            (state.avoid ? ('<div class="micro" style="margin-top:10px">'+esc((lang==="fr")?"À éviter: ":(lang==="es")?"Evitar: ":"Avoid: ")+state.avoid)+'</div>') : '') +
+          '</div>' +
+
+          '<div class="box">' +
+            '<div class="kicker">'+esc(a.report.sections.vibe)+'</div>' +
+            '<div style="margin-top:8px">'+radarSVG(state.sliders, radarLabels)+'</div>' +
+            '<div class="micro">'+esc(sliderSentence())+'</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="divider"></div>' +
+
+        '<div class="grid2">' +
+          '<div class="box">' +
+            '<div class="kicker">'+esc(a.report.sections.plan)+'</div>' +
+            '<h2>'+esc((lang==="fr")?"Plan (concret)":(lang==="es")?"Plan (concreto)":"Plan (concrete)")+'</h2>' +
+            '<p class="lead">'+esc((lang==="fr")
+              ? "Une série cohérente, pensée pour vos supports. Pas d’effet catalogue : on raconte, on respire, on fait vrai."
+              : (lang==="es")
+                ? "Una serie coherente, pensada para sus soportes. Sin efecto catálogo: contamos, respiramos, se siente real."
+                : "A coherent series designed for your channels. No catalog feel: we tell, we breathe, it feels real."
+            )+'</p>' +
+            '<div class="hint">'+esc((lang==="fr")
+              ? "Je prépare : lumière + séquence + liste de plans. Vous validez. Ensuite : exécution simple."
+              : (lang==="es")
+                ? "Yo preparo: luz + secuencia + lista de planos. Usted valida. Luego: ejecución simple."
+                : "I prepare: light + sequence + shot list. You approve. Then: clean execution."
+            )+'</div>' +
+          '</div>' +
+
+          '<div class="box">' +
+            '<div class="kicker">'+esc(a.report.sections.next)+'</div>' +
+            '<p class="lead">'+esc(a.report.nextLead)+'</p>' +
+            '<p class="micro">'+esc((lang==="fr")?"Email Marina : ":(lang==="es")?"Email Marina: ":"Marina email: ")+MARINA_MAIL+'</p>' +
+          '</div>' +
+        '</div>' +
+
+        row.html;
+
+      row.bind();
+      document.getElementById("copyBtn").onclick = function(){ copyText(mailBody); };
+      document.getElementById("pdfBtn").onclick = function(){ window.print(); };
+      document.getElementById("mailBtn").onclick = function(){ window.location.href = mailto; };
+      document.getElementById("restartBtn").onclick = function(){
+        state = { name:"", project:"", core:null, intent:[], time:null, where:[], avoid:"", sliders:{ calm:55, present:45, rich:50 } };
+        step = 0;
+        safeRender(true);
+      };
+    }
+
+    function safeRender(scrollTop){
+      try{
+        setHeader();
+        app.classList.remove("fade");
+        app.getBoundingClientRect();
+        app.classList.add("fade");
+        steps[step].render();
+        if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
+      }catch(e){
+        app.innerHTML =
+          '<div class="kicker">JS ERROR</div>' +
+          '<h1>Oups 😅</h1>' +
+          '<p class="lead">Copiez/collez ce message :</p>' +
+          '<pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">'+esc(String(e))+'</pre>';
+        console.error(e);
+      }
+    }
+
+    // init
+    setLang("fr");
+    safeRender(true);
+
+    // Extra: catch runtime errors (helps debugging)
+    window.addEventListener("error", function(ev){
+      console.error("Global error:", ev.error || ev.message);
+    });
+  })();
   </script>
 </body>
 </html>
