@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Marina — Project Snapshot</title>
-<meta name="description" content="A playful, simple briefing experience that generates an instant Project Snapshot." />
+<title>Marina — Image Meaning Snapshot</title>
+<meta name="description" content="A playful, simple briefing experience that generates an instant, beautiful Project Snapshot." />
 
 <style>
   :root{
@@ -43,7 +43,7 @@
   }
 
   .wrap{min-height:100vh; display:flex; justify-content:center; align-items:center; padding:26px 14px;}
-  .shell{ width:min(1060px,100%); }
+  .shell{ width:min(1100px,100%); }
 
   .topbar{
     display:flex; justify-content:space-between; align-items:center;
@@ -58,7 +58,14 @@
     border-radius:999px;
     border:1px solid var(--line);
     background:rgba(255,255,255,.04);
+    min-height:34px;
   }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:950; color:rgba(255,255,255,.86);
+    letter-spacing:.01em;
+  }
+  .brand small{font-weight:750; color:rgba(255,255,255,.55)}
   .progress{
     width:260px; height:10px; border-radius:999px; overflow:hidden;
     background:rgba(255,255,255,.10);
@@ -100,6 +107,7 @@
 
   .kicker{font-size:12px; letter-spacing:.11em; text-transform:uppercase; color:rgba(255,255,255,.56)}
   h1{font-size:34px; margin:10px 0 10px; letter-spacing:-.02em}
+  h2{font-size:20px; margin:0 0 10px; letter-spacing:-.01em}
   p{margin:0 0 12px; line-height:1.55}
   .lead{color:var(--muted); font-size:16px}
   .hint{color:var(--muted2); font-size:13px; margin-top:10px; line-height:1.45}
@@ -185,9 +193,6 @@
   input[type="range"]{width:100%; margin-top:10px}
   .sliderHelp{display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:12px; color:var(--muted2)}
 
-  .presetRow{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
-  .presetRow button.active{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.28)}
-
   .toast{
     position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
     background:rgba(0,0,0,.55);
@@ -204,9 +209,10 @@
   }
   .toast.show{opacity:1}
 
+  /* Print/PDF */
   @media print{
     body{background:#fff; color:#111}
-    .bg,.grain,.topbar,.toast{display:none !important}
+    .bg,.grain,.topbar,.toast,.noPrint{display:none !important}
     .wrap{padding:0}
     .card{box-shadow:none; border:1px solid #ddd}
     .content{padding:22px}
@@ -214,7 +220,6 @@
     .box{border-color:#ddd}
     .track{background:#eee}
     .fill{background:#111}
-    button{display:none !important}
   }
 </style>
 </head>
@@ -226,7 +231,9 @@
 <div class="wrap">
   <div class="shell">
     <div class="topbar">
-      <div class="pill" id="actPill">—</div>
+      <div class="pill">
+        <div class="brand" id="brandText">—</div>
+      </div>
 
       <div class="pill" style="gap:12px">
         <div class="progress"><div id="progFill"></div></div>
@@ -243,7 +250,7 @@
       <div class="content fade" id="app">
         <div class="kicker">Loading…</div>
         <h1>Chargement</h1>
-        <p class="lead">Si tu restes bloqué ici, c’est que le JavaScript ne s’exécute pas (ou qu’il plante). On affichera l’erreur juste après.</p>
+        <p class="lead">Si vous restez bloqué ici, c’est que le JavaScript ne s’exécute pas (ou qu’il plante). L’erreur s’affichera juste après.</p>
       </div>
     </div>
   </div>
@@ -252,7 +259,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ==== GLOBAL ERROR DISPLAY (so you always SEE the bug) ==== */
+/* ==== GLOBAL ERROR DISPLAY ==== */
 (function(){
   function esc(s){
     s = String(s || "");
@@ -266,8 +273,8 @@
       if(!app) return;
       app.innerHTML =
         '<div class="kicker">JS Error</div>' +
-        '<h1>Ça a planté 😅</h1>' +
-        '<p class="lead">Copie/colle ce message ici (ou ouvre la console).</p>' +
+        '<h1>Oups 😅</h1>' +
+        '<p class="lead">Copiez/collez ce message (ou ouvrez la console) :</p>' +
         '<pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">' +
           esc(ev.message || ev.error || ev) +
         '</pre>';
@@ -277,115 +284,119 @@
 </script>
 
 <script>
-/* ==== APP ==== */
 (function(){
-  // Recipient for CTA
-  var MAIL_TO = "hello@marinaphoto.es";
+  /* =========================
+     CONFIG
+  ========================= */
+  var MARINA_MAIL = "hello@marinaphoto.es"; // <-- mettez ici la bonne adresse si besoin
 
+  /* =========================
+     I18N
+  ========================= */
   var I18N = {
     fr:{
-      acts:{ intro:"Intro", who:"Toi & le projet", core:"Essence", use:"Usage", vibe:"Ambiance", extra:"Détails", report:"Snapshot" },
+      toolName:"Image Meaning Snapshot",
+      toolTagline:"« Je sais ce qu’une image signifie pour vous. »",
+      acts:{ intro:"Intro", who:"Vous & le projet", core:"Essence", use:"Usage", vibe:"Ambiance", extra:"Détails", report:"Rapport" },
       ui:{
-        start:"C’est parti",
+        start:"Commencer",
         continue:"Continuer",
         back:"Retour",
         optional:"(optionnel)",
-        pickOne:"Choisis une option 🙂",
-        pickAtLeastOne:"Choisis au moins une option 🙂",
+        pickOne:"Choisissez une option 🙂",
+        pickAtLeastOne:"Choisissez au moins une option 🙂",
         maxTwo:"Max 2 choix",
         maxTwoShort:"Max 2",
         copied:"Copié ✨",
-        copy:"Copier le snapshot",
-        email:"Ouvrir un email",
-        print:"Imprimer / PDF",
+        copy:"Copier le rapport",
+        emailMarina:"Envoyer à Marina",
+        pdf:"Exporter en PDF",
         restart:"Recommencer",
-        ifHesitate:"Si tu hésites : choisis ce qui te semble le plus vrai aujourd’hui.",
-        presets:"Presets (si t’as la flemme 😄)",
-        presetSoft:"Soft",
-        presetBalanced:"Balanced",
-        presetBold:"Bold"
+        ifHesitate:"Si vous hésitez : choisissez ce qui vous semble le plus vrai aujourd’hui."
       },
       intro:{
-        kicker:"Project Snapshot",
-        h1:"Un brief simple. Rapide. (Et un peu fun.)",
-        p:"Tu réponds à l’instinct. Je transforme ça en mini-brief clair.\nObjectif : qu’on sache quoi faire — sans te demander d’être une agence."
+        kicker:"Un brief photo (pas un brief de marque)",
+        h1:"3 minutes. Zéro jargon. Un rapport clair.",
+        p:"Vous répondez à l’instinct. Je transforme vos réponses en un snapshot lisible :\nce qu’il faut raconter, où ça va vivre, et comment le rendre juste (sans changer mon style)."
       },
       who:{
-        nameH1:"Comment je t’appelle ?",
-        nameHelp:"Prénom, pseudo… comme tu veux. (Optionnel.)",
+        nameH1:"Quel est votre prénom ?",
+        nameHelp:"Prénom ou pseudo — comme vous préférez.",
         namePh:"Ex : Alex",
         projH1:"Nom du projet",
-        projHelp:"Même un nom provisoire, ça marche très bien.",
-        projPh:"Ex : Casa Sitges / Opening / Nouveau menu…"
+        projHelp:"Même provisoire. Ça m’aide à personnaliser le rapport.",
+        projPh:"Ex : Clinica Vinyet / Nouveau menu / Opening…"
       },
       core:{
-        h1:"En une phrase, c’est plutôt…",
-        help:"Choisis ce qui décrit le mieux le projet.",
+        h1:"En une phrase, votre projet, c’est plutôt…",
+        help:"Choisissez l’option la plus évidente.",
         opts:{
-          place:{t:"🏠 Un lieu", d:"On veut le faire ressentir : lumière, matière, atmosphère."},
-          story:{t:"📖 Une histoire", d:"Des gens, des gestes, un fil narratif."},
-          moment:{t:"⏳ Un moment", d:"On garde l’essentiel, sans surjouer."}
+          place:{t:"🏠 Un lieu", d:"Faire ressentir : lumière, matière, atmosphère."},
+          story:{t:"📖 Une histoire", d:"Des gens, des gestes, une narration."},
+          moment:{t:"⏳ Un moment", d:"Aller à l’essentiel, sans surjouer."}
         },
-        intentH1:"Quand quelqu’un voit ces images, tu veux qu’il se dise…",
-        intentHelp:"Choisis 1 ou 2. Instinctif = parfait.",
+        intentH1:"Quand quelqu’un voit ces images, vous voulez qu’il se dise…",
+        intentHelp:"Choisissez 1 ou 2.",
         intent:{
-          natural:{t:"“C’est naturel, ça sonne vrai.”", d:"Rien de forcé. Ça respire."},
-          atmosphere:{t:"“Il y a une vraie ambiance.”", d:"On sent le lieu / le moment."},
-          truth:{t:"“C’est sincère.”", d:"Ça a l’air vécu, pas fabriqué."},
-          elegance:{t:"“Simple, mais élégant.”", d:"Sobre, précis, intemporel."}
+          notAI:{t:"« Ce ne sont pas des images IA. »", d:"On sent du vrai : présence, matière, lumière."},
+          brand:{t:"« Ça reflète parfaitement ma marque. »", d:"Cohérent, reconnaissable, aligné."},
+          fresh:{t:"« C’est un regard artistique, neuf. »", d:"Pas du déjà-vu. Une vraie signature."},
+          trust:{t:"« Ça me donne confiance. »", d:"Crédible, humain, juste (pas “trop pub”)."}
         }
       },
       use:{
-        timeH1:"Ces images, tu les imagines surtout…",
-        timeHelp:"Ça m’aide à doser (pas à te noter 😄).",
+        timeH1:"Ces images doivent surtout servir…",
+        timeHelp:"Ça aide à doser le rythme et la quantité.",
         time:{
-          moment:{t:"📆 Pour un moment précis", d:"Un lancement, une campagne, un événement."},
-          overtime:{t:"🔁 Pour les réutiliser souvent", d:"Une base solide qui tient dans le temps."},
-          grow:{t:"🌱 Comme quelque chose qui va évoluer", d:"Continuité : série + suivi."}
+          moment:{t:"📆 Un moment précis", d:"Lancement, campagne, événement."},
+          overtime:{t:"🔁 Une base réutilisable", d:"Des visuels qui durent et se déclinent."},
+          grow:{t:"🌱 Une continuité", d:"Série + suivi : ça évolue dans le temps."}
         },
-        whereH1:"Où ces images vont vivre (le plus souvent) ?",
-        whereHelp:"Max 2. Là où tu les croiseras vraiment.",
+        whereH1:"Où ces images vont vivre le plus souvent ?",
+        whereHelp:"Max 2. Là où vous allez vraiment les utiliser.",
         where:{
-          website:{t:"sur ton site", d:"Lecture posée, temps long."},
-          social:{t:"sur Instagram / réseaux", d:"Rythme, répétition, série."},
-          editorial:{t:"dans des articles / presse", d:"Contexte, narration, détails."},
-          print:{t:"imprimées / affichées", d:"Impact, matière, permanence."}
+          website:{t:"Site web", d:"Lecture posée, crédibilité."},
+          social:{t:"Réseaux", d:"Rythme, répétition, série."},
+          editorial:{t:"Presse / editorial", d:"Contexte, narration, détails."},
+          print:{t:"Print", d:"Impact, matière, permanence."}
         }
       },
       vibe:{
-        h1:"Dernière chose. Réponds vite (sans te juger).",
-        help:"Ça ne change pas mon style. Ça m’aide juste à régler le tempo.",
+        h1:"Ambiance (réponse rapide).",
+        help:"Ça ne change pas mon style. Ça règle juste le tempo.",
         s:{
-          calm:{l:"😌 calme", r:"⚡ vivant", hl:"posé", hr:"énergie"},
-          present:{l:"👀 discret", r:"🤍 proche", hl:"observer", hr:"être dedans"},
-          rich:{l:"✂️ simple", r:"🧱 riche", hl:"épuré", hr:"matière"}
+          calm:{l:"😌 Calme", r:"⚡ Vivant", hl:"posé", hr:"énergique"},
+          present:{l:"👀 Discret", r:"🤍 Proche", hl:"observer", hr:"être dedans"},
+          rich:{l:"✂️ Épuré", r:"🧱 Texturé", hl:"simple", hr:"matière"}
         }
       },
       extra:{
-        h1:"Un dernier détail (et on a fini).",
-        help:"S’il y a UNE chose à éviter absolument… c’est quoi ?",
+        h1:"Une chose à éviter absolument ?",
+        help:"Même un mot suffit.",
         ph:"Ex : trop lisse / trop “pub” / trop sombre / trop figé…"
       },
       report:{
-        kicker:"Project Snapshot",
-        sub:"Une lecture simple, utile — côté images",
-        takeaways:"En 3 idées",
-        evidence:"Ce que ça implique (usage + rythme)",
-        plan:"Ce que Marina va chercher",
-        closing:"Mon job : traduire ça en images justes — avec mon style (promis, pas de mode caméléon 😄).",
-        bullets:{
-          series:"Une série cohérente (pas 3 images isolées)",
-          rhythm:"Un rythme (respiration, lumière, continuité)",
-          real:"Du vrai (gestes, présence, matière)",
-          reuse:"Des images qui tiennent dans le temps"
-        }
+        kicker:"Rapport",
+        sub:"Voilà comment je comprends votre projet (et comment je le traduirais en images).",
+        sections:{
+          reading:"Lecture du projet",
+          takeaways:"Synthèse (3 points)",
+          usage:"Où ça vit (et pourquoi)",
+          vibe:"Ambiance (radar)",
+          plan:"Plan de prise de vue",
+          next:"Prochaine étape"
+        },
+        ctaLead:"Si vous le souhaitez : envoyez ce rapport à Marina, et on cale un court échange.",
+        closing:"Mon rôle : traduire votre intention en images justes — avec ma signature (sans mode caméléon)."
       }
     },
 
     en:{
-      acts:{ intro:"Intro", who:"You & project", core:"Essence", use:"Use", vibe:"Vibe", extra:"Details", report:"Snapshot" },
+      toolName:"Image Meaning Snapshot",
+      toolTagline:"“I know what an image means to you.”",
+      acts:{ intro:"Intro", who:"You & project", core:"Essence", use:"Use", vibe:"Vibe", extra:"Details", report:"Report" },
       ui:{
-        start:"Let’s go",
+        start:"Start",
         continue:"Continue",
         back:"Back",
         optional:"(optional)",
@@ -394,220 +405,218 @@
         maxTwo:"Max 2",
         maxTwoShort:"Max 2",
         copied:"Copied ✨",
-        copy:"Copy snapshot",
-        email:"Open email",
-        print:"Print / PDF",
+        copy:"Copy report",
+        emailMarina:"Send to Marina",
+        pdf:"Export PDF",
         restart:"Restart",
-        ifHesitate:"If you hesitate: pick what feels most true today.",
-        presets:"Presets (if you’re lazy 😄)",
-        presetSoft:"Soft",
-        presetBalanced:"Balanced",
-        presetBold:"Bold"
+        ifHesitate:"If you hesitate: pick what feels most true today."
       },
       intro:{
-        kicker:"Project Snapshot",
-        h1:"A simple brief. Quick. (And a bit fun.)",
-        p:"Answer by instinct. I turn it into a clear mini-brief.\nGoal: we know what to shoot — without pretending you’re an agency."
+        kicker:"A photo brief (not a brand deck)",
+        h1:"3 minutes. No jargon. A clear report.",
+        p:"You answer by instinct. I turn it into a readable snapshot:\nwhat to say, where it will live, and how to make it feel true (without changing my style)."
       },
       who:{
-        nameH1:"What should I call you?",
-        nameHelp:"First name, nickname… your choice. (Optional.)",
+        nameH1:"What’s your first name?",
+        nameHelp:"First name or nickname — your choice.",
         namePh:"e.g. Alex",
         projH1:"Project name",
-        projHelp:"Even a temporary name is totally fine.",
-        projPh:"e.g. Sitges house / Opening / New menu…"
+        projHelp:"Even temporary. It helps me personalize the report.",
+        projPh:"e.g. Clinica Vinyet / New menu / Opening…"
       },
       core:{
-        h1:"In one sentence, it’s more like…",
-        help:"Pick what describes it best.",
+        h1:"In one sentence, your project is mostly…",
+        help:"Pick the most obvious option.",
         opts:{
-          place:{t:"🏠 A place", d:"We want people to feel it: light, texture, atmosphere."},
+          place:{t:"🏠 A place", d:"Make people feel it: light, texture, atmosphere."},
           story:{t:"📖 A story", d:"People, gestures, a narrative thread."},
           moment:{t:"⏳ A moment", d:"Keep what matters, no overacting."}
         },
-        intentH1:"When someone sees these images, you want them to think…",
-        intentHelp:"Pick 1 or 2. Instinct is perfect.",
+        intentH1:"When people see these images, you want them to think…",
+        intentHelp:"Pick 1 or 2.",
         intent:{
-          natural:{t:"“It feels natural and real.”", d:"Nothing forced. It breathes."},
-          atmosphere:{t:"“There’s a real vibe.”", d:"You can feel the place / moment."},
-          truth:{t:"“It feels sincere.”", d:"Lived-in, not manufactured."},
-          elegance:{t:"“Simple, but elegant.”", d:"Understated, precise, timeless."}
+          notAI:{t:"“These are not AI images.”", d:"You feel real life: presence, texture, light."},
+          brand:{t:"“This perfectly matches my brand.”", d:"Consistent, recognizable, aligned."},
+          fresh:{t:"“It’s a fresh artistic eye.”", d:"Not generic. A real signature."},
+          trust:{t:"“This makes me trust you.”", d:"Credible, human, true (not ‘too ad’)."}
         }
       },
       use:{
-        timeH1:"You mostly imagine these images…",
-        timeHelp:"This helps me calibrate (not grade you 😄).",
+        timeH1:"These images should mainly serve…",
+        timeHelp:"Helps set tempo and scope.",
         time:{
-          moment:{t:"📆 For a specific moment", d:"A launch, a campaign, an event."},
-          overtime:{t:"🔁 To reuse often", d:"A solid base that lasts."},
-          grow:{t:"🌱 As something that evolves", d:"Continuity: series + follow-up."}
+          moment:{t:"📆 A specific moment", d:"Launch, campaign, event."},
+          overtime:{t:"🔁 A reusable base", d:"Visuals that last and can be reused."},
+          grow:{t:"🌱 A continuity", d:"Series + follow-up over time."}
         },
         whereH1:"Where will these images live most often?",
-        whereHelp:"Max 2. Where you’ll actually meet them.",
+        whereHelp:"Max 2. Where you’ll really use them.",
         where:{
-          website:{t:"on your website", d:"Slower, calmer reading."},
-          social:{t:"on Instagram / social", d:"Rhythm, repetition, series."},
-          editorial:{t:"in editorial / press", d:"Context, narrative, details."},
-          print:{t:"printed / displayed", d:"Impact, materiality, permanence."}
+          website:{t:"Website", d:"Calm reading, credibility."},
+          social:{t:"Social", d:"Rhythm, repetition, series."},
+          editorial:{t:"Editorial / press", d:"Context, narrative, detail."},
+          print:{t:"Print", d:"Impact, materiality, permanence."}
         }
       },
       vibe:{
-        h1:"Last thing. Answer fast (no self-judgement).",
-        help:"This doesn’t change my style. It just sets the tempo.",
+        h1:"Vibe (quick answer).",
+        help:"This doesn’t change my style. It sets the tempo.",
         s:{
-          calm:{l:"😌 calm", r:"⚡ lively", hl:"quiet", hr:"energy"},
-          present:{l:"👀 discreet", r:"🤍 close", hl:"observe", hr:"in it"},
-          rich:{l:"✂️ simple", r:"🧱 rich", hl:"minimal", hr:"texture"}
+          calm:{l:"😌 Calm", r:"⚡ Lively", hl:"quiet", hr:"energetic"},
+          present:{l:"👀 Discreet", r:"🤍 Close", hl:"observe", hr:"in it"},
+          rich:{l:"✂️ Minimal", r:"🧱 Textured", hl:"simple", hr:"material"}
         }
       },
       extra:{
-        h1:"One last detail (then we’re done).",
-        help:"If there’s ONE thing to avoid at all costs… what is it?",
+        h1:"One thing to avoid at all costs?",
+        help:"Even one word is enough.",
         ph:"e.g. too polished / too ‘ad’ / too dark / too stiff…"
       },
       report:{
-        kicker:"Project Snapshot",
-        sub:"A simple, useful reading — through images",
-        takeaways:"3 takeaways",
-        evidence:"What this implies (use + tempo)",
-        plan:"What Marina will look for",
-        closing:"My job: translate this into honest images — with my style (no chameleon mode 😄).",
-        bullets:{
-          series:"A coherent series (not 3 isolated images)",
-          rhythm:"A rhythm (breathing, light, continuity)",
-          real:"Real life (gestures, presence, texture)",
-          reuse:"Images that keep making sense over time"
-        }
+        kicker:"Report",
+        sub:"Here’s how I read your project (and how I’d translate it into images).",
+        sections:{
+          reading:"Project reading",
+          takeaways:"Summary (3 points)",
+          usage:"Where it lives (and why)",
+          vibe:"Vibe radar",
+          plan:"Shoot plan",
+          next:"Next step"
+        },
+        ctaLead:"If you want: send this report to Marina and we’ll set a short call.",
+        closing:"My role: translate your intent into honest images — with my signature (no chameleon mode)."
       }
     },
 
     es:{
-      acts:{ intro:"Intro", who:"Tú & proyecto", core:"Esencia", use:"Uso", vibe:"Vibra", extra:"Detalles", report:"Snapshot" },
+      toolName:"Image Meaning Snapshot",
+      toolTagline:"« Sé lo que una imagen significa para usted. »",
+      acts:{ intro:"Intro", who:"Usted & proyecto", core:"Esencia", use:"Uso", vibe:"Vibra", extra:"Detalles", report:"Informe" },
       ui:{
-        start:"Vamos",
+        start:"Empezar",
         continue:"Continuar",
         back:"Atrás",
         optional:"(opcional)",
-        pickOne:"Elige una 🙂",
-        pickAtLeastOne:"Elige al menos una 🙂",
+        pickOne:"Elija una 🙂",
+        pickAtLeastOne:"Elija al menos una 🙂",
         maxTwo:"Máx 2",
         maxTwoShort:"Máx 2",
         copied:"Copiado ✨",
-        copy:"Copiar snapshot",
-        email:"Abrir email",
-        print:"Imprimir / PDF",
+        copy:"Copiar informe",
+        emailMarina:"Enviar a Marina",
+        pdf:"Exportar PDF",
         restart:"Reiniciar",
-        ifHesitate:"Si dudas: elige lo que se sienta más verdadero hoy.",
-        presets:"Presets (si te da pereza 😄)",
-        presetSoft:"Soft",
-        presetBalanced:"Balanced",
-        presetBold:"Bold"
+        ifHesitate:"Si duda: elija lo que se sienta más verdadero hoy."
       },
       intro:{
-        kicker:"Project Snapshot",
-        h1:"Un brief simple. Rápido. (Y un poco divertido.)",
-        p:"Responde con instinto. Lo transformo en un mini-brief claro.\nObjetivo: saber qué hacer — sin jugar a ser una agencia."
+        kicker:"Un brief de foto (no un dossier de marca)",
+        h1:"3 minutos. Sin jerga. Un informe claro.",
+        p:"Usted responde por instinto. Yo lo convierto en un snapshot legible:\nqué contar, dónde vivirá, y cómo hacerlo verdadero (sin cambiar mi estilo)."
       },
       who:{
-        nameH1:"¿Cómo te llamo?",
-        nameHelp:"Nombre, apodo… como quieras. (Opcional.)",
+        nameH1:"¿Cuál es su nombre?",
+        nameHelp:"Nombre o apodo — como prefiera.",
         namePh:"p.ej. Alex",
         projH1:"Nombre del proyecto",
-        projHelp:"Incluso un nombre provisional sirve.",
-        projPh:"p.ej. Casa Sitges / Opening / Nuevo menú…"
+        projHelp:"Aunque sea provisional. Me ayuda a personalizar el informe.",
+        projPh:"p.ej. Clinica Vinyet / Nuevo menú / Opening…"
       },
       core:{
-        h1:"En una frase, es más bien…",
-        help:"Elige lo que mejor lo describe.",
+        h1:"En una frase, su proyecto es sobre todo…",
+        help:"Elija la opción más evidente.",
         opts:{
-          place:{t:"🏠 Un lugar", d:"Queremos sentirlo: luz, textura, atmósfera."},
+          place:{t:"🏠 Un lugar", d:"Sentir: luz, textura, atmósfera."},
           story:{t:"📖 Una historia", d:"Personas, gestos, un hilo narrativo."},
-          moment:{t:"⏳ Un momento", d:"Guardar lo esencial, sin exagerar."}
+          moment:{t:"⏳ Un momento", d:"Lo esencial, sin exagerar."}
         },
-        intentH1:"Cuando alguien ve estas imágenes, quieres que piense…",
-        intentHelp:"Elige 1 o 2. Instinto = perfecto.",
+        intentH1:"Cuando alguien vea estas imágenes, usted quiere que piense…",
+        intentHelp:"Elija 1 o 2.",
         intent:{
-          natural:{t:"“Se siente natural y real.”", d:"Nada forzado. Respira."},
-          atmosphere:{t:"“Hay una vibra real.”", d:"Se siente el lugar / momento."},
-          truth:{t:"“Se siente sincero.”", d:"Vivido, no fabricado."},
-          elegance:{t:"“Simple, pero elegante.”", d:"Sutil, preciso, atemporal."}
+          notAI:{t:"« No son imágenes IA. »", d:"Se siente lo real: presencia, materia, luz."},
+          brand:{t:"« Refleja perfectamente mi marca. »", d:"Coherente, reconocible, alineado."},
+          fresh:{t:"« Es una mirada artística, nueva. »", d:"No genérico. Una firma real."},
+          trust:{t:"« Me da confianza. »", d:"Creíble, humano, verdadero (no ‘demasiado anuncio’)."}
         }
       },
       use:{
-        timeH1:"Sobre todo imaginas estas imágenes…",
-        timeHelp:"Esto me ayuda a calibrar (no a juzgar 😄).",
+        timeH1:"Estas imágenes deben servir sobre todo para…",
+        timeHelp:"Ayuda a definir ritmo y alcance.",
         time:{
-          moment:{t:"📆 Para un momento concreto", d:"Un lanzamiento, una campaña, un evento."},
-          overtime:{t:"🔁 Para reutilizar a menudo", d:"Una base sólida que dura."},
-          grow:{t:"🌱 Como algo que evoluciona", d:"Continuidad: serie + seguimiento."}
+          moment:{t:"📆 Un momento concreto", d:"Lanzamiento, campaña, evento."},
+          overtime:{t:"🔁 Una base reutilizable", d:"Visuales que duran y se reutilizan."},
+          grow:{t:"🌱 Una continuidad", d:"Serie + seguimiento con el tiempo."}
         },
-        whereH1:"¿Dónde van a vivir estas imágenes (la mayoría del tiempo)?",
-        whereHelp:"Máx 2. Donde realmente te las encontrarás.",
+        whereH1:"¿Dónde vivirán estas imágenes la mayor parte del tiempo?",
+        whereHelp:"Máx 2. Donde realmente las usará.",
         where:{
-          website:{t:"en tu web", d:"Lectura lenta y calmada."},
-          social:{t:"en Instagram / redes", d:"Ritmo, repetición, serie."},
-          editorial:{t:"en editorial / prensa", d:"Contexto, relato, detalles."},
-          print:{t:"impresas / expuestas", d:"Impacto, materia, permanencia."}
+          website:{t:"Web", d:"Lectura calmada, credibilidad."},
+          social:{t:"Redes", d:"Ritmo, repetición, serie."},
+          editorial:{t:"Editorial / prensa", d:"Contexto, relato, detalle."},
+          print:{t:"Print", d:"Impacto, materia, permanencia."}
         }
       },
       vibe:{
-        h1:"Última. Responde rápido (sin juzgarte).",
-        help:"Esto no cambia mi estilo. Solo pone el tempo.",
+        h1:"Vibra (respuesta rápida).",
+        help:"No cambia mi estilo. Ajusta el tempo.",
         s:{
-          calm:{l:"😌 calmo", r:"⚡ vivo", hl:"silencio", hr:"energía"},
-          present:{l:"👀 discreto", r:"🤍 cerca", hl:"observar", hr:"dentro"},
-          rich:{l:"✂️ simple", r:"🧱 rico", hl:"minimal", hr:"textura"}
+          calm:{l:"😌 Calmo", r:"⚡ Vivo", hl:"sereno", hr:"enérgico"},
+          present:{l:"👀 Discreto", r:"🤍 Cercano", hl:"observar", hr:"dentro"},
+          rich:{l:"✂️ Limpio", r:"🧱 Texturado", hl:"simple", hr:"materia"}
         }
       },
       extra:{
-        h1:"Un último detalle (y terminamos).",
-        help:"Si hay UNA cosa que hay que evitar sí o sí… ¿cuál es?",
-        ph:"p.ej. demasiado pulido / demasiado ‘anuncio’ / demasiado oscuro / rígido…"
+        h1:"¿Una cosa a evitar sí o sí?",
+        help:"Incluso una palabra basta.",
+        ph:"p.ej. demasiado pulido / demasiado ‘anuncio’ / oscuro / rígido…"
       },
       report:{
-        kicker:"Project Snapshot",
-        sub:"Una lectura simple y útil — en imágenes",
-        takeaways:"3 ideas clave",
-        evidence:"Lo que implica (uso + tempo)",
-        plan:"Lo que Marina buscará",
-        closing:"Mi trabajo: traducir esto en imágenes honestas — con mi estilo (sin modo camaleón 😄).",
-        bullets:{
-          series:"Una serie coherente (no 3 imágenes sueltas)",
-          rhythm:"Un ritmo (respirar, luz, continuidad)",
-          real:"Vida real (gestos, presencia, textura)",
-          reuse:"Imágenes que sigan teniendo sentido con el tiempo"
-        }
+        kicker:"Informe",
+        sub:"Así entiendo su proyecto (y así lo traduciría en imágenes).",
+        sections:{
+          reading:"Lectura del proyecto",
+          takeaways:"Síntesis (3 puntos)",
+          usage:"Dónde vive (y por qué)",
+          vibe:"Radar de vibra",
+          plan:"Plan de toma",
+          next:"Siguiente paso"
+        },
+        ctaLead:"Si quiere: envíe este informe a Marina y agendamos una llamada breve.",
+        closing:"Mi trabajo: traducir su intención en imágenes honestas — con mi firma (sin modo camaleón)."
       }
     }
   };
 
+  /* =========================
+     STATE
+  ========================= */
   var lang = "fr";
   var state = {
     name:"",
     project:"",
-    core:null,
-    intent:[],
-    time:null,
-    where:[],
+    core:null,     // place/story/moment
+    intent:[],     // up to 2
+    time:null,     // moment/overtime/grow
+    where:[],      // up to 2
     avoid:"",
-    sliders:{ calm:55, present:45, rich:50 },
-    preset:"balanced"
+    sliders:{ calm:55, present:45, rich:50 }
   };
 
+  /* =========================
+     DOM
+  ========================= */
   var app = document.getElementById("app");
-  var actPill = document.getElementById("actPill");
+  var brandText = document.getElementById("brandText");
   var stepPill = document.getElementById("stepPill");
   var progFill = document.getElementById("progFill");
   var toast = document.getElementById("toast");
   var bg = document.getElementById("bg");
-
   var btnEN = document.getElementById("btnEN");
   var btnFR = document.getElementById("btnFR");
   var btnES = document.getElementById("btnES");
 
   function tr(){ return I18N[lang]; }
   function esc(s){
-    s = s || "";
+    s = String(s || "");
     return s.replace(/[&<>"']/g, function(m){
       return ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]);
     });
@@ -627,11 +636,13 @@
     (l==="en"?btnEN : l==="fr"?btnFR : btnES).classList.add("active");
     safeRender(false);
   }
-
   btnEN.addEventListener("click", function(){ setLang("en"); });
   btnFR.addEventListener("click", function(){ setLang("fr"); });
   btnES.addEventListener("click", function(){ setLang("es"); });
 
+  /* =========================
+     STEPS
+  ========================= */
   var steps = [
     { act:"intro",  render: renderIntro },
     { act:"who",    render: renderName },
@@ -648,8 +659,8 @@
 
   function setHeader(){
     var a = tr();
-    actPill.textContent = a.acts[steps[step].act] + " · " + (step+1) + "/" + steps.length;
-    stepPill.textContent = (step+1) + "/" + steps.length;
+    brandText.innerHTML = esc(a.toolName) + ' <small>' + esc(a.toolTagline) + '</small>';
+    stepPill.textContent = (step+1) + "/" + steps.length + " · " + a.acts[steps[step].act];
     progFill.style.width = Math.round(((step+1)/steps.length)*100) + "%";
   }
   function next(){ if(step < steps.length-1){ step++; safeRender(true); } }
@@ -657,7 +668,7 @@
 
   function btnRow(primaryLabel, onPrimary, extraButtonsHtml){
     var a = tr();
-    var html = '<div class="btnrow">' +
+    var html = '<div class="btnrow noPrint">' +
       '<button class="primary" id="primaryBtn" type="button">' + esc(primaryLabel) + '</button>' +
       (extraButtonsHtml || "") +
       (step>0 ? '<button class="ghost" id="backBtn" type="button">' + esc(a.ui.back) + '</button>' : '') +
@@ -672,17 +683,21 @@
 
   function clamp(v){ return Math.max(0, Math.min(100, v)); }
 
+  function sliderSentence(){
+    var c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
+    if(lang==="fr") return "Rythme " + (c>60?"posé":"énergique") + " · distance " + (p>55?"proche":"discrète") + " · matière " + (r>55?"présente":"minimaliste") + ".";
+    if(lang==="es") return "Ritmo " + (c>60?"sereno":"enérgico") + " · distancia " + (p>55?"cercana":"discreta") + " · materia " + (r>55?"presente":"minimal") + ".";
+    return "Tempo " + (c>60?"calm":"energetic") + " · distance " + (p>55?"close":"discreet") + " · material " + (r>55?"present":"minimal") + ".";
+  }
+
   function usageScores(){
-    var base = { website:28, social:28, editorial:28, print:28 };
+    var base = { website:26, social:26, editorial:26, print:26 };
     for(var i=0;i<state.where.length;i++) base[state.where[i]] += 34;
 
     var longevity = 55;
-    if(state.time==="moment") longevity = 35;
-    if(state.time==="overtime") longevity = 72;
-    if(state.time==="grow") longevity = 86;
-
-    var boost = (state.time==="overtime") ? 6 : (state.time==="grow") ? 10 : 0;
-    base.website += boost; base.social += boost; base.editorial += boost; base.print += boost;
+    if(state.time==="moment") longevity = 38;
+    if(state.time==="overtime") longevity = 74;
+    if(state.time==="grow") longevity = 88;
 
     base.website = clamp(base.website);
     base.social = clamp(base.social);
@@ -692,105 +707,14 @@
     return { base:base, longevity:clamp(longevity) };
   }
 
-  function sliderSentence(){
-    var c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
-    if(lang==="fr") return "Rythme " + (c>60?"posé":"énergique") + " · distance " + (p>55?"proche":"discrète") + " · visuel " + (r>55?"texturé":"épuré") + ".";
-    if(lang==="es") return "Ritmo " + (c>60?"calmo":"enérgico") + " · distancia " + (p>55?"cerca":"discreta") + " · visual " + (r>55?"con textura":"limpio") + ".";
-    return "Tempo " + (c>60?"calm":"energetic") + " · distance " + (p>55?"close":"discreet") + " · visuals " + (r>55?"textured":"minimal") + ".";
-  }
-
-  function computeTakeaways(){
-    var coreLine;
-    if(lang==="fr"){
-      coreLine = (state.core==="place") ? "C’est un projet de lieu : on veut faire ressentir l’atmosphère." :
-                 (state.core==="story") ? "C’est un projet d’histoire : on suit des humains, des gestes, un fil." :
-                 "C’est un projet de moment : on garde l’essentiel, sans surjouer.";
-    } else if(lang==="es"){
-      coreLine = (state.core==="place") ? "Es un proyecto de lugar: queremos sentir la atmósfera." :
-                 (state.core==="story") ? "Es un proyecto de historia: personas, gestos, un hilo." :
-                 "Es un proyecto de momento: guardar lo esencial, sin exagerar.";
-    } else {
-      coreLine = (state.core==="place") ? "It’s a place project: we want people to feel the atmosphere." :
-                 (state.core==="story") ? "It’s a story project: people, gestures, a thread." :
-                 "It’s a moment project: keep what matters, no overacting.";
-    }
-
-    var it = state.intent.slice(0);
-    var intentLine;
-    if(lang==="fr"){
-      var m = { natural:"naturel", atmosphere:"ambiance", truth:"sincère", elegance:"simple & élégant" };
-      intentLine = it.length===2 ? ("On veut que ça reste " + m[it[0]] + " + " + m[it[1]] + ".") :
-                   it.length===1 ? ("On veut que ça reste " + m[it[0]] + ".") :
-                                   "On veut que ça sonne vrai.";
-    } else if(lang==="es"){
-      var ms = { natural:"natural", atmosphere:"con vibra", truth:"sincero", elegance:"simple y elegante" };
-      intentLine = it.length===2 ? ("Queremos que quede " + ms[it[0]] + " + " + ms[it[1]] + ".") :
-                   it.length===1 ? ("Queremos que quede " + ms[it[0]] + ".") :
-                                   "Queremos que se sienta real.";
-    } else {
-      var me = { natural:"natural", atmosphere:"full of vibe", truth:"sincere", elegance:"simple & elegant" };
-      intentLine = it.length===2 ? ("We want it to feel " + me[it[0]] + " + " + me[it[1]] + ".") :
-                   it.length===1 ? ("We want it to feel " + me[it[0]] + ".") :
-                                   "We want it to feel real.";
-    }
-
-    var collabLine;
-    if(lang==="fr"){
-      collabLine = (state.time==="moment") ? "Format idéal : une session ciblée, claire, efficace." :
-                  (state.time==="overtime") ? "Format idéal : construire une base réutilisable." :
-                                             "Format idéal : continuité (série + suivi).";
-    } else if(lang==="es"){
-      collabLine = (state.time==="moment") ? "Formato ideal: una sesión enfocada y eficaz." :
-                  (state.time==="overtime") ? "Formato ideal: construir una base reutilizable." :
-                                             "Formato ideal: continuidad (serie + seguimiento).";
-    } else {
-      collabLine = (state.time==="moment") ? "Ideal format: one focused, efficient shoot." :
-                  (state.time==="overtime") ? "Ideal format: build a reusable base." :
-                                             "Ideal format: continuity (series + follow-up).";
-    }
-
-    return [coreLine, intentLine, collabLine];
-  }
-
-  function tags(){
-    var a = tr();
-    var out = [];
-    if(state.core) out.push(a.core.opts[state.core].t);
-    for(var i=0;i<state.intent.length;i++) out.push(a.core.intent[state.intent[i]].t);
-
-    var c=state.sliders.calm, p=state.sliders.present, r=state.sliders.rich;
-    var extra;
-    if(lang==="fr"){
-      extra = (c>65 && p<45) ? "Calme + discret" :
-              (c<45 && p>60) ? "Énergie + proche" :
-              (r>70) ? "Matière + détails" :
-              (r<35) ? "Très épuré" : "Équilibré";
-    } else if(lang==="es"){
-      extra = (c>65 && p<45) ? "Calma + discreto" :
-              (c<45 && p>60) ? "Energía + cerca" :
-              (r>70) ? "Textura + detalle" :
-              (r<35) ? "Muy limpio" : "Equilibrado";
-    } else {
-      extra = (c>65 && p<45) ? "Calm + discreet" :
-              (c<45 && p>60) ? "Energy + close" :
-              (r>70) ? "Texture + detail" :
-              (r<35) ? "Very minimal" : "Balanced";
-    }
-    out.push(extra);
-
-    var uniq = [];
-    for(var j=0;j<out.length;j++) if(uniq.indexOf(out[j])===-1) uniq.push(out[j]);
-    return uniq.slice(0,3);
-  }
-
-  function mailtoLink(subject, body){
-    return "mailto:" + encodeURIComponent(MAIL_TO) +
+  function mailtoLink(to, subject, body){
+    return "mailto:" + encodeURIComponent(to) +
       "?subject=" + encodeURIComponent(subject) +
       "&body=" + encodeURIComponent(body);
   }
 
-  function radarSVG(values){
-    var w=280, h=220, cx=w/2, cy=h/2+12, R=85;
+  function radarSVG(values, labels){
+    var w=320, h=250, cx=w/2, cy=h/2+14, R=92;
     var axes = [{ key:"calm", angle:-90 },{ key:"present", angle:30 },{ key:"rich", angle:150 }];
     function pt(key, val){
       var ang=0;
@@ -799,16 +723,95 @@
       var rr = R*(val/100);
       return { x: cx + Math.cos(rad)*rr, y: cy + Math.sin(rad)*rr };
     }
-    var p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
     function polyAt(v){
       var q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
       return '<polygon points="'+q1.x+','+q1.y+' '+q2.x+','+q2.y+' '+q3.x+','+q3.y+'" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>';
     }
     var grid = polyAt(30)+polyAt(60)+polyAt(100);
+    var p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
     var poly = '<polygon points="'+p1.x+','+p1.y+' '+p2.x+','+p2.y+' '+p3.x+','+p3.y+'" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>';
-    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="vibe radar">'+grid+poly+'</svg>';
+    var labelSvg =
+      '<text x="'+(cx)+'" y="'+(cy-R-8)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="middle">'+esc(labels[0])+'</text>' +
+      '<text x="'+(cx+R+10)+'" y="'+(cy+6)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="start">'+esc(labels[1])+'</text>' +
+      '<text x="'+(cx-R-10)+'" y="'+(cy+6)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="end">'+esc(labels[2])+'</text>';
+    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="vibe radar">'+grid+poly+labelSvg+'</svg>';
   }
 
+  function bar(label, v){
+    v = clamp(Math.round(v));
+    return '' +
+      '<div class="bar">' +
+        '<div class="barhead"><span>'+esc(label)+'</span><span>'+v+'%</span></div>' +
+        '<div class="track"><div class="fill" style="width:'+v+'%"></div></div>' +
+      '</div>';
+  }
+
+  function tags(){
+    var a = tr();
+    var out = [];
+    if(state.core) out.push(a.core.opts[state.core].t);
+    for(var i=0;i<state.intent.length;i++) out.push(a.core.intent[state.intent[i]].t);
+    out.push(sliderSentence());
+    // unique & short
+    var uniq = [];
+    for(var j=0;j<out.length;j++) if(uniq.indexOf(out[j])===-1) uniq.push(out[j]);
+    return uniq.slice(0,3);
+  }
+
+  function computeStoryLines(){
+    var a = tr();
+    var who = (state.name||"").trim();
+    var proj = (state.project||"").trim();
+    var hello =
+      lang==="fr" ? ("Bonjour" + (who?(" "+who):"") + " — voici la lecture de « "+(proj||"votre projet")+" ».") :
+      lang==="es" ? ("Hola" + (who?(" "+who):"") + " — aquí va la lectura de « "+(proj||"su proyecto")+" ».") :
+                    ("Hi" + (who?(" "+who):"") + " — here’s the reading of “"+(proj||"your project")+"”.");
+    var core =
+      (lang==="fr" ? "Le cœur du projet : " : lang==="es" ? "El corazón del proyecto: " : "Core: ") +
+      (state.core==="place" ? (lang==="fr"?"un lieu à faire ressentir.":lang==="es"?"un lugar para sentir.":"a place to feel.") :
+       state.core==="story" ? (lang==="fr"?"une histoire à suivre.":lang==="es"?"una historia que seguir.":"a story to follow.") :
+                             (lang==="fr"?"un moment à rendre juste.":lang==="es"?"un momento que hacer verdadero.":"a moment to make true."));
+
+    var intentMapFR = {
+      notAI:"On doit sentir du vrai (pas du « généré »).",
+      brand:"Ça doit être parfaitement aligné à votre image.",
+      fresh:"On veut un regard artistique, neuf.",
+      trust:"On veut de la confiance : crédible, humain, juste."
+    };
+    var intentMapEN = {
+      notAI:"It should feel real (not ‘generated’).",
+      brand:"It should match your brand perfectly.",
+      fresh:"We want a fresh artistic eye.",
+      trust:"We want trust: credible, human, true."
+    };
+    var intentMapES = {
+      notAI:"Debe sentirse real (no ‘generado’).",
+      brand:"Debe reflejar perfectamente su marca.",
+      fresh:"Buscamos una mirada artística, nueva.",
+      trust:"Buscamos confianza: creíble, humano, verdadero."
+    };
+    var intentMap = (lang==="fr") ? intentMapFR : (lang==="es") ? intentMapES : intentMapEN;
+
+    var intentLine;
+    if(state.intent.length){
+      intentLine = (lang==="fr"?"Ce qui doit rester après le visionnage : ":"Lo que debe quedar: ":"What should remain: ") +
+        state.intent.map(function(k){ return intentMap[k]; }).join(" ");
+    } else {
+      intentLine = (lang==="fr"?"Ce qui doit rester : du vrai et du sens.":lang==="es"?"Lo que debe quedar: verdad y sentido.":"What should remain: truth and meaning.");
+    }
+
+    var timeLine =
+      (lang==="fr"?"Usage principal : ":"Uso principal: ":"Main use: ") +
+      (state.time==="moment" ? (lang==="fr"?"un moment précis (impact + efficacité).":lang==="es"?"un momento concreto (impacto + eficacia).":"a specific moment (impact + efficiency).") :
+       state.time==="overtime" ? (lang==="fr"?"une base réutilisable (cohérence + long terme).":lang==="es"?"una base reutilizable (coherencia + largo plazo).":"a reusable base (coherence + long-term).") :
+                                (lang==="fr"?"une continuité (série + évolution).":lang==="es"?"una continuidad (serie + evolución).":"continuity (series + evolution)."));
+
+    return [hello, core, intentLine, timeLine];
+  }
+
+  /* =========================
+     RENDERERS
+  ========================= */
   function renderIntro(){
     var a = tr();
     var row = btnRow(a.ui.start, function(){ next(); });
@@ -832,7 +835,6 @@
       '<h1>'+esc(a.who.nameH1)+'</h1>' +
       '<p class="lead">'+esc(a.who.nameHelp)+'</p>' +
       '<input id="nameInput" type="text" value="'+esc(state.name)+'" placeholder="'+esc(a.who.namePh)+'" />' +
-      '<div class="micro">'+esc(a.ui.optional)+'</div>' +
       row.html;
     row.bind();
   }
@@ -848,7 +850,6 @@
       '<h1>'+esc(a.who.projH1)+'</h1>' +
       '<p class="lead">'+esc(a.who.projHelp)+'</p>' +
       '<input id="projInput" type="text" value="'+esc(state.project)+'" placeholder="'+esc(a.who.projPh)+'" />' +
-      '<div class="micro">'+esc(a.ui.optional)+'</div>' +
       row.html;
     row.bind();
   }
@@ -877,7 +878,6 @@
     html += '</div>';
     html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
     html += row.html;
-
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".choice");
@@ -899,10 +899,10 @@
     });
 
     var items = [
-      ["natural", o.natural.t, o.natural.d],
-      ["atmosphere", o.atmosphere.t, o.atmosphere.d],
-      ["truth", o.truth.t, o.truth.d],
-      ["elegance", o.elegance.t, o.elegance.d]
+      ["notAI", o.notAI.t, o.notAI.d],
+      ["brand", o.brand.t, o.brand.d],
+      ["fresh", o.fresh.t, o.fresh.d],
+      ["trust", o.trust.t, o.trust.d]
     ];
 
     var html = '';
@@ -922,7 +922,6 @@
     html += '<div class="micro">'+esc(a.ui.maxTwoShort)+'</div>';
     html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
     html += row.html;
-
     app.innerHTML = html;
 
     var els2 = app.querySelectorAll(".check");
@@ -966,7 +965,6 @@
     html += '</div>';
     html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
     html += row.html;
-
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".choice");
@@ -1005,7 +1003,6 @@
     html += '<div class="micro">'+esc(a.ui.maxTwoShort)+'</div>';
     html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
     html += row.html;
-
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".check");
@@ -1034,29 +1031,10 @@
       '</div>';
   }
 
-  function applyPreset(p){
-    state.preset = p;
-    if(p==="soft"){ state.sliders = { calm:72, present:40, rich:40 }; }
-    if(p==="balanced"){ state.sliders = { calm:55, present:45, rich:50 }; }
-    if(p==="bold"){ state.sliders = { calm:35, present:70, rich:72 }; }
-  }
-
   function renderVibe(){
     var a = tr();
     var s = a.vibe.s;
-
     var row = btnRow(a.ui.continue, function(){ next(); });
-
-    var presetHtml =
-      '<div class="box" style="margin-top:14px">' +
-        '<div class="kicker">'+esc(a.ui.presets)+'</div>' +
-        '<div class="presetRow">' +
-          '<button class="small '+(state.preset==="soft"?"active":"")+'" id="pSoft" type="button">'+esc(a.ui.presetSoft)+'</button>' +
-          '<button class="small '+(state.preset==="balanced"?"active":"")+'" id="pBal" type="button">'+esc(a.ui.presetBalanced)+'</button>' +
-          '<button class="small '+(state.preset==="bold"?"active":"")+'" id="pBold" type="button">'+esc(a.ui.presetBold)+'</button>' +
-        '</div>' +
-        '<div class="hint" id="liveSentence">'+esc(sliderSentence())+'</div>' +
-      '</div>';
 
     app.innerHTML =
       '<div class="kicker">'+esc(a.acts.vibe)+'</div>' +
@@ -1065,7 +1043,7 @@
       sliderBlock("calm", s.calm.l, s.calm.r, s.calm.hl, s.calm.hr, state.sliders.calm) +
       sliderBlock("present", s.present.l, s.present.r, s.present.hl, s.present.hr, state.sliders.present) +
       sliderBlock("rich", s.rich.l, s.rich.r, s.rich.hl, s.rich.hr, state.sliders.rich) +
-      presetHtml +
+      '<div class="hint" id="liveSentence">'+esc(sliderSentence())+'</div>' +
       row.html;
 
     var inputs = app.querySelectorAll('input[type="range"]');
@@ -1073,18 +1051,12 @@
       inputs[i].addEventListener("input", function(){
         var k = this.getAttribute("data-key");
         state.sliders[k] = Number(this.value);
-        state.preset = "custom";
         var live = document.getElementById("liveSentence");
         if(live) live.textContent = sliderSentence();
         var calm01 = state.sliders.calm/100;
         bg.style.filter = "saturate("+(0.95 + calm01*0.25)+")";
       });
     }
-
-    document.getElementById("pSoft").onclick = function(){ applyPreset("soft"); safeRender(false); };
-    document.getElementById("pBal").onclick  = function(){ applyPreset("balanced"); safeRender(false); };
-    document.getElementById("pBold").onclick = function(){ applyPreset("bold"); safeRender(false); };
-
     row.bind();
   }
 
@@ -1107,20 +1079,182 @@
   }
 
   function renderReport(){
-    // (on garde ton rendu report complet si tu veux, mais pour debug c’est OK)
     var a = tr();
+    var proj = (state.project||"").trim() || (lang==="fr"?"Votre projet":lang==="es"?"Su proyecto":"Your project");
+    var who = (state.name||"").trim();
+    var score = usageScores();
+    var tgs = tags();
+    var story = computeStoryLines();
+
+    var whereLabels = {
+      website: a.use.where.website.t,
+      social: a.use.where.social.t,
+      editorial: a.use.where.editorial.t,
+      print: a.use.where.print.t
+    };
+
+    var radarLabels =
+      lang==="fr" ? ["Rythme", "Proximité", "Matière"] :
+      lang==="es" ? ["Ritmo", "Cercanía", "Materia"] :
+                    ["Tempo", "Closeness", "Material"];
+
+    // Build mail body for Marina (nice + readable)
+    var subject =
+      (lang==="fr" ? "Project Snapshot — " :
+       lang==="es" ? "Project Snapshot — " : "Project Snapshot — ") + proj;
+
+    var bodyLines = [];
+    bodyLines.push(a.toolName + " — " + proj);
+    bodyLines.push(a.toolTagline);
+    bodyLines.push("");
+    if(who) bodyLines.push((lang==="fr"?"Prénom: ":lang==="es"?"Nombre: ":"Name: ") + who);
+    bodyLines.push("");
+    for(var i=0;i<story.length;i++) bodyLines.push("• " + story[i]);
+    bodyLines.push("");
+    bodyLines.push((lang==="fr"?"Où ça vit:":lang==="es"?"Dónde vive:":"Where it lives:"));
+    bodyLines.push("- " + whereLabels.website + ": " + Math.round(score.base.website) + "%");
+    bodyLines.push("- " + whereLabels.social + ": " + Math.round(score.base.social) + "%");
+    bodyLines.push("- " + whereLabels.editorial + ": " + Math.round(score.base.editorial) + "%");
+    bodyLines.push("- " + whereLabels.print + ": " + Math.round(score.base.print) + "%");
+    bodyLines.push("- " + (lang==="fr"?"Durée de vie":lang==="es"?"Vida útil":"Longevity") + ": " + Math.round(score.longevity) + "%");
+    if(state.avoid) bodyLines.push((lang==="fr"?"À éviter: ":lang==="es"?"Evitar: ":"Avoid: ") + state.avoid);
+    bodyLines.push("");
+    bodyLines.push("— marinaphoto.es");
+    var mailBody = bodyLines.join("\n");
+
+    var mailtoMarina = mailtoLink(MARINA_MAIL, subject, mailBody);
+
+    // Copy fallback (works more often than navigator.clipboard on some browsers)
+    function copyText(text){
+      try{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(function(){ showToast(a.ui.copied); })
+          .catch(function(){ legacyCopy(text); });
+        } else legacyCopy(text);
+      }catch(_){ legacyCopy(text); }
+
+      function legacyCopy(t){
+        var ta = document.createElement("textarea");
+        ta.value = t;
+        ta.setAttribute("readonly","");
+        ta.style.position="fixed";
+        ta.style.left="-9999px";
+        ta.style.top="0";
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand("copy"); }catch(_e){}
+        document.body.removeChild(ta);
+        showToast(a.ui.copied);
+      }
+    }
+
+    var extraBtns =
+      '<button class="ghost" id="copyBtn" type="button">'+esc(a.ui.copy)+'</button>' +
+      '<button class="ghost" id="pdfBtn" type="button">'+esc(a.ui.pdf)+'</button>' +
+      '<button class="ghost" id="mailBtn" type="button">'+esc(a.ui.emailMarina)+'</button>' +
+      '<button class="ghost" id="restartBtn" type="button">'+esc(a.ui.restart)+'</button>';
+
+    var row = btnRow(
+      (lang==="fr"?"Parler à Marina":lang==="es"?"Hablar con Marina":"Talk to Marina"),
+      function(){ window.location.href = mailtoMarina; },
+      extraBtns
+    );
+
     app.innerHTML =
       '<div class="kicker">'+esc(a.report.kicker)+'</div>' +
-      '<h1>OK ✅</h1>' +
-      '<p class="lead">Si tu vois ça, le JS tourne. On peut remettre le rapport complet juste après.</p>' +
-      '<div class="hint">'+esc("Lang: "+lang)+"</div>";
+      '<h1>'+esc(proj)+'</h1>' +
+      '<p class="lead">'+esc(a.report.sub)+(who?(" · "+esc(who)):"")+'</p>' +
+      '<div class="tags">'+tgs.map(function(x){ return '<div class="tag">'+esc(x)+'</div>'; }).join("")+'</div>' +
+
+      '<div class="divider"></div>' +
+
+      '<div class="box">' +
+        '<div class="kicker">'+esc(a.report.sections.reading)+'</div>' +
+        '<div style="margin-top:10px">' +
+          story.map(function(x){ return '<p class="lead" style="margin:0 0 8px">• '+esc(x)+'</p>'; }).join("") +
+        '</div>' +
+        '<p class="hint">'+esc(a.report.closing)+'</p>' +
+      '</div>' +
+
+      '<div class="divider"></div>' +
+
+      '<div class="grid2">' +
+        '<div class="box">' +
+          '<div class="kicker">'+esc(a.report.sections.usage)+'</div>' +
+          bar(whereLabels.website, score.base.website) +
+          bar(whereLabels.social, score.base.social) +
+          bar(whereLabels.editorial, score.base.editorial) +
+          bar(whereLabels.print, score.base.print) +
+          bar((lang==="fr"?"Durée de vie":lang==="es"?"Vida útil":"Longevity"), score.longevity) +
+          (state.avoid ? ('<div class="micro" style="margin-top:10px">'+esc(lang==="fr"?"À éviter: ":lang==="es"?"Evitar: ":"Avoid: ")+state.avoid)+'</div>') : '') +
+        '</div>' +
+
+        '<div class="box">' +
+          '<div class="kicker">'+esc(a.report.sections.vibe)+'</div>' +
+          '<div style="margin-top:8px">'+radarSVG(state.sliders, radarLabels)+'</div>' +
+          '<div class="micro">'+esc(sliderSentence())+'</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="divider"></div>' +
+
+      '<div class="grid2">' +
+        '<div class="box">' +
+          '<div class="kicker">'+esc(a.report.sections.plan)+'</div>' +
+          '<h2>'+esc(lang==="fr"?"Plan (concret)":"Plan (concreto)")+'</h2>' +
+          '<p class="lead">'+esc(lang==="fr"
+            ? "Une série cohérente, pensée pour vos supports. On évite l’effet catalogue : on raconte, on respire, on fait vrai."
+            : lang==="es"
+              ? "Una serie coherente, pensada para sus soportes. Sin efecto catálogo: contamos, respiramos, se siente real."
+              : "A coherent series designed for your channels. No catalog feel: we tell, we breathe, it feels real."
+          )+'</p>' +
+          '<div class="hint">'+esc(lang==="fr"
+            ? "Je prépare : références de lumière + séquence + liste de plans. Vous validez. Ensuite : exécution simple."
+            : lang==="es"
+              ? "Yo preparo: referencias de luz + secuencia + lista de planos. Usted valida. Luego: ejecución simple."
+              : "I prepare: light references + sequence + shot list. You approve. Then: clean execution."
+          )+'</div>' +
+        '</div>' +
+        '<div class="box">' +
+          '<div class="kicker">'+esc(a.report.sections.next)+'</div>' +
+          '<p class="lead">'+esc(a.report.ctaLead)+'</p>' +
+          '<div class="hint">'+esc(lang==="fr"
+            ? "Astuce : exportez en PDF et transférez-le à votre équipe."
+            : lang==="es"
+              ? "Consejo: expórtelo en PDF y compártalo con su equipo."
+              : "Tip: export to PDF and share it with your team."
+          )+'</div>' +
+          '<div class="divider"></div>' +
+          '<p class="micro">'+esc(lang==="fr"
+            ? "Email Marina : "+MARINA_MAIL
+            : lang==="es"
+              ? "Email Marina: "+MARINA_MAIL
+              : "Marina email: "+MARINA_MAIL
+          )+'</p>' +
+        '</div>' +
+      '</div>' +
+
+      row.html;
+
+    row.bind();
+
+    document.getElementById("copyBtn").onclick = function(){ copyText(mailBody); };
+    document.getElementById("pdfBtn").onclick = function(){ window.print(); };
+    document.getElementById("mailBtn").onclick = function(){ window.location.href = mailtoMarina; };
+    document.getElementById("restartBtn").onclick = function(){
+      state = {
+        name:"", project:"", core:null, intent:[], time:null, where:[], avoid:"",
+        sliders:{ calm:55, present:45, rich:50 }
+      };
+      step = 0;
+      safeRender(true);
+    };
   }
 
   function safeRender(scrollTop){
     setHeader();
     app.classList.remove("fade");
-    // Force reflow (safe)
-    app.getBoundingClientRect();
+    app.getBoundingClientRect(); // reflow
     app.classList.add("fade");
     steps[step].render();
     if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
