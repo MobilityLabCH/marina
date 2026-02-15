@@ -4,17 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Marina — Project Snapshot</title>
+  <meta name="description" content="A calm, one-question-at-a-time briefing experience that generates a Project Snapshot instantly." />
 
   <style>
     :root{
-      --bg:#0c0e11;
+      --bg:#0b0d10;
       --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.035);
       --line:rgba(255,255,255,.14);
       --txt:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.50);
       --accent:rgba(255,255,255,.92);
-      --shadow:0 18px 50px rgba(0,0,0,.55);
-      --radius:24px;
+      --shadow:0 18px 60px rgba(0,0,0,.60);
+      --radius:26px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -26,73 +29,67 @@
       overflow-x:hidden;
     }
     .bg{
-      position:fixed; inset:0; z-index:-2;
+      position:fixed; inset:0; z-index:-3;
       background:
-        radial-gradient(900px 420px at 18% 20%, rgba(255,255,255,.11), transparent 60%),
-        radial-gradient(900px 520px at 82% 30%, rgba(255,255,255,.08), transparent 62%),
-        radial-gradient(900px 520px at 55% 92%, rgba(255,255,255,.06), transparent 60%),
+        radial-gradient(980px 520px at 18% 18%, rgba(255,255,255,.11), transparent 62%),
+        radial-gradient(860px 520px at 85% 28%, rgba(255,255,255,.085), transparent 65%),
+        radial-gradient(980px 560px at 52% 96%, rgba(255,255,255,.065), transparent 60%),
         linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
+      filter:saturate(1.0);
+      transition:filter .25s ease;
     }
     .grain{
-      position:fixed; inset:-40px; z-index:-1; opacity:.10; pointer-events:none;
+      position:fixed; inset:-40px; z-index:-2; opacity:.10; pointer-events:none;
       background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>');
       mix-blend-mode:overlay;
     }
-    .wrap{
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:26px 14px;
-    }
-    .shell{ width:min(1040px,100%); }
+
+    .wrap{min-height:100vh; display:flex; justify-content:center; align-items:center; padding:26px 14px;}
+    .shell{ width:min(1060px,100%); }
+
     .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; flex-wrap:wrap;
       padding:10px 6px;
-      font-size:13px;
       color:var(--muted);
-      gap:10px;
-      flex-wrap:wrap;
+      font-size:13px;
     }
     .pill{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      padding:6px 10px;
+      display:inline-flex; align-items:center; gap:10px;
+      padding:7px 10px;
       border-radius:999px;
       border:1px solid var(--line);
       background:rgba(255,255,255,.04);
       max-width:100%;
     }
     .lang{
-      display:inline-flex;
-      gap:6px;
-      align-items:center;
+      display:inline-flex; gap:6px; align-items:center;
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.03);
-      padding:4px;
-      border-radius:999px;
+      padding:4px; border-radius:999px;
     }
     .lang button{
-      border:none;
-      background:transparent;
-      color:var(--muted);
-      font-weight:800;
-      cursor:pointer;
-      padding:6px 10px;
-      border-radius:999px;
+      border:none; background:transparent; color:var(--muted);
+      font-weight:850; cursor:pointer; padding:6px 10px; border-radius:999px;
       letter-spacing:.02em;
     }
-    .lang button.active{
-      color:#0c0e11;
-      background:var(--accent);
+    .lang button.active{ color:#0c0e11; background:var(--accent); }
+    .progress{
+      width:260px; height:10px; border-radius:999px; overflow:hidden;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.10);
     }
+    .progress > div{
+      height:100%; width:0%;
+      background:rgba(255,255,255,.86);
+      border-radius:999px;
+      transition:width .35s ease;
+    }
+    @media(max-width:720px){ .progress{ width:180px; } }
 
     .card{
       border:1px solid var(--line);
-      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.03));
+      background:linear-gradient(180deg, var(--card), var(--card2));
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       overflow:hidden;
@@ -103,14 +100,14 @@
     .fade{animation:fade .32s ease both}
     @keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:translateY(0)}}
 
-    h1{font-size:34px; margin:0 0 10px; letter-spacing:-.02em}
+    .kicker{font-size:12px; letter-spacing:.11em; text-transform:uppercase; color:rgba(255,255,255,.56)}
+    h1{font-size:34px; margin:8px 0 10px; letter-spacing:-.02em}
     p{margin:0 0 12px; line-height:1.55}
-    .lead{color:var(--muted)}
-    .kicker{font-size:12px; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.58)}
-    .bigtitle{font-size:34px; margin:8px 0 6px; letter-spacing:-.02em}
-    .subtitle{color:var(--muted); margin:0}
+    .lead{color:var(--muted); font-size:16px}
+    .hint{color:var(--muted2); font-size:13px; margin-top:8px; line-height:1.45}
+    .micro{color:var(--muted2); font-size:12px; margin-top:10px}
+    .divider{height:1px; background:rgba(255,255,255,.12); margin:18px 0}
 
-    .fieldlabel{display:block; margin-top:14px; font-size:12px; color:var(--muted)}
     input[type="text"]{
       width:100%;
       padding:12px 14px;
@@ -119,7 +116,8 @@
       background:rgba(255,255,255,.04);
       color:var(--txt);
       outline:none;
-      margin-top:8px;
+      margin-top:10px;
+      font-size:15px;
     }
 
     .choices,.checks{display:grid; gap:10px; margin-top:14px}
@@ -129,15 +127,13 @@
       padding:14px;
       background:rgba(255,255,255,.04);
       cursor:pointer;
+      transition:background .15s ease, border-color .15s ease, transform .08s ease;
     }
     .choice:hover,.check:hover{background:rgba(255,255,255,.06)}
-    .choice.sel,.check.sel{
-      background:rgba(255,255,255,.09);
-      border-color:rgba(255,255,255,.25);
-    }
-    .optTitle{font-weight:850}
+    .choice:active,.check:active{transform:scale(.997)}
+    .choice.sel,.check.sel{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.26);}
+    .optTitle{font-weight:900}
     .optDesc{margin-top:6px; font-size:12px; color:var(--muted); line-height:1.35}
-    .meta{margin-top:10px; font-size:13px; color:var(--muted)}
 
     .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
     button{
@@ -147,14 +143,11 @@
       background:rgba(255,255,255,.06);
       color:var(--txt);
       cursor:pointer;
-      font-weight:850;
+      font-weight:900;
     }
-    button.primary{
-      background:var(--accent);
-      color:#0c0e11;
-      border-color:rgba(255,255,255,.18);
-    }
-    button.ghost{background:transparent}
+    button.primary{ background:var(--accent); color:#0c0e11; border-color:rgba(255,255,255,.18); }
+    button.ghost{ background:transparent; }
+    button.small{ padding:8px 12px; font-size:13px; font-weight:850; }
 
     .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
     @media (max-width:900px){ .grid2{grid-template-columns:1fr} }
@@ -165,7 +158,6 @@
       padding:14px;
       background:rgba(255,255,255,.04);
     }
-    .divider{height:1px; background:var(--line); margin:18px 0}
 
     .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
     .tag{
@@ -175,6 +167,7 @@
       border-radius:999px;
       font-size:13px;
       color:rgba(255,255,255,.86);
+      white-space:nowrap;
     }
 
     .bar{margin-top:12px}
@@ -191,9 +184,11 @@
     }
     .slab{display:flex; justify-content:space-between; color:var(--muted); font-size:13px}
     input[type="range"]{width:100%; margin-top:10px}
-    .smallhelp{font-size:12px; color:var(--muted); margin-top:8px; line-height:1.35}
+    .sliderHelp{display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:12px; color:var(--muted2)}
 
-    #app{min-height:320px}
+    .presetRow{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .presetRow button{background:rgba(255,255,255,.05)}
+    .presetRow button.active{background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.24)}
 
     .toast{
       position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
@@ -210,20 +205,37 @@
       text-align:center;
     }
     .toast.show{opacity:1}
+
+    /* Print (PDF via Print dialog) */
+    @media print{
+      body{background:#fff; color:#111}
+      .bg,.grain,.topbar,.toast{display:none !important}
+      .wrap{padding:0}
+      .card{box-shadow:none; border:1px solid #ddd}
+      .content{padding:22px}
+      .tag{border-color:#ddd; color:#111}
+      .box{border-color:#ddd}
+      .track{background:#eee}
+      .fill{background:#111}
+      button{display:none !important}
+    }
   </style>
 </head>
 
 <body>
-  <div class="bg"></div>
+  <div class="bg" id="bg"></div>
   <div class="grain"></div>
 
   <div class="wrap">
     <div class="shell">
       <div class="topbar">
         <div class="pill" id="actPill">—</div>
-        <div class="pill">
+
+        <div class="pill" style="gap:12px">
+          <div class="progress" aria-label="progress"><div id="progFill"></div></div>
           <span id="stepPill">—</span>
-          <span class="lang" style="margin-left:10px" aria-label="Language">
+
+          <span class="lang" aria-label="Language">
             <button id="btnEN" type="button">EN</button>
             <button id="btnFR" type="button">FR</button>
             <button id="btnES" type="button">ES</button>
@@ -241,12 +253,22 @@
 
 <script>
 (function(){
-  // IMPORTANT:
-  // This file is "single-script safe": nothing is injected that can close the <script> tag.
+  /* ===========================
+     World-class simplification:
+     - One question at a time
+     - Micro-guides + examples
+     - Presets for sliders
+     - Report = Cover → 3 takeaways → Evidence → Next step
+     - No external deps. GitHub Pages safe.
+  ============================ */
+
+  // If you want a fixed recipient:
+  // var MAIL_TO = "hello@marinaphoto.es";
+  var MAIL_TO = "";
 
   var I18N = {
     fr:{
-      acts:{ intro:"Intro", who:"Toi & le projet", core:"Le coeur", live:"Usage", feel:"Ambiance", report:"Rapport" },
+      acts:{ intro:"Intro", who:"Toi & le projet", core:"Essence", use:"Usage", vibe:"Ambiance", report:"Snapshot" },
       ui:{
         start:"C’est parti",
         continue:"Continuer",
@@ -259,88 +281,89 @@
         talk:"Parlons de ce projet",
         copy:"Copier le snapshot",
         email:"Ouvrir un email",
-        longTerm:"Durée de vie"
+        print:"Imprimer / PDF",
+        ifHesitate:"Si tu hésites : choisis ce qui te semble le plus vrai aujourd’hui.",
+        maxTwoShort:"Max 2",
+        presets:"Presets (si t’as la flemme 😄)",
+        presetSoft:"Soft",
+        presetBalanced:"Balanced",
+        presetBold:"Bold"
       },
       intro:{
         kicker:"Project Snapshot",
         h1:"On va parler d’images. Pas de stratégie. Promis.",
-        p:"Quelques questions rapides pour comprendre ce que ces images doivent vraiment faire pour toi.\n(Et non, il n’y a pas de mauvaise réponse.)"
+        p:"8 questions rapides. Tu réponds à l’instinct.\nÀ la fin, tu repars avec un mini brief clair (et joli)."
       },
       who:{
         nameH1:"Comment je t’appelle ?",
-        nameHelp:"Prénom, pseudo… comme tu veux.",
+        nameHelp:"Prénom, pseudo… comme tu veux. (Et oui, c’est optionnel.)",
         namePh:"Ex : Alex",
         projH1:"Ce projet, tu l’appelles comment ?",
-        projHelp:"Même un nom provisoire, ça marche très bien.",
-        projPh:"Ex : Maison Sitges, Hotel opening…"
+        projHelp:"Même un nom provisoire marche très bien.",
+        projPh:"Ex : Casa Sitges, Opening hotel…"
       },
       core:{
-        h1:"Si tu devais l’expliquer en une phrase, ce serait plutôt…",
-        help:"Choisis ce qui te ressemble le plus aujourd’hui.",
+        h1:"En une phrase, c’est plutôt…",
+        help:"Choisis ce qui décrit le mieux le projet.",
         opts:{
-          place:{t:"🏠 Un lieu", d:"Un endroit à montrer / à faire ressentir."},
-          story:{t:"📖 Une histoire", d:"Des gens, des gestes, une ambiance."},
-          moment:{t:"⏳ Un moment", d:"Quelque chose qu’on ne veut pas oublier."}
+          place:{t:"🏠 Un lieu", d:"On veut le faire ressentir (lumière, matière, atmosphère)."},
+          story:{t:"📖 Une histoire", d:"On suit des gens, des gestes, un fil narratif."},
+          moment:{t:"⏳ Un moment", d:"On garde l’essentiel, sans surjouer."}
         },
-        intentH1:"Quand quelqu’un tombe sur ces images, tu aimerais qu’il se dise…",
+        intentH1:"Quand quelqu’un tombe sur ces images, tu veux qu’il se dise…",
         intentHelp:"Choisis 1 ou 2. Instinctif = parfait.",
         intent:{
           natural:{t:"“C’est naturel, ça sonne vrai.”", d:"Rien de forcé. Ça respire."},
           atmosphere:{t:"“Il y a une vraie ambiance.”", d:"On sent le lieu / le moment."},
-          truth:{t:"“C’est sincère.”", d:"Quelque chose de réel, pas fabriqué."},
+          truth:{t:"“C’est sincère.”", d:"Ça a l’air vécu, pas fabriqué."},
           elegance:{t:"“Simple, mais élégant.”", d:"Sobre, précis, intemporel."}
         }
       },
-      live:{
+      use:{
         timeH1:"Ces images, tu les imagines surtout…",
-        timeHelp:"Ça m’aide à doser. Pas à te juger 😄",
+        timeHelp:"Ça m’aide à doser (pas à te noter 😄).",
         time:{
           moment:{t:"📆 Pour un moment précis", d:"Un lancement, une période, un événement."},
           overtime:{t:"🔁 Pour les réutiliser souvent", d:"Une base solide, qui tient dans le temps."},
-          grow:{t:"🌱 Comme quelque chose qui va évoluer", d:"Un langage visuel qui s’installe."}
+          grow:{t:"🌱 Comme quelque chose qui va évoluer", d:"Une continuité, une série, du suivi."}
         },
         whereH1:"Tu verras surtout ces images…",
-        whereHelp:"Max 2. Là où tu penses les croiser le plus souvent.",
+        whereHelp:"Max 2. Là où tu les croiseras vraiment.",
         where:{
-          website:{t:"sur ton site", d:"Lecture plus lente, plus posée."},
+          website:{t:"sur ton site", d:"Lecture posée, temps long."},
           social:{t:"sur Instagram / réseaux", d:"Rythme, répétition, série."},
           editorial:{t:"dans des articles / presse", d:"Contexte, narration, détails."},
           print:{t:"imprimées / affichées", d:"Impact, matière, permanence."}
         }
       },
-      feel:{
-        h1:"Dernière chose. Réponds vite, sans trop réfléchir.",
-        help:"Ces curseurs ne changent pas mon style — ils m’aident juste à régler le tempo.",
+      vibe:{
+        h1:"Dernière chose. Réponds vite (sans te juger).",
+        help:"Ça ne change pas mon style. Ça m’aide juste à régler le tempo.",
         s:{
-          calm:{l:"😌 calme", r:"⚡ vivant", hl:"posé, respirations", hr:"énergie, mouvement"},
-          present:{l:"👀 discret", r:"🤍 très présent", hl:"observer", hr:"plus proche"},
-          rich:{l:"✂️ simple", r:"🧱 riche", hl:"épuré", hr:"détails, matière"}
+          calm:{l:"😌 calme", r:"⚡ vivant", hl:"posé", hr:"énergie"},
+          present:{l:"👀 discret", r:"🤍 proche", hl:"observer", hr:"être dedans"},
+          rich:{l:"✂️ simple", r:"🧱 riche", hl:"épuré", hr:"matière"}
         }
       },
       report:{
-        kicker:"Lecture du projet",
-        sub:"Une première lecture — côté images",
-        sec1:"Ce que j’ai compris",
-        sec2:"Comment ces images peuvent vivre",
-        sec3:"Ambiance générale",
-        sec4:"Ce que je vais chercher en photo",
-        sec5:"Comment on peut travailler ensemble",
+        kicker:"Project Snapshot",
+        sub:"Une lecture simple, utile — côté images",
+        coverTitle:"Lecture du projet",
+        takeaways:"En 3 idées",
+        evidence:"Ce que ça implique (usage + rythme)",
+        plan:"Ce que Marina va chercher",
+        next:"Prochaine étape",
         bullets:{
-          series:"Une série cohérente (pas juste 3 images isolées)",
+          series:"Une série cohérente (pas 3 images isolées)",
           rhythm:"Un rythme (respiration, lumière, continuité)",
-          real:"Du vrai : gestes, présence, matière",
+          real:"Du vrai (gestes, présence, matière)",
           reuse:"Des images qui tiennent dans le temps"
-        },
-        collab:{
-          moment:"On fait un shooting ciblé, simple, efficace.",
-          overtime:"On construit une base réutilisable (un set solide).",
-          grow:"On crée une continuité (collab dans le temps)."
         }
       }
     },
 
     en:{
-      acts:{ intro:"Intro", who:"You & project", core:"The core", live:"Use", feel:"Vibe", report:"Report" },
+      acts:{ intro:"Intro", who:"You & project", core:"Essence", use:"Use", vibe:"Vibe", report:"Snapshot" },
       ui:{
         start:"Let’s go",
         continue:"Continue",
@@ -353,48 +376,54 @@
         talk:"Let’s talk about this project",
         copy:"Copy snapshot",
         email:"Open email",
-        longTerm:"Longevity"
+        print:"Print / PDF",
+        ifHesitate:"If you hesitate: pick what feels most true today.",
+        maxTwoShort:"Max 2",
+        presets:"Presets (if you’re lazy 😄)",
+        presetSoft:"Soft",
+        presetBalanced:"Balanced",
+        presetBold:"Bold"
       },
       intro:{
         kicker:"Project Snapshot",
         h1:"We’ll talk images. Not strategy. Promise.",
-        p:"A few quick questions to understand what these images need to do for you.\n(And yes, there’s no wrong answer.)"
+        p:"8 quick questions. Answer by instinct.\nAt the end, you get a clear (and pretty) mini brief."
       },
       who:{
         nameH1:"How should I call you?",
-        nameHelp:"First name, nickname… your choice.",
+        nameHelp:"First name, nickname… your choice. (Optional.)",
         namePh:"e.g. Alex",
         projH1:"What do you call this project?",
         projHelp:"Even a temporary name is totally fine.",
         projPh:"e.g. Sitges house, Hotel opening…"
       },
       core:{
-        h1:"If you had to explain it in one sentence, it’s more like…",
-        help:"Pick what feels closest today.",
+        h1:"In one sentence, it’s more like…",
+        help:"Pick what describes it best.",
         opts:{
-          place:{t:"🏠 A place", d:"A place to show / to make people feel."},
-          story:{t:"📖 A story", d:"People, gestures, atmosphere."},
-          moment:{t:"⏳ A moment", d:"Something you don’t want to forget."}
+          place:{t:"🏠 A place", d:"We want people to feel it (light, texture, atmosphere)."},
+          story:{t:"📖 A story", d:"People, gestures, a narrative thread."},
+          moment:{t:"⏳ A moment", d:"Keep what matters, no overacting."}
         },
-        intentH1:"When someone lands on these images, you’d love them to think…",
+        intentH1:"When someone lands on these images, you want them to think…",
         intentHelp:"Pick 1 or 2. Instinct is perfect.",
         intent:{
           natural:{t:"“It feels natural and real.”", d:"Nothing forced. It breathes."},
           atmosphere:{t:"“There’s a real vibe.”", d:"You can feel the place / moment."},
-          truth:{t:"“It feels sincere.”", d:"Something real, not manufactured."},
+          truth:{t:"“It feels sincere.”", d:"Lived-in, not manufactured."},
           elegance:{t:"“Simple, but elegant.”", d:"Understated, precise, timeless."}
         }
       },
-      live:{
+      use:{
         timeH1:"You mostly imagine these images…",
-        timeHelp:"This helps me calibrate — not judge 😄",
+        timeHelp:"This helps me calibrate (not grade you 😄).",
         time:{
           moment:{t:"📆 For a specific moment", d:"A launch, a period, an event."},
           overtime:{t:"🔁 To reuse often", d:"A solid base that lasts."},
-          grow:{t:"🌱 As something that evolves", d:"A visual language that settles in."}
+          grow:{t:"🌱 As something that evolves", d:"Continuity, series, follow-up."}
         },
         whereH1:"You’ll mostly see these images…",
-        whereHelp:"Max 2. Where you’ll actually meet them most.",
+        whereHelp:"Max 2. Where you’ll actually meet them.",
         where:{
           website:{t:"on your website", d:"Slower, calmer reading."},
           social:{t:"on Instagram / social", d:"Rhythm, repetition, series."},
@@ -402,39 +431,34 @@
           print:{t:"printed / displayed", d:"Impact, materiality, permanence."}
         }
       },
-      feel:{
-        h1:"Last thing. Answer fast, don’t overthink it.",
-        help:"These sliders don’t change my style — they just help set the tempo.",
+      vibe:{
+        h1:"Last thing. Answer fast (no self-judgement).",
+        help:"This doesn’t change my style. It just sets the tempo.",
         s:{
-          calm:{l:"😌 calm", r:"⚡ lively", hl:"quiet, breathing", hr:"energy, motion"},
-          present:{l:"👀 discreet", r:"🤍 very present", hl:"observe", hr:"closer"},
-          rich:{l:"✂️ simple", r:"🧱 rich", hl:"airy", hr:"detail, texture"}
+          calm:{l:"😌 calm", r:"⚡ lively", hl:"quiet", hr:"energy"},
+          present:{l:"👀 discreet", r:"🤍 close", hl:"observe", hr:"inside it"},
+          rich:{l:"✂️ simple", r:"🧱 rich", hl:"minimal", hr:"texture"}
         }
       },
       report:{
-        kicker:"Project reading",
-        sub:"A first reading — through images",
-        sec1:"What I understood",
-        sec2:"How these images can live",
-        sec3:"Overall vibe",
-        sec4:"What I’ll look for in photos",
-        sec5:"How we can work together",
+        kicker:"Project Snapshot",
+        sub:"A simple, useful reading — through images",
+        coverTitle:"Project reading",
+        takeaways:"3 takeaways",
+        evidence:"What this implies (use + tempo)",
+        plan:"What Marina will look for",
+        next:"Next step",
         bullets:{
-          series:"A coherent series (not just 3 isolated images)",
+          series:"A coherent series (not 3 isolated images)",
           rhythm:"A rhythm (breathing, light, continuity)",
-          real:"Real life: gestures, presence, texture",
+          real:"Real life (gestures, presence, texture)",
           reuse:"Images that keep making sense over time"
-        },
-        collab:{
-          moment:"One focused shoot. Simple and effective.",
-          overtime:"Build a reusable base (a solid set).",
-          grow:"Create continuity (ongoing collaboration)."
         }
       }
     },
 
     es:{
-      acts:{ intro:"Intro", who:"Tú & proyecto", core:"El núcleo", live:"Uso", feel:"Vibra", report:"Informe" },
+      acts:{ intro:"Intro", who:"Tú & proyecto", core:"Esencia", use:"Uso", vibe:"Vibra", report:"Snapshot" },
       ui:{
         start:"Vamos",
         continue:"Continuar",
@@ -447,82 +471,83 @@
         talk:"Hablemos de este proyecto",
         copy:"Copiar snapshot",
         email:"Abrir email",
-        longTerm:"Vida útil"
+        print:"Imprimir / PDF",
+        ifHesitate:"Si dudas: elige lo que se siente más verdadero hoy.",
+        maxTwoShort:"Máx 2",
+        presets:"Presets (si te da pereza 😄)",
+        presetSoft:"Soft",
+        presetBalanced:"Balanced",
+        presetBold:"Bold"
       },
       intro:{
         kicker:"Project Snapshot",
         h1:"Hablamos de imágenes. No de estrategia. Prometido.",
-        p:"Unas preguntas rápidas para entender qué deben hacer estas imágenes por ti.\n(Y sí: no hay respuesta mala.)"
+        p:"8 preguntas rápidas. Responde con instinto.\nAl final te llevas un mini brief claro (y bonito)."
       },
       who:{
         nameH1:"¿Cómo te llamo?",
-        nameHelp:"Nombre, apodo… como quieras.",
+        nameHelp:"Nombre, apodo… como quieras. (Opcional.)",
         namePh:"p.ej. Alex",
         projH1:"¿Cómo llamas a este proyecto?",
         projHelp:"Incluso un nombre provisional sirve.",
-        projPh:"p.ej. Casa Sitges, Hotel opening…"
+        projPh:"p.ej. Casa Sitges, Opening hotel…"
       },
       core:{
-        h1:"Si tuvieras que explicarlo en una frase, es más bien…",
-        help:"Elige lo que se siente más cercano hoy.",
+        h1:"En una frase, es más bien…",
+        help:"Elige lo que mejor lo describe.",
         opts:{
-          place:{t:"🏠 Un lugar", d:"Un sitio para mostrar / hacer sentir."},
-          story:{t:"📖 Una historia", d:"Personas, gestos, atmósfera."},
-          moment:{t:"⏳ Un momento", d:"Algo que no quieres olvidar."}
+          place:{t:"🏠 Un lugar", d:"Queremos que se sienta (luz, textura, atmósfera)."},
+          story:{t:"📖 Una historia", d:"Personas, gestos, un hilo narrativo."},
+          moment:{t:"⏳ Un momento", d:"Guardar lo esencial, sin sobreactuar."}
         },
-        intentH1:"Cuando alguien se topa con estas imágenes, te gustaría que pensara…",
-        intentHelp:"Elige 1 o 2. La intuición vale oro.",
+        intentH1:"Cuando alguien se topa con estas imágenes, quieres que piense…",
+        intentHelp:"Elige 1 o 2. Instinto = perfecto.",
         intent:{
           natural:{t:"“Se siente natural y real.”", d:"Nada forzado. Respira."},
           atmosphere:{t:"“Hay una vibra real.”", d:"Se siente el lugar / momento."},
-          truth:{t:"“Se siente sincero.”", d:"Algo real, no fabricado."},
+          truth:{t:"“Se siente sincero.”", d:"Vivido, no fabricado."},
           elegance:{t:"“Simple, pero elegante.”", d:"Sutil, preciso, atemporal."}
         }
       },
-      live:{
+      use:{
         timeH1:"Sobre todo imaginas estas imágenes…",
-        timeHelp:"Esto me ayuda a calibrar — no a juzgar 😄",
+        timeHelp:"Esto me ayuda a calibrar (no a juzgar 😄).",
         time:{
           moment:{t:"📆 Para un momento concreto", d:"Un lanzamiento, una etapa, un evento."},
           overtime:{t:"🔁 Para reutilizar a menudo", d:"Una base sólida que dura."},
-          grow:{t:"🌱 Como algo que evoluciona", d:"Un lenguaje visual que se asienta."}
+          grow:{t:"🌱 Como algo que evoluciona", d:"Continuidad, serie, seguimiento."}
         },
         whereH1:"Vas a ver estas imágenes sobre todo…",
         whereHelp:"Máx 2. Donde realmente te las encontrarás.",
         where:{
-          website:{t:"en tu web", d:"Lectura más lenta, más calmada."},
+          website:{t:"en tu web", d:"Lectura lenta, calmada."},
           social:{t:"en Instagram / redes", d:"Ritmo, repetición, serie."},
           editorial:{t:"en editorial / prensa", d:"Contexto, relato, detalles."},
           print:{t:"impresas / expuestas", d:"Impacto, materia, permanencia."}
         }
       },
-      feel:{
-        h1:"Última. Responde rápido, sin pensarlo demasiado.",
-        help:"Estos controles no cambian mi estilo — solo ayudan a poner el tempo.",
+      vibe:{
+        h1:"Última. Responde rápido (sin juzgarte).",
+        help:"Esto no cambia mi estilo. Solo pone el tempo.",
         s:{
-          calm:{l:"😌 calmo", r:"⚡ vivo", hl:"silencio, respirar", hr:"energía, movimiento"},
-          present:{l:"👀 discreto", r:"🤍 muy presente", hl:"observar", hr:"más cerca"},
-          rich:{l:"✂️ simple", r:"🧱 rico", hl:"aireado", hr:"detalle, textura"}
+          calm:{l:"😌 calmo", r:"⚡ vivo", hl:"silencio", hr:"energía"},
+          present:{l:"👀 discreto", r:"🤍 cerca", hl:"observar", hr:"dentro"},
+          rich:{l:"✂️ simple", r:"🧱 rico", hl:"minimal", hr:"textura"}
         }
       },
       report:{
-        kicker:"Lectura del proyecto",
-        sub:"Una primera lectura — en imágenes",
-        sec1:"Lo que entendí",
-        sec2:"Cómo pueden vivir estas imágenes",
-        sec3:"Vibra general",
-        sec4:"Qué voy a buscar en fotos",
-        sec5:"Cómo podemos trabajar",
+        kicker:"Project Snapshot",
+        sub:"Una lectura simple y útil — en imágenes",
+        coverTitle:"Lectura del proyecto",
+        takeaways:"3 ideas clave",
+        evidence:"Lo que implica (uso + tempo)",
+        plan:"Lo que Marina buscará",
+        next:"Siguiente paso",
         bullets:{
           series:"Una serie coherente (no 3 imágenes sueltas)",
           rhythm:"Un ritmo (respirar, luz, continuidad)",
-          real:"Vida real: gestos, presencia, textura",
+          real:"Vida real (gestos, presencia, textura)",
           reuse:"Imágenes que sigan teniendo sentido con el tiempo"
-        },
-        collab:{
-          moment:"Una sesión enfocada. Simple y eficaz.",
-          overtime:"Construir una base reutilizable (un set sólido).",
-          grow:"Crear continuidad (colaboración en el tiempo)."
         }
       }
     }
@@ -536,30 +561,20 @@
     intent:[],
     time:null,
     where:[],
-    sliders:{ calm:50, present:50, rich:50 }
+    sliders:{ calm:55, present:45, rich:50 },
+    preset:"balanced"
   };
 
   var app = document.getElementById("app");
   var actPill = document.getElementById("actPill");
   var stepPill = document.getElementById("stepPill");
   var toast = document.getElementById("toast");
+  var progFill = document.getElementById("progFill");
+  var bg = document.getElementById("bg");
 
   var btnEN = document.getElementById("btnEN");
   var btnFR = document.getElementById("btnFR");
   var btnES = document.getElementById("btnES");
-
-  var steps = [
-    { act:"intro", render: renderIntro },
-    { act:"who", render: renderName },
-    { act:"who", render: renderProject },
-    { act:"core", render: renderCore },
-    { act:"core", render: renderIntent },
-    { act:"live", render: renderTime },
-    { act:"live", render: renderWhere },
-    { act:"feel", render: renderFeel },
-    { act:"report", render: renderReport }
-  ];
-  var step = 0;
 
   function tr(){ return I18N[lang]; }
   function esc(s){
@@ -580,303 +595,323 @@
     btnFR.classList.remove("active");
     btnES.classList.remove("active");
     (l==="en"?btnEN : l==="fr"?btnFR : btnES).classList.add("active");
-    safeRender();
+    safeRender(false);
   }
+
   btnEN.addEventListener("click", function(){ setLang("en"); });
   btnFR.addEventListener("click", function(){ setLang("fr"); });
   btnES.addEventListener("click", function(){ setLang("es"); });
+
+  // Steps
+  var steps = [
+    { act:"intro", render: renderIntro },
+    { act:"who", render: renderName },
+    { act:"who", render: renderProject },
+    { act:"core", render: renderCore },
+    { act:"core", render: renderIntent },
+    { act:"use",  render: renderTime },
+    { act:"use",  render: renderWhere },
+    { act:"vibe", render: renderVibe },
+    { act:"report", render: renderReport }
+  ];
+  var step = 0;
 
   function setHeader(){
     var a = tr();
     actPill.textContent = a.acts[steps[step].act] + " · " + (step+1) + "/" + steps.length;
     stepPill.textContent = (step+1) + "/" + steps.length;
+    progFill.style.width = Math.round(((step+1)/steps.length)*100) + "%";
   }
+
   function next(){ if(step < steps.length-1){ step++; safeRender(true); } }
   function prev(){ if(step > 0){ step--; safeRender(true); } }
 
-  function btns(primaryLabel){
+  function btnRow(primaryLabel, onPrimary){
     var a = tr();
     var html = '<div class="btnrow">' +
       '<button class="primary" id="primaryBtn" type="button">' + esc(primaryLabel) + '</button>';
     if(step>0) html += '<button class="ghost" id="backBtn" type="button">' + esc(a.ui.back) + '</button>';
     html += '</div>';
-    return html;
-  }
-  function bindPrimary(fn){
-    var p = document.getElementById("primaryBtn");
-    if(p) p.onclick = fn;
-    var b = document.getElementById("backBtn");
-    if(b) b.onclick = prev;
+    return { html: html, bind: function(){
+      var p = document.getElementById("primaryBtn");
+      if(p) p.onclick = onPrimary;
+      var b = document.getElementById("backBtn");
+      if(b) b.onclick = prev;
+    }};
   }
 
+  // ---------------- Report logic (simple & useful)
+  function clamp(v){ return Math.max(0, Math.min(100, v)); }
+
   function usageScores(){
-    var base = { website:30, social:30, editorial:30, print:30 };
-    for(var i=0;i<state.where.length;i++){
-      base[state.where[i]] += 35;
-    }
-    var longTerm = 50;
-    if(state.time==="moment") longTerm = 32;
-    if(state.time==="overtime"){ longTerm = 72; base.website+=6;base.social+=6;base.editorial+=6;base.print+=6; }
-    if(state.time==="grow"){ longTerm = 86; base.website+=10;base.social+=10;base.editorial+=10;base.print+=10; }
-    function clamp(v){ return Math.max(10, Math.min(100, v)); }
+    var base = { website:28, social:28, editorial:28, print:28 };
+    for(var i=0;i<state.where.length;i++) base[state.where[i]] += 34;
+
+    var longevity = 55;
+    if(state.time==="moment") longevity = 35;
+    if(state.time==="overtime") longevity = 72;
+    if(state.time==="grow") longevity = 86;
+
+    // small boosts for long-term use
+    var boost = (state.time==="overtime") ? 6 : (state.time==="grow") ? 10 : 0;
+    base.website += boost; base.social += boost; base.editorial += boost; base.print += boost;
+
     base.website = clamp(base.website);
     base.social = clamp(base.social);
     base.editorial = clamp(base.editorial);
     base.print = clamp(base.print);
-    return { base:base, longTerm:clamp(longTerm) };
+
+    return { base:base, longevity:clamp(longevity) };
   }
 
   function sliderSentence(){
-    var c = state.sliders.calm;
-    var p = state.sliders.present;
-    var r = state.sliders.rich;
-    if(lang==="fr") return "Ambiance plutôt " + (c>55?"calme":"vivante") + " · regard " + (p>55?"plus proche":"plus discret") + " · visuel " + (r>55?"plus riche":"plus simple") + ".";
-    if(lang==="es") return "Vibra más bien " + (c>55?"calma":"viva") + " · mirada " + (p>55?"más cercana":"más discreta") + " · visual " + (r>55?"más rico":"más simple") + ".";
-    return "Mostly " + (c>55?"calm":"lively") + " · a " + (p>55?"closer":"more discreet") + " gaze · visually " + (r>55?"richer":"simpler") + ".";
+    var c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
+    if(lang==="fr"){
+      return "Rythme " + (c>60?"posé":"énergique") + " · distance " + (p>55?"proche":"discrète") + " · visuel " + (r>55?"texturé":"épuré") + ".";
+    }
+    if(lang==="es"){
+      return "Ritmo " + (c>60?"calmo":"enérgico") + " · distancia " + (p>55?"cerca":"discreta") + " · visual " + (r>55?"con textura":"limpio") + ".";
+    }
+    return "Tempo " + (c>60?"calm":"energetic") + " · distance " + (p>55?"close":"discreet") + " · visuals " + (r>55?"textured":"minimal") + ".";
   }
 
-  function storyLines(){
+  function computeTakeaways(){
     var a = tr();
-    var who = (state.name||"").trim() || (lang==="fr"?"toi":lang==="es"?"ti":"you");
+    var who = (state.name||"").trim();
     var proj = (state.project||"").trim();
-    var projLabel = proj ? "“" + proj + "”" : (lang==="fr"?"ce projet":lang==="es"?"este proyecto":"this project");
+    var projLabel = proj ? ("“" + proj + "”") : (lang==="fr"?"ce projet":lang==="es"?"este proyecto":"this project");
 
-    var core = state.core || "place";
+    // 1) Core
     var coreLine;
     if(lang==="fr"){
-      coreLine = (core==="place") ? ("On est sur " + projLabel + " comme un lieu : on veut le faire ressentir.") :
-                 (core==="story") ? ("On est sur " + projLabel + " comme une histoire : des gens, des gestes, une ambiance.") :
-                                   ("On est sur " + projLabel + " comme un moment : on veut garder l’essentiel.");
+      coreLine = (state.core==="place") ? ("C’est un projet de lieu : on veut faire ressentir l’atmosphère.") :
+                 (state.core==="story") ? ("C’est un projet d’histoire : on suit des humains, des gestes, un fil.") :
+                 ("C’est un projet de moment : on garde l’essentiel, sans surjouer.");
     } else if(lang==="es"){
-      coreLine = (core==="place") ? (projLabel + " se siente como un lugar: queremos hacerlo sentir.") :
-                 (core==="story") ? (projLabel + " se siente como una historia: gente, gestos, atmósfera.") :
-                                   (projLabel + " se siente como un momento: guardar lo esencial.");
+      coreLine = (state.core==="place") ? ("Es un proyecto de lugar: queremos sentir la atmósfera.") :
+                 (state.core==="story") ? ("Es un proyecto de historia: personas, gestos, un hilo.") :
+                 ("Es un proyecto de momento: guardar lo esencial, sin exagerar.");
     } else {
-      coreLine = (core==="place") ? (projLabel + " feels like a place: we want people to feel it.") :
-                 (core==="story") ? (projLabel + " feels like a story: people, gestures, atmosphere.") :
-                                   (projLabel + " feels like a moment: keep what matters.");
+      coreLine = (state.core==="place") ? ("It’s a place project: we want people to feel the atmosphere.") :
+                 (state.core==="story") ? ("It’s a story project: people, gestures, a thread.") :
+                 ("It’s a moment project: keep what matters, no overacting.");
     }
 
-    var intentText;
+    // 2) Intent (max 2)
+    var it = state.intent.slice(0);
+    var intentLine;
     if(lang==="fr"){
-      var mapFr = { natural:"naturel", atmosphere:"ambiance", truth:"sincère", elegance:"élégant" };
-      var listFr = [];
-      for(var i=0;i<state.intent.length;i++) listFr.push(mapFr[state.intent[i]]);
-      intentText = (listFr.length===0) ? "Et surtout : que ça sonne vrai." :
-                   (listFr.length===1) ? ("Et que ça soit " + listFr[0] + ".") :
-                                        ("Et que ça soit " + listFr[0] + " + " + listFr[1] + ".");
+      var m = { natural:"naturel", atmosphere:"ambiance", truth:"sincère", elegance:"simple & élégant" };
+      intentLine = it.length===2 ? ("On veut que ça reste " + m[it[0]] + " + " + m[it[1]] + ".") :
+                   it.length===1 ? ("On veut que ça reste " + m[it[0]] + ".") :
+                                   ("On veut que ça sonne vrai.");
     } else if(lang==="es"){
-      var mapEs = { natural:"natural", atmosphere:"con vibra", truth:"sincero", elegance:"elegante" };
-      var listEs = [];
-      for(var j=0;j<state.intent.length;j++) listEs.push(mapEs[state.intent[j]]);
-      intentText = (listEs.length===0) ? "Y sobre todo: que se sienta real." :
-                   (listEs.length===1) ? ("Y que sea " + listEs[0] + ".") :
-                                        ("Y que sea " + listEs[0] + " + " + listEs[1] + ".");
+      var ms = { natural:"natural", atmosphere:"con vibra", truth:"sincero", elegance:"simple y elegante" };
+      intentLine = it.length===2 ? ("Queremos que quede " + ms[it[0]] + " + " + ms[it[1]] + ".") :
+                   it.length===1 ? ("Queremos que quede " + ms[it[0]] + ".") :
+                                   ("Queremos que se sienta real.");
     } else {
-      var mapEn = { natural:"natural", atmosphere:"full of vibe", truth:"sincere", elegance:"simple & elegant" };
-      var listEn = [];
-      for(var k=0;k<state.intent.length;k++) listEn.push(mapEn[state.intent[k]]);
-      intentText = (listEn.length===0) ? "And most of all: it should feel real." :
-                   (listEn.length===1) ? ("And it should feel " + listEn[0] + ".") :
-                                        ("And it should feel " + listEn[0] + " + " + listEn[1] + ".");
+      var me = { natural:"natural", atmosphere:"full of vibe", truth:"sincere", elegance:"simple & elegant" };
+      intentLine = it.length===2 ? ("We want it to feel " + me[it[0]] + " + " + me[it[1]] + ".") :
+                   it.length===1 ? ("We want it to feel " + me[it[0]] + ".") :
+                                   ("We want it to feel real.");
     }
 
-    var timeLine;
-    var t = state.time || "overtime";
+    // 3) Collaboration expectation
+    var collabLine;
     if(lang==="fr"){
-      timeLine = (t==="moment") ? "C’est pour un moment précis : on va droit au but." :
-                 (t==="overtime") ? "Tu veux pouvoir réutiliser : on construit une base solide." :
-                                   "Ça doit évoluer : on pense “série” et continuité.";
+      collabLine = (state.time==="moment") ? "Format idéal : une session ciblée, claire, efficace." :
+                  (state.time==="overtime") ? "Format idéal : construire une base réutilisable." :
+                                             "Format idéal : continuité (série + suivi).";
     } else if(lang==="es"){
-      timeLine = (t==="moment") ? "Es para un momento concreto: vamos a lo esencial." :
-                 (t==="overtime") ? "Quieres reutilizar: construimos una base sólida." :
-                                   "Tiene que evolucionar: pensamos en serie y continuidad.";
+      collabLine = (state.time==="moment") ? "Formato ideal: una sesión enfocada y eficaz." :
+                  (state.time==="overtime") ? "Formato ideal: construir una base reutilizable." :
+                                             "Formato ideal: continuidad (serie + seguimiento).";
     } else {
-      timeLine = (t==="moment") ? "It’s for a specific moment: straight to the point." :
-                 (t==="overtime") ? "You want reuse: we build a solid base." :
-                                   "It should evolve: we think series and continuity.";
+      collabLine = (state.time==="moment") ? "Ideal format: one focused, efficient shoot." :
+                  (state.time==="overtime") ? "Ideal format: build a reusable base." :
+                                             "Ideal format: continuity (series + follow-up).";
     }
 
-    var close = (lang==="fr") ? ("Moi, je fais ça avec mon style (promis, je ne le change pas au milieu 😄).") :
-                (lang==="es") ? ("Yo lo haré con mi estilo (prometido: no lo cambio a mitad 😄).") :
-                                ("I’ll do this with my style (promise: I won’t change it halfway 😄).");
+    var close;
+    if(lang==="fr") close = "Et oui : je le fais avec mon style. Pas de “mode caméléon” 😄";
+    else if(lang==="es") close = "Y sí: lo haré con mi estilo. Nada de “camaleón” 😄";
+    else close = "And yes: I’ll do it with my style. No chameleon mode 😄";
 
-    return { title: projLabel, lines:[coreLine, intentText, timeLine, close] };
+    return {
+      projLabel: projLabel,
+      who: who,
+      takeaways: [coreLine, intentLine, collabLine],
+      close: close
+    };
   }
 
   function tags(){
     var a = tr();
-    var res = [];
-    if(state.core) res.push(a.core.opts[state.core].t);
-    for(var i=0;i<state.intent.length;i++){
-      res.push(a.core.intent[state.intent[i]].t);
-    }
-    var c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
+    var out = [];
+    if(state.core) out.push(a.core.opts[state.core].t);
+    for(var i=0;i<state.intent.length;i++) out.push(a.core.intent[state.intent[i]].t);
+
+    // slider tag
+    var c=state.sliders.calm, p=state.sliders.present, r=state.sliders.rich;
     var extra;
     if(lang==="fr"){
-      extra = (c>65 && p<45) ? "Calme & discret" :
-              (c<40 && p>60) ? "Énergie & proche" :
-              (r>70) ? "Détails & matière" :
+      extra = (c>65 && p<45) ? "Calme + discret" :
+              (c<45 && p>60) ? "Énergie + proche" :
+              (r>70) ? "Matière + détails" :
               (r<35) ? "Très épuré" : "Équilibré";
     } else if(lang==="es"){
-      extra = (c>65 && p<45) ? "Calma y discreto" :
-              (c<40 && p>60) ? "Energía y cerca" :
-              (r>70) ? "Detalle y textura" :
+      extra = (c>65 && p<45) ? "Calma + discreto" :
+              (c<45 && p>60) ? "Energía + cerca" :
+              (r>70) ? "Textura + detalle" :
               (r<35) ? "Muy limpio" : "Equilibrado";
     } else {
-      extra = (c>65 && p<45) ? "Calm & discreet" :
-              (c<40 && p>60) ? "Energy & close" :
-              (r>70) ? "Detail & texture" :
+      extra = (c>65 && p<45) ? "Calm + discreet" :
+              (c<45 && p>60) ? "Energy + close" :
+              (r>70) ? "Texture + detail" :
               (r<35) ? "Very minimal" : "Balanced";
     }
-    res.push(extra);
+    out.push(extra);
+
     // unique + first 3
-    var out = [];
-    for(var j=0;j<res.length;j++){
-      if(out.indexOf(res[j])===-1) out.push(res[j]);
-    }
-    return out.slice(0,3);
+    var uniq = [];
+    for(var j=0;j<out.length;j++) if(uniq.indexOf(out[j])===-1) uniq.push(out[j]);
+    return uniq.slice(0,3);
   }
 
-  function radarSVG(values){
-    var w=260, h=220, cx=w/2, cy=h/2+10, R=82;
-    var axes = [
-      { key:"calm", angle:-90 },
-      { key:"present", angle:30 },
-      { key:"rich", angle:150 }
-    ];
-    var a = tr();
-    var s = a.feel.s;
-
-    function pt(key, val){
-      var ang=0;
-      for(var i=0;i<axes.length;i++) if(axes[i].key===key) ang = axes[i].angle;
-      var rad = ang * Math.PI/180;
-      var r = R * (val/100);
-      return { x: cx + Math.cos(rad)*r, y: cy + Math.sin(rad)*r };
-    }
-
-    var p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
-    var o1=pt("calm",100), o2=pt("present",100), o3=pt("rich",100);
-
-    function polyAt(v){
-      var q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
-      return '<polygon points="' + q1.x+','+q1.y+' '+q2.x+','+q2.y+' '+q3.x+','+q3.y + '" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>';
-    }
-
-    var grid = polyAt(30) + polyAt(60) + polyAt(100);
-    var poly = '<polygon points="' + p1.x+','+p1.y+' '+p2.x+','+p2.y+' '+p3.x+','+p3.y + '" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>';
-    var lines =
-      '<line x1="'+cx+'" y1="'+cy+'" x2="'+o1.x+'" y2="'+o1.y+'" stroke="rgba(255,255,255,.20)"/>' +
-      '<line x1="'+cx+'" y1="'+cy+'" x2="'+o2.x+'" y2="'+o2.y+'" stroke="rgba(255,255,255,.20)"/>' +
-      '<line x1="'+cx+'" y1="'+cy+'" x2="'+o3.x+'" y2="'+o3.y+'" stroke="rgba(255,255,255,.20)"/>';
-
-    var lab1 = esc(s.calm.l) + " ↔ " + esc(s.calm.r);
-    var lab2 = esc(s.present.l) + " ↔ " + esc(s.present.r);
-    var lab3 = esc(s.rich.l) + " ↔ " + esc(s.rich.r);
-
-    var labels =
-      '<text x="'+o1.x+'" y="'+(o1.y-10)+'" fill="rgba(255,255,255,.65)" font-size="11" text-anchor="middle">'+lab1+'</text>' +
-      '<text x="'+(o2.x+10)+'" y="'+(o2.y+6)+'" fill="rgba(255,255,255,.65)" font-size="11" text-anchor="start">'+lab2+'</text>' +
-      '<text x="'+(o3.x-10)+'" y="'+(o3.y+6)+'" fill="rgba(255,255,255,.65)" font-size="11" text-anchor="end">'+lab3+'</text>';
-
-    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Vibe radar">' + grid + lines + poly + labels + '</svg>';
+  function mailtoLink(subject, body){
+    var to = MAIL_TO ? MAIL_TO : "";
+    return "mailto:" + encodeURIComponent(to) +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
   }
 
-  // Renders
+  // ---------------- Renderers
   function renderIntro(){
     var a = tr();
+    var row = btnRow(a.ui.start, function(){ next(); });
+
     app.innerHTML =
       '<div class="kicker">'+esc(a.intro.kicker)+'</div>' +
-      '<div class="bigtitle">'+esc(a.intro.h1)+'</div>' +
+      '<h1>'+esc(a.intro.h1)+'</h1>' +
       '<p class="lead">'+esc(a.intro.p).replace(/\n/g,"<br/>")+'</p>' +
-      btns(a.ui.start);
-    bindPrimary(function(){ next(); });
+      '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>' +
+      row.html;
+
+    row.bind();
   }
 
   function renderName(){
     var a = tr();
-    app.innerHTML =
-      '<h1>'+esc(a.who.nameH1)+'</h1>' +
-      '<p class="lead">'+esc(a.who.nameHelp)+'</p>' +
-      '<div class="fieldlabel">'+esc(a.ui.optional)+'</div>' +
-      '<input id="nameInput" type="text" value="'+esc(state.name)+'" placeholder="'+esc(a.who.namePh)+'" />' +
-      btns(a.ui.continue);
-    bindPrimary(function(){
-      state.name = (document.getElementById("nameInput").value || "").trim();
+    var row = btnRow(a.ui.continue, function(){
+      state.name = (document.getElementById("nameInput").value||"").trim();
       next();
     });
+
+    app.innerHTML =
+      '<div class="kicker">'+esc(a.acts.who)+'</div>' +
+      '<h1>'+esc(a.who.nameH1)+'</h1>' +
+      '<p class="lead">'+esc(a.who.nameHelp)+'</p>' +
+      '<input id="nameInput" type="text" value="'+esc(state.name)+'" placeholder="'+esc(a.who.namePh)+'" />' +
+      '<div class="micro">'+esc(a.ui.optional)+'</div>' +
+      row.html;
+
+    row.bind();
   }
 
   function renderProject(){
     var a = tr();
-    app.innerHTML =
-      '<h1>'+esc(a.who.projH1)+'</h1>' +
-      '<p class="lead">'+esc(a.who.projHelp)+'</p>' +
-      '<div class="fieldlabel">'+esc(a.ui.optional)+'</div>' +
-      '<input id="projInput" type="text" value="'+esc(state.project)+'" placeholder="'+esc(a.who.projPh)+'" />' +
-      btns(a.ui.continue);
-    bindPrimary(function(){
-      state.project = (document.getElementById("projInput").value || "").trim();
+    var row = btnRow(a.ui.continue, function(){
+      state.project = (document.getElementById("projInput").value||"").trim();
       next();
     });
+
+    app.innerHTML =
+      '<div class="kicker">'+esc(a.acts.who)+'</div>' +
+      '<h1>'+esc(a.who.projH1)+'</h1>' +
+      '<p class="lead">'+esc(a.who.projHelp)+'</p>' +
+      '<input id="projInput" type="text" value="'+esc(state.project)+'" placeholder="'+esc(a.who.projPh)+'" />' +
+      '<div class="micro">'+esc(a.ui.optional)+'</div>' +
+      row.html;
+
+    row.bind();
   }
 
   function renderCore(){
     var a = tr();
     var c = a.core.opts;
+    var row = btnRow(a.ui.continue, function(){
+      if(!state.core){ showToast(a.ui.pickOne); return; }
+      next();
+    });
+
     var items = [
       ["place", c.place.t, c.place.d],
       ["story", c.story.t, c.story.d],
       ["moment", c.moment.t, c.moment.d]
     ];
-    var html = '<h1>'+esc(a.core.h1)+'</h1>' +
-      '<p class="lead">'+esc(a.core.help)+'</p>' +
-      '<div class="choices">';
+
+    var html = '';
+    html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
+    html += '<h1>'+esc(a.core.h1)+'</h1>';
+    html += '<p class="lead">'+esc(a.core.help)+'</p>';
+    html += '<div class="choices">';
     for(var i=0;i<items.length;i++){
-      var id = items[i][0], t = items[i][1], d = items[i][2];
+      var id=items[i][0], t=items[i][1], d=items[i][2];
       html += '<div class="choice '+(state.core===id?'sel':'')+'" data-id="'+id+'">' +
         '<div class="optTitle">'+esc(t)+'</div>' +
         '<div class="optDesc">'+esc(d)+'</div>' +
       '</div>';
     }
-    html += '</div>' + btns(a.ui.continue);
+    html += '</div>';
+    html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+    html += row.html;
+
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".choice");
     for(var j=0;j<els.length;j++){
       els[j].onclick = function(){
         state.core = this.getAttribute("data-id");
-        safeRender();
+        safeRender(false);
       };
     }
-    bindPrimary(function(){
-      if(!state.core){ showToast(a.ui.pickOne); return; }
-      next();
-    });
+    row.bind();
   }
 
   function renderIntent(){
     var a = tr();
     var o = a.core.intent;
+    var row = btnRow(a.ui.continue, function(){
+      if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+      next();
+    });
+
     var items = [
       ["natural", o.natural.t, o.natural.d],
       ["atmosphere", o.atmosphere.t, o.atmosphere.d],
       ["truth", o.truth.t, o.truth.d],
       ["elegance", o.elegance.t, o.elegance.d]
     ];
-    var html = '<h1>'+esc(a.core.intentH1)+'</h1>' +
-      '<p class="lead">'+esc(a.core.intentHelp)+'</p>' +
-      '<div class="checks">';
+
+    var html = '';
+    html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
+    html += '<h1>'+esc(a.core.intentH1)+'</h1>';
+    html += '<p class="lead">'+esc(a.core.intentHelp)+'</p>';
+    html += '<div class="checks">';
     for(var i=0;i<items.length;i++){
-      var id = items[i][0], t = items[i][1], d = items[i][2];
+      var id=items[i][0], t=items[i][1], d=items[i][2];
       var sel = state.intent.indexOf(id)!==-1;
       html += '<div class="check '+(sel?'sel':'')+'" data-id="'+id+'">' +
         '<div class="optTitle">'+esc(t)+'</div>' +
         '<div class="optDesc">'+esc(d)+'</div>' +
       '</div>';
     }
-    html += '</div><div class="meta">'+esc(a.ui.maxTwo)+'</div>' + btns(a.ui.continue);
+    html += '</div>';
+    html += '<div class="micro">'+esc(a.ui.maxTwoShort)+'</div>';
+    html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+    html += row.html;
+
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".check");
@@ -890,26 +925,31 @@
           if(state.intent.length>=2){ showToast(a.ui.maxTwo); return; }
           state.intent.push(id);
         }
-        safeRender();
+        safeRender(false);
       };
     }
-    bindPrimary(function(){
-      if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
-      next();
-    });
+    row.bind();
   }
 
   function renderTime(){
     var a = tr();
-    var t = a.live.time;
+    var t = a.use.time;
+    var row = btnRow(a.ui.continue, function(){
+      if(!state.time){ showToast(a.ui.pickOne); return; }
+      next();
+    });
+
     var items = [
       ["moment", t.moment.t, t.moment.d],
       ["overtime", t.overtime.t, t.overtime.d],
       ["grow", t.grow.t, t.grow.d]
     ];
-    var html = '<h1>'+esc(a.live.timeH1)+'</h1>' +
-      '<p class="lead">'+esc(a.live.timeHelp)+'</p>' +
-      '<div class="choices">';
+
+    var html = '';
+    html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
+    html += '<h1>'+esc(a.use.timeH1)+'</h1>';
+    html += '<p class="lead">'+esc(a.use.timeHelp)+'</p>';
+    html += '<div class="choices">';
     for(var i=0;i<items.length;i++){
       var id=items[i][0], ti=items[i][1], de=items[i][2];
       html += '<div class="choice '+(state.time===id?'sel':'')+'" data-id="'+id+'">' +
@@ -917,34 +957,42 @@
         '<div class="optDesc">'+esc(de)+'</div>' +
       '</div>';
     }
-    html += '</div>' + btns(a.ui.continue);
+    html += '</div>';
+    html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+    html += row.html;
+
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".choice");
     for(var j=0;j<els.length;j++){
       els[j].onclick = function(){
         state.time = this.getAttribute("data-id");
-        safeRender();
+        safeRender(false);
       };
     }
-    bindPrimary(function(){
-      if(!state.time){ showToast(a.ui.pickOne); return; }
-      next();
-    });
+    row.bind();
   }
 
   function renderWhere(){
     var a = tr();
-    var w = a.live.where;
+    var w = a.use.where;
+    var row = btnRow(a.ui.continue, function(){
+      if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+      next();
+    });
+
     var items = [
       ["website", w.website.t, w.website.d],
       ["social", w.social.t, w.social.d],
       ["editorial", w.editorial.t, w.editorial.d],
       ["print", w.print.t, w.print.d]
     ];
-    var html = '<h1>'+esc(a.live.whereH1)+'</h1>' +
-      '<p class="lead">'+esc(a.live.whereHelp)+'</p>' +
-      '<div class="checks">';
+
+    var html = '';
+    html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
+    html += '<h1>'+esc(a.use.whereH1)+'</h1>';
+    html += '<p class="lead">'+esc(a.use.whereHelp)+'</p>';
+    html += '<div class="checks">';
     for(var i=0;i<items.length;i++){
       var id=items[i][0], ti=items[i][1], de=items[i][2];
       var sel = state.where.indexOf(id)!==-1;
@@ -953,7 +1001,11 @@
         '<div class="optDesc">'+esc(de)+'</div>' +
       '</div>';
     }
-    html += '</div><div class="meta">'+esc(a.ui.maxTwo)+'</div>' + btns(a.ui.continue);
+    html += '</div>';
+    html += '<div class="micro">'+esc(a.ui.maxTwoShort)+'</div>';
+    html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
+    html += row.html;
+
     app.innerHTML = html;
 
     var els = app.querySelectorAll(".check");
@@ -967,13 +1019,10 @@
           if(state.where.length>=2){ showToast(a.ui.maxTwo); return; }
           state.where.push(id);
         }
-        safeRender();
+        safeRender(false);
       };
     }
-    bindPrimary(function(){
-      if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
-      next();
-    });
+    row.bind();
   }
 
   function sliderBlock(key, left, right, hl, hr, value){
@@ -981,132 +1030,8 @@
       '<div class="slider">' +
         '<div class="slab"><span>'+esc(left)+'</span><span>'+esc(right)+'</span></div>' +
         '<input type="range" min="0" max="100" value="'+value+'" data-key="'+key+'">' +
-        '<div class="smallhelp"><span>'+esc(hl)+'</span><span style="float:right">'+esc(hr)+'</span></div>' +
+        '<div class="sliderHelp"><span>'+esc(hl)+'</span><span>'+esc(hr)+'</span></div>' +
       '</div>';
   }
 
-  function renderFeel(){
-    var a = tr();
-    var s = a.feel.s;
-    app.innerHTML =
-      '<h1>'+esc(a.feel.h1)+'</h1>' +
-      '<p class="lead">'+esc(a.feel.help)+'</p>' +
-      sliderBlock("calm", s.calm.l, s.calm.r, s.calm.hl, s.calm.hr, state.sliders.calm) +
-      sliderBlock("present", s.present.l, s.present.r, s.present.hl, s.present.hr, state.sliders.present) +
-      sliderBlock("rich", s.rich.l, s.rich.r, s.rich.hl, s.rich.hr, state.sliders.rich) +
-      '<div class="box" style="margin-top:14px">' +
-        '<div class="kicker">'+esc(a.acts.feel)+'</div>' +
-        '<div id="liveSentence" style="margin-top:8px; color:rgba(255,255,255,.86)">'+esc(sliderSentence())+'</div>' +
-      '</div>' +
-      btns(a.ui.continue);
-
-    // no re-render while dragging
-    var inputs = app.querySelectorAll('input[type="range"]');
-    for(var i=0;i<inputs.length;i++){
-      inputs[i].addEventListener("input", function(){
-        var k = this.getAttribute("data-key");
-        state.sliders[k] = Number(this.value);
-        var live = document.getElementById("liveSentence");
-        if(live) live.textContent = sliderSentence();
-      });
-    }
-
-    bindPrimary(function(){ next(); });
-  }
-
-  function renderReport(){
-    var a = tr();
-    var scores = usageScores();
-    var base = scores.base;
-    var longTerm = scores.longTerm;
-    var story = storyLines();
-    var tg = tags();
-
-    var projTitle = (state.project||"").trim() || (lang==="fr"?"Projet":lang==="es"?"Proyecto":"Project");
-    var who = (state.name||"").trim();
-    var collabText = a.report.collab[state.time || "overtime"];
-
-    var whereLabels = {
-      website: a.live.where.website.t,
-      social: a.live.where.social.t,
-      editorial: a.live.where.editorial.t,
-      print: a.live.where.print.t
-    };
-
-    function bar(label, v){
-      v = Math.max(0, Math.min(100, Math.round(v)));
-      return '' +
-        '<div class="bar">' +
-          '<div class="barhead"><span>'+esc(label)+'</span><span>'+v+'%</span></div>' +
-          '<div class="track"><div class="fill" style="width:'+v+'%"></div></div>' +
-        '</div>';
-    }
-
-    var subject = (lang==="fr" ? "Discussion projet — " + projTitle :
-                  lang==="es" ? "Conversación del proyecto — " + projTitle :
-                               "Project discussion — " + projTitle);
-
-    var bodyLines = [];
-    bodyLines.push(a.report.kicker + " — " + projTitle);
-    if(who) bodyLines.push((lang==="fr"?"Nom : ":lang==="es"?"Nombre : ":"Name: ") + who);
-    bodyLines.push("");
-    for(var i=0;i<story.lines.length;i++) bodyLines.push(story.lines[i]);
-    bodyLines.push("");
-    bodyLines.push(a.report.sec2 + ":");
-    bodyLines.push("- " + whereLabels.website + ": " + Math.round(base.website) + "%");
-    bodyLines.push("- " + whereLabels.social + ": " + Math.round(base.social) + "%");
-    bodyLines.push("- " + whereLabels.editorial + ": " + Math.round(base.editorial) + "%");
-    bodyLines.push("- " + whereLabels.print + ": " + Math.round(base.print) + "%");
-    bodyLines.push("- " + a.ui.longTerm + ": " + Math.round(longTerm) + "%");
-    bodyLines.push("");
-    bodyLines.push(a.report.sec4 + ":");
-    bodyLines.push("- " + a.report.bullets.series);
-    bodyLines.push("- " + a.report.bullets.rhythm);
-    bodyLines.push("- " + a.report.bullets.real);
-    bodyLines.push("- " + a.report.bullets.reuse);
-    bodyLines.push("");
-    bodyLines.push(a.report.sec5 + ":");
-    bodyLines.push(collabText);
-
-    var snapshotText = bodyLines.join("\n");
-    var mailto = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(snapshotText);
-
-    app.innerHTML =
-      '<div class="kicker">'+esc(a.report.kicker)+'</div>' +
-      '<div class="bigtitle">'+esc(projTitle)+'</div>' +
-      '<div class="subtitle">'+esc(a.report.sub) + (who ? " · " + esc(who) : "") + '</div>' +
-      '<div class="tags">' + tg.map(function(x){ return '<div class="tag">'+esc(x)+'</div>'; }).join("") + '</div>' +
-      '<div class="divider"></div>' +
-
-      '<div class="grid2">' +
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.sec1)+'</div>' +
-          '<div style="margin-top:10px; color:rgba(255,255,255,.88)">' +
-            story.lines.map(function(l){ return '<div style="margin-top:8px">'+esc(l)+'</div>'; }).join("") +
-          '</div>' +
-        '</div>' +
-
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.sec2)+'</div>' +
-          bar(whereLabels.website, base.website) +
-          bar(whereLabels.social, base.social) +
-          bar(whereLabels.editorial, base.editorial) +
-          bar(whereLabels.print, base.print) +
-          bar(a.ui.longTerm, longTerm) +
-          '<div class="smallhelp" style="margin-top:10px">' +
-            esc(lang==="fr"
-              ? "Ces barres donnent une idée du rythme et de la durée de vie (pas une formule magique)."
-              : lang==="es"
-                ? "Estas barras dan una idea del ritmo y la vida útil (no es magia)."
-                : "These bars hint at rhythm + longevity (not magic)."
-            ) +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="divider"></div>' +
-
-      '<div class="grid2">' +
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.sec3)+'</div>' +
-          '<div style="margin-top:10px">' + radarSVG(state.sliders)
+  function apply
