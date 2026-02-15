@@ -3,375 +3,231 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>MARINA — Vision Board & Snapshot</title>
+    <title>Marina — Project Snapshot</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --bg: #0b0c0e;
+            --bg: #0d0f12;
             --card: rgba(255, 255, 255, 0.05);
             --line: rgba(255, 255, 255, 0.12);
             --txt: rgba(255, 255, 255, 0.95);
             --muted: rgba(255, 255, 255, 0.5);
             --accent: #ffffff;
             --radius: 28px;
-            --shadow: 0 25px 80px rgba(0,0,0,0.6);
         }
 
         * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         body {
             margin: 0;
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--txt);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Arrière-plan animé */
-        .bg-gradient {
-            position: fixed; inset: 0; z-index: -2;
-            background: 
-                radial-gradient(circle at 15% 15%, rgba(255,255,255,0.05) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(255,255,255,0.03) 0%, transparent 40%),
-                #0b0c0e;
-        }
-
-        .wrap {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .shell { width: min(900px, 100%); }
+        .bg-grain {
+            position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%), #0d0f12;
+        }
+
+        .shell { width: min(900px, 90%); padding: 40px 0; }
 
         .card {
-            background: linear-gradient(165deg, var(--card), rgba(255,255,255,0.01));
+            background: var(--card);
             border: 1px solid var(--line);
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
             backdrop-filter: blur(20px);
             padding: 50px;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        @media (max-width: 600px) { .card { padding: 30px; } }
-
-        /* Navigation haut */
         .topbar {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 40px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 30px; font-size: 12px; letter-spacing: 1px;
         }
 
         .lang button {
             background: none; border: 1px solid transparent; color: var(--muted);
-            cursor: pointer; padding: 6px 12px; border-radius: 10px; font-weight: 600;
+            cursor: pointer; padding: 5px 10px; border-radius: 8px; font-weight: 600;
         }
         .lang button.active { color: var(--accent); border-color: var(--line); background: rgba(255,255,255,0.05); }
 
-        /* Typographie */
-        h1 { font-size: 42px; margin: 0 0 20px; letter-spacing: -1.5px; line-height: 1.1; font-weight: 700; }
-        .lead { font-size: 20px; color: var(--muted); line-height: 1.6; margin-bottom: 30px; }
+        h1 { font-size: 42px; margin: 0 0 20px; letter-spacing: -1px; line-height: 1.1; }
+        .lead { font-size: 20px; color: var(--muted); line-height: 1.5; margin-bottom: 30px; }
 
-        /* Formulaire */
-        input[type="text"] {
-            width: 100%; padding: 20px; border-radius: 18px; border: 1px solid var(--line);
-            background: rgba(255,255,255,0.03); color: var(--txt); font-size: 22px; outline: none;
-        }
-        input[type="text"]:focus { border-color: var(--accent); background: rgba(255,255,255,0.07); }
-
-        /* Choix & Checks */
-        .grid-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin: 30px 0; }
         .item {
-            padding: 24px; border-radius: 20px; border: 1px solid var(--line);
-            background: rgba(255,255,255,0.02); cursor: pointer; position: relative;
+            padding: 20px; border-radius: 18px; border: 1px solid var(--line);
+            background: rgba(255,255,255,0.02); cursor: pointer; margin-bottom: 12px;
         }
-        .item:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
-        .item.sel { background: rgba(255,255,255,0.1); border-color: var(--accent); }
-        .item b { display: block; font-size: 18px; margin-bottom: 5px; }
-        .item small { color: var(--muted); line-height: 1.4; display: block; }
+        .item:hover { background: rgba(255,255,255,0.05); }
+        .item.sel { border-color: var(--accent); background: rgba(255,255,255,0.08); }
 
-        /* Sliders */
-        .slider-wrap { margin: 40px 0; }
-        .slider-labels { display: flex; justify-content: space-between; font-weight: 600; font-size: 14px; color: var(--muted); text-transform: uppercase; }
-        .slider-hints { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 8px; }
         input[type="range"] {
-            width: 100%; height: 6px; border-radius: 10px; background: var(--line);
+            width: 100%; height: 6px; border-radius: 5px; background: var(--line);
             outline: none; -webkit-appearance: none; margin: 20px 0;
         }
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); cursor: pointer;
-            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+            -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer;
         }
 
-        /* Boutons */
-        .btn-row { display: flex; gap: 15px; margin-top: 40px; }
         button.primary {
-            padding: 18px 35px; border-radius: 999px; border: none; background: var(--accent);
-            color: #000; font-weight: 700; font-size: 16px; cursor: pointer;
-        }
-        button.primary:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
-        button.ghost {
-            padding: 18px 35px; border-radius: 999px; border: 1px solid var(--line); background: none;
-            color: var(--txt); font-weight: 600; cursor: pointer;
+            padding: 15px 30px; border-radius: 999px; border: none; background: var(--accent);
+            color: #000; font-weight: 700; cursor: pointer; font-size: 16px;
         }
 
-        /* Rapport / Report */
-        .report-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; margin-top: 30px; }
-        @media (max-width: 800px) { .report-grid { grid-template-columns: 1fr; } }
-        .chart-box { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 20px; display: flex; align-items: center; justify-content: center; }
-        .tag { display: inline-block; padding: 6px 14px; border-radius: 999px; background: var(--line); font-size: 13px; margin: 4px; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        @media (max-width: 700px) { .report-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
-
 <body>
-    <div class="bg-gradient"></div>
-    <div class="wrap">
-        <div class="shell">
-            <div class="topbar">
-                <div style="font-weight: 800; letter-spacing: 4px;">MARINA</div>
-                <div class="lang" id="langBox">
-                    <button onclick="changeLang('en')" id="btn-en">EN</button>
-                    <button onclick="changeLang('fr')" id="btn-fr">FR</button>
-                    <button onclick="changeLang('es')" id="btn-es">ES</button>
-                </div>
+    <div class="bg-grain"></div>
+    <div class="shell">
+        <div class="topbar">
+            <div id="stepCounter">—</div>
+            <div class="lang">
+                <button onclick="setLang('en')" id="btnEN">EN</button>
+                <button onclick="setLang('fr')" id="btnFR">FR</button>
+                <button onclick="setLang('es')" id="btnES">ES</button>
             </div>
-
-            <div class="card fade-in" id="app">
-                </div>
         </div>
+        <div class="card fade-in" id="app"></div>
     </div>
 
-    <script>
-        const i18n = {
-            fr: {
-                intro_h1: "Chaque projet a une âme.",
-                intro_p: "Prenons un instant pour capturer l'essence de votre vision photographique. Ce snapshot servira de boussole pour notre future collaboration.",
-                start: "Commencer l'expérience",
-                name_h1: "Comment s'appelle l'esprit créatif ?",
-                name_p: "Pour garder nos échanges humains.",
-                project_h1: "Quel titre donner à cette vision ?",
-                project_p: "Un nom de code ou un titre officiel.",
-                core_h1: "Au fond, ce projet est...",
-                core_p: "L'intention change la manière de cadrer.",
-                core_opts: [
-                    {id:'place', t:"Un lieu à ressentir", d:"Focus sur la matière, la lumière et l'espace."},
-                    {id:'story', t:"Une histoire à raconter", d:"Focus sur l'humain, les gestes et la narration."},
-                    {id:'moment', t:"Un moment à préserver", d:"Focus sur l'émotion pure et la spontanéité."}
-                ],
-                feel_h1: "Instinctivement, quel est le tempo ?",
-                feel_p: "Ajustez les curseurs pour définir l'atmosphère globale.",
-                sliders: {
-                    calm: {l:"Calme", r:"Vibrant", hl:"Silence & lenteur", hr:"Énergie & mouvement"},
-                    present: {l:"Discret", r:"Affirmé", hl:"Observateur neutre", hr:"Regard incarné"},
-                    rich: {l:"Épuré", r:"Riche", hl:"Minimalisme", hr:"Détails & textures"}
-                },
-                report_h1: "Vision Snapshot",
-                report_sub: "Lecture photographique préliminaire",
-                report_text: "Votre projet se dessine autour d'une esthétique ",
-                cta: "Parlons de ce projet",
-                copy: "Copier le résumé"
-            },
-            en: {
-                intro_h1: "Every project has a soul.",
-                intro_p: "Let's take a moment to capture the essence of your photographic vision. This snapshot will serve as a compass for our collaboration.",
-                start: "Start the Experience",
-                name_h1: "Who is the creative mind?",
-                name_p: "To keep things human.",
-                project_h1: "What is the project title?",
-                project_p: "A code name or an official title.",
-                core_h1: "At its core, this project is...",
-                core_p: "Intention changes the way we frame.",
-                core_opts: [
-                    {id:'place', t:"A place to feel", d:"Focus on texture, light, and space."},
-                    {id:'story', t:"A story to tell", d:"Focus on people, gestures, and narrative."},
-                    {id:'moment', t:"A moment to preserve", d:"Focus on pure emotion and spontaneity."}
-                ],
-                feel_h1: "Instinctively, what's the tempo?",
-                feel_p: "Adjust the sliders to define the global atmosphere.",
-                sliders: {
-                    calm: {l:"Calm", r:"Vibrant", hl:"Quiet & slow", hr:"Energy & motion"},
-                    present: {l:"Discreet", r:"Bold", hl:"Neutral observer", hr:"Embodied gaze"},
-                    rich: {l:"Simple", r:"Rich", hl:"Minimalism", hr:"Detail & texture"}
-                },
-                report_h1: "Vision Snapshot",
-                report_sub: "Preliminary photographic reading",
-                report_text: "Your project is taking shape around an aesthetic of ",
-                cta: "Discuss this project",
-                copy: "Copy summary"
-            }
-        };
+<script>
+const i18n = {
+    fr: {
+        intro_h1: "Chaque projet a une âme.",
+        intro_p: "Prenons un instant pour capturer l'essence de votre vision photographique. Ce snapshot servira de boussole pour notre collaboration.",
+        start: "Commencer l'expérience",
+        feel_h1: "Instinctivement, quel est le tempo ?",
+        sliders: {
+            calm: {l:"Calme", r:"Vibrant"},
+            present: {l:"Discret", r:"Affirmé"},
+            rich: {l:"Épuré", r:"Riche"}
+        },
+        report_h1: "Lecture du projet",
+        report_sub: "Une première lecture photographique",
+        cta: "Parlons de ce projet"
+    },
+    en: {
+        intro_h1: "Every project has a soul.",
+        intro_p: "Let's take a moment to capture the essence of your photographic vision. This snapshot will be our compass.",
+        start: "Start Experience",
+        feel_h1: "Instinctively, what is the tempo?",
+        sliders: {
+            calm: {l:"Calm", r:"Lively"},
+            present: {l:"Discreet", r:"Present"},
+            rich: {l:"Simple", r:"Rich"}
+        },
+        report_h1: "Project Snapshot",
+        report_sub: "A first photographic reading",
+        cta: "Let's talk about it"
+    }
+};
 
-        let lang = 'fr';
-        let step = 0;
-        const state = {
-            name: "",
-            project: "",
-            core: null,
-            sliders: { calm: 50, present: 50, rich: 50 }
-        };
+let lang = 'fr';
+let step = 0;
+const state = { sliders: { calm: 50, present: 50, rich: 50 } };
 
-        function changeLang(l) {
-            lang = l;
-            document.querySelectorAll('.lang button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${l}`).classList.add('active');
-            render();
+function setLang(l) {
+    lang = l;
+    document.querySelectorAll('.lang button').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.getElementById('btn' + l.toUpperCase());
+    if(activeBtn) activeBtn.classList.add('active');
+    render();
+}
+
+function render() {
+    const app = document.getElementById('app');
+    const t = i18n[lang] || i18n['en'];
+    document.getElementById('stepCounter').innerText = step === 0 ? "INTRO" : `STEP ${step}`;
+
+    app.classList.remove('fade-in');
+    void app.offsetWidth;
+    app.classList.add('fade-in');
+
+    if (step === 0) {
+        app.innerHTML = `
+            <h1>${t.intro_h1}</h1>
+            <p class="lead">${t.intro_p}</p>
+            <button class="primary" onclick="step=1;render()">${t.start}</button>
+        `;
+    } else if (step === 1) {
+        app.innerHTML = `
+            <h1>${t.feel_h1}</h1>
+            ${renderSlider('calm', t.sliders.calm)}
+            ${renderSlider('present', t.sliders.present)}
+            ${renderSlider('rich', t.sliders.rich)}
+            <div style="margin-top:40px">
+                <button class="primary" onclick="step=2;render()">Générer le Snapshot</button>
+            </div>
+        `;
+    } else if (step === 2) {
+        renderReport();
+    }
+}
+
+function renderSlider(id, labels) {
+    return `
+        <div style="margin: 30px 0;">
+            <div style="display:flex; justify-content:space-between; font-weight:600; font-size:14px; color:var(--muted)">
+                <span>${labels.l}</span><span>${labels.r}</span>
+            </div>
+            <input type="range" min="0" max="100" value="${state.sliders[id]}" oninput="state.sliders['${id}']=this.value">
+        </div>
+    `;
+}
+
+function renderReport() {
+    const app = document.getElementById('app');
+    const t = i18n[lang];
+    app.innerHTML = `
+        <h1>${t.report_h1}</h1>
+        <p class="lead">${t.report_sub}</p>
+        <div class="report-grid">
+            <div style="font-size:18px; line-height:1.6; color:var(--muted)">
+                Votre projet semble privilégier une atmosphère <b>${state.sliders.calm > 50 ? 'vibrante' : 'calme'}</b> 
+                avec un regard <b>${state.sliders.present > 50 ? 'affirmé' : 'discret'}</b>. 
+                L'esthétique tend vers le <b>${state.sliders.rich > 50 ? 'détail riche' : 'minimalisme'}</b>.
+            </div>
+            <div style="background:rgba(255,255,255,0.02); border-radius:20px; padding:20px;">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+        <button class="primary" style="margin-top:30px" onclick="location.reload()">${t.cta}</button>
+    `;
+
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: [t.sliders.calm.r, t.sliders.present.r, t.sliders.rich.r],
+            datasets: [{
+                data: [state.sliders.calm, state.sliders.present, state.sliders.rich],
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' } } },
+            plugins: { legend: { display: false } }
         }
+    });
+}
 
-        function next() { step++; render(); }
-        function prev() { step--; render(); }
-
-        function render() {
-            const app = document.getElementById('app');
-            const t = i18n[lang] || i18n['en'];
-            app.classList.remove('fade-in');
-            void app.offsetWidth; 
-            app.classList.add('fade-in');
-
-            if (step === 0) {
-                app.innerHTML = `
-                    <h1>${t.intro_h1}</h1>
-                    <p class="lead">${t.intro_p}</p>
-                    <button class="primary" onclick="next()">${t.start}</button>
-                `;
-            } else if (step === 1) {
-                app.innerHTML = `
-                    <h1>${t.name_h1}</h1>
-                    <p class="lead">${t.name_p}</p>
-                    <input type="text" placeholder="..." id="nameInp" value="${state.name}" onchange="state.name=this.value">
-                    <div class="btn-row"><button class="primary" onclick="next()">→</button></div>
-                `;
-            } else if (step === 2) {
-                app.innerHTML = `
-                    <h1>${t.project_h1}</h1>
-                    <p class="lead">${t.project_p}</p>
-                    <input type="text" placeholder="..." id="projInp" value="${state.project}" onchange="state.project=this.value">
-                    <div class="btn-row"><button class="ghost" onclick="prev()">←</button><button class="primary" onclick="next()">→</button></div>
-                `;
-            } else if (step === 3) {
-                app.innerHTML = `
-                    <h1>${t.core_h1}</h1>
-                    <p class="lead">${t.core_p}</p>
-                    <div class="grid-choices">
-                        ${t.core_opts.map(opt => `
-                            <div class="item ${state.core === opt.id ? 'sel' : ''}" onclick="state.core='${opt.id}';next()">
-                                <b>${opt.t}</b>
-                                <small>${opt.d}</small>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } else if (step === 4) {
-                app.innerHTML = `
-                    <h1>${t.feel_h1}</h1>
-                    <p class="lead">${t.feel_p}</p>
-                    ${renderSlider('calm', t.sliders.calm)}
-                    ${renderSlider('present', t.sliders.present)}
-                    ${renderSlider('rich', t.sliders.rich)}
-                    <div class="btn-row"><button class="primary" onclick="next()">Générer le Snapshot</button></div>
-                `;
-            } else if (step === 5) {
-                renderReport();
-            }
-        }
-
-        function renderSlider(id, labels) {
-            return `
-                <div class="slider-wrap">
-                    <div class="slider-labels"><span>${labels.l}</span><span>${labels.r}</span></div>
-                    <input type="range" min="0" max="100" value="${state.sliders[id]}" oninput="state.sliders['${id}']=this.value">
-                    <div class="slider-hints"><span>${labels.hl}</span><span>${labels.hr}</span></div>
-                </div>
-            `;
-        }
-
-        function renderReport() {
-            const app = document.getElementById('app');
-            const t = i18n[lang];
-            const energy = state.sliders.calm > 60 ? (lang === 'fr' ? 'vibrante' : 'vibrant') : (lang === 'fr' ? 'contemplative' : 'contemplative');
-            
-            app.innerHTML = `
-                <div class="top-report">
-                    <h1 style="margin:0">${t.report_h1}</h1>
-                    <p class="lead" style="margin-bottom:10px">${t.report_sub}</p>
-                    <b style="text-transform:uppercase; letter-spacing:2px; font-size:14px;">${state.project || "Untitled"}</b>
-                </div>
-
-                <div class="report-grid">
-                    <div class="report-text">
-                        <p style="font-size:18px; line-height:1.7">
-                            Cher(e) <b>${state.name || 'Creative'}</b>, votre vision pour ce projet se définit comme une recherche de 
-                            <u>${t.core_opts.find(o => o.id === state.core).t.toLowerCase()}</u>. 
-                            L'atmosphère globale est <b>${energy}</b>, avec une présence visuelle 
-                            ${state.sliders.present > 50 ? (lang === 'fr' ? 'affirmée' : 'bold') : (lang === 'fr' ? 'subtile' : 'subtle')}.
-                        </p>
-                        <div style="margin-top:20px">
-                            <span class="tag">#${state.core}</span>
-                            <span class="tag">#${state.sliders.rich > 50 ? 'texture-rich' : 'minimalist'}</span>
-                        </div>
-                    </div>
-                    <div class="chart-box">
-                        <canvas id="radarChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="btn-row">
-                    <button class="primary" onclick="sendEmail()">${t.cta}</button>
-                    <button class="ghost" onclick="copyReport()">${t.copy}</button>
-                </div>
-            `;
-
-            
-            
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: [t.sliders.calm.r, t.sliders.present.r, t.sliders.rich.r],
-                    datasets: [{
-                        data: [state.sliders.calm, state.sliders.present, state.sliders.rich],
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        borderColor: '#ffffff',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    scales: {
-                        r: {
-                            min: 0, max: 100,
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            angleLines: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { display: false },
-                            pointLabels: { color: 'rgba(255,255,255,0.6)', font: { size: 10, weight: '600' } }
-                        }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        function sendEmail() {
-            const subject = encodeURIComponent(`MARINA Vision : ${state.project}`);
-            const body = encodeURIComponent(`Bonjour,\n\nVoici ma vision pour le projet ${state.project}.\nEssence : ${state.core}\nScores : Calm(${state.sliders.calm}), Present(${state.sliders.present}), Rich(${state.sliders.rich}).\n\nParlons-en.`);
-            window.location.href = `mailto:hello@mobilitylab.ch?subject=${subject}&body=${body}`;
-        }
-
-        function copyReport() {
-            const text = `Snapshot MARINA - Projet: ${state.project}\nVision: ${state.core}\nAtmosphère: ${state.sliders.calm}% Vibrant`;
-            navigator.clipboard.writeText(text);
-            alert("Copié dans le presse-papier !");
-        }
-
-        changeLang('fr');
-    </script>
+// Initialisation sécurisée
+window.onload = () => setLang('fr');
+</script>
 </body>
 </html>
