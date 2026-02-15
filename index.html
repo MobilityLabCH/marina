@@ -1,875 +1,357 @@
 <!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visual Project Snapshot</title>
-    <style>
-      :root{
-        --bg:#0b0d10; --card:rgba(255,255,255,.06); --card2:rgba(255,255,255,.09);
-        --txt:rgba(255,255,255,.92); --muted:rgba(255,255,255,.62);
-        --line:rgba(255,255,255,.14); --accent:rgba(255,255,255,.92);
-        --shadow: 0 18px 50px rgba(0,0,0,.55);
-        --radius: 22px;
-      }
-      *{box-sizing:border-box}
-      body{
-        margin:0; min-height:100vh; color:var(--txt); background:var(--bg);
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-        overflow-x:hidden;
-      }
-      .bg{
-        position:fixed; inset:0; z-index:-2;
-        background:
-          radial-gradient(900px 420px at 18% 20%, rgba(255,255,255,.10), transparent 60%),
-          radial-gradient(900px 520px at 82% 30%, rgba(255,255,255,.08), transparent 62%),
-          radial-gradient(900px 520px at 55% 92%, rgba(255,255,255,.06), transparent 60%),
-          linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
-        filter:saturate(.95);
-      }
-      .grain{
-        position:fixed; inset:-40px; z-index:-1; opacity:.10; pointer-events:none;
-        background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>');
-        mix-blend-mode:overlay;
-      }
-      .wrap{
-        min-height:100vh;
-        display:flex; align-items:center; justify-content:center;
-        padding:28px 16px;
-      }
-      .shell{
-        width:min(980px, 100%);
-        display:grid;
-        grid-template-columns: 1fr;
-        gap:14px;
-      }
-      .topbar{
-        display:flex; justify-content:space-between; align-items:center;
-        padding:10px 6px;
-        color:var(--muted);
-        font-size:13px;
-      }
-      .pill{
-        border:1px solid var(--line);
-        background:rgba(255,255,255,.04);
-        padding:6px 10px; border-radius:999px;
-        display:inline-flex; gap:8px; align-items:center;
-      }
-      .card{
-        border:1px solid var(--line);
-        background:linear-gradient(180deg, var(--card), rgba(255,255,255,.03));
-        border-radius:var(--radius);
-        box-shadow:var(--shadow);
-        overflow:hidden;
-      }
-      .content{
-        padding:28px;
-      }
-      @media (max-width:640px){ .content{padding:20px} }
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Project Snapshot — Marina</title>
 
-      h1{font-size:34px; margin:0 0 10px; letter-spacing:-.02em}
-      h2{font-size:18px; margin:0 0 12px; color:var(--muted); font-weight:500}
-      .lead{color:var(--muted); line-height:1.5; margin:0 0 18px}
+<style>
+:root{
+  --bg:#0e0f11;
+  --card:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.14);
+  --txt:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.62);
+  --accent:#ffffff;
+  --radius:22px;
+  --shadow:0 18px 50px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+}
+.wrap{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px 14px;
+}
+.card{
+  width:min(900px,100%);
+  background:linear-gradient(180deg,var(--card),rgba(255,255,255,.03));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:28px;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+.lang button{
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-weight:600;
+  cursor:pointer;
+  margin-left:8px;
+}
+.lang button.active{color:var(--txt)}
+h1{font-size:32px; margin:0 0 12px}
+h2{font-size:18px; color:var(--muted); margin:0 0 14px; font-weight:500}
+p{line-height:1.55}
+input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--txt);
+  margin-top:8px;
+}
+.choices,.checks{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.choice,.check{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  cursor:pointer;
+}
+.choice.sel,.check.sel{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.3);
+}
+.meta{font-size:13px;color:var(--muted);margin-top:8px}
+.btns{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+button{
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  color:var(--txt);
+  padding:11px 18px;
+  font-weight:600;
+  cursor:pointer;
+}
+button.primary{
+  background:var(--accent);
+  color:#0e0f11;
+}
+.slider{
+  margin-top:14px;
+}
+.slider label{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--muted);
+}
+input[type=range]{width:100%}
+.bar{
+  margin-top:10px;
+}
+.track{
+  height:10px;
+  background:rgba(255,255,255,.08);
+  border-radius:999px;
+  overflow:hidden;
+}
+.fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:999px;
+}
+.fade{animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+</style>
+</head>
 
-      .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
-      button{
-        border-radius:999px; border:1px solid var(--line);
-        padding:11px 16px; background:rgba(255,255,255,.06);
-        color:var(--txt); cursor:pointer; font-weight:600;
-      }
-      button.primary{
-        background:rgba(255,255,255,.88);
-        color:#0b0d10; border-color:rgba(255,255,255,.22);
-      }
-      button:disabled{opacity:.45; cursor:not-allowed}
-
-      .choices{display:grid; gap:10px; margin-top:14px}
-      .choice{
-        border:1px solid var(--line); border-radius:18px;
-        padding:14px 14px;
-        background:rgba(255,255,255,.04);
-        display:flex; align-items:flex-start; gap:12px;
-        cursor:pointer;
-      }
-      .choice:hover{background:rgba(255,255,255,.06)}
-      .dot{
-        width:18px; height:18px; border-radius:50%;
-        border:1px solid var(--line);
-        margin-top:2px;
-        display:grid; place-items:center;
-      }
-      .dot > span{
-        width:10px; height:10px; border-radius:50%;
-        background:rgba(255,255,255,.85); display:none;
-      }
-      .choice.sel{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.22)}
-      .choice.sel .dot > span{display:block}
-      .choice .title{font-weight:650}
-      .choice .desc{color:var(--muted); margin-top:2px; font-size:13px; line-height:1.35}
-
-      .meta{margin-top:12px; color:var(--muted); font-size:13px}
-
-      .checks{display:grid; gap:10px; margin-top:14px}
-      .check{
-        border:1px solid var(--line); border-radius:18px;
-        padding:14px; background:rgba(255,255,255,.04);
-        display:flex; gap:12px; cursor:pointer; align-items:flex-start;
-      }
-      .box{
-        width:18px; height:18px; border-radius:6px;
-        border:1px solid var(--line);
-        margin-top:2px; display:grid; place-items:center;
-        background:rgba(0,0,0,.15);
-      }
-      .box svg{display:none}
-      .check.sel{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.22)}
-      .check.sel .box svg{display:block}
-
-      .grid2{
-        display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px;
-      }
-      @media (max-width:760px){ .grid2{grid-template-columns:1fr} }
-
-      .slider{
-        border:1px solid var(--line); border-radius:18px;
-        padding:14px; background:rgba(255,255,255,.04);
-      }
-      .slab{display:flex; justify-content:space-between; color:var(--muted); font-size:13px}
-      input[type="range"]{width:100%; margin-top:10px}
-
-      .fade{
-        animation:fade .38s ease both;
-      }
-      @keyframes fade{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
-
-      .divider{height:1px; background:var(--line); margin:18px 0}
-      .kpis{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
-      @media (max-width:760px){ .kpis{grid-template-columns:1fr} }
-      .kpi{
-        border:1px solid var(--line); border-radius:18px;
-        padding:14px; background:rgba(255,255,255,.04);
-      }
-      .kpi .k{color:var(--muted); font-size:12px}
-      .kpi .v{font-size:16px; margin-top:6px; font-weight:650}
-
-      .bars{display:grid; gap:10px; margin-top:12px}
-      .bar{
-        border:1px solid var(--line); border-radius:14px;
-        padding:10px 12px; background:rgba(255,255,255,.03);
-      }
-      .barhead{display:flex; justify-content:space-between; font-size:13px; color:var(--muted)}
-      .track{height:10px; border-radius:999px; background:rgba(255,255,255,.08); margin-top:8px; overflow:hidden}
-      .fill{height:100%; border-radius:999px; background:rgba(255,255,255,.82); width:40%}
-
-      a.link{color:rgba(255,255,255,.86); text-decoration:none}
-      a.link:hover{text-decoration:underline}
-
-      .toast{
-        position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
-        background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.18);
-        color:rgba(255,255,255,.9); padding:10px 12px; border-radius:999px;
-        font-size:13px; opacity:0; pointer-events:none;
-        transition:opacity .2s ease;
-      }
-      .toast.show{opacity:1}
-      .small{font-size:12px; color:var(--muted)}
-      .field{
-        width:100%; padding:12px 14px; border-radius:14px;
-        border:1px solid var(--line); background:rgba(255,255,255,.04);
-        color:var(--txt); outline:none;
-      }
-      label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
-    </style>
-  </head>
-  <body>
-    <div class="bg"></div>
-    <div class="grain"></div>
-
-    <div class="wrap">
-      <div class="shell">
-        <div class="topbar">
-          <div class="pill" id="progressPill">Act I · Intention</div>
-          <div class="pill" id="stepPill">1 / 9</div>
-        </div>
-
-        <div class="card">
-          <div class="content fade" id="app"></div>
-        </div>
-
-        <div class="small" style="padding:0 6px;">
-          one question at a time · calm transitions · premium, natural, mediterranean
-        </div>
+<body>
+<div class="wrap">
+  <div class="card fade">
+    <div class="top">
+      <div></div>
+      <div class="lang">
+        <button onclick="setLang('en')" id="en">EN</button>
+        <button onclick="setLang('fr')" id="fr">FR</button>
+        <button onclick="setLang('es')" id="es">ES</button>
       </div>
     </div>
 
-    <div class="toast" id="toast"></div>
-
-    <!-- jsPDF for PDF export -->
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
-    <script>
-      const $ = (id)=>document.getElementById(id);
-      const app = $("app");
-      const progressPill = $("progressPill");
-      const stepPill = $("stepPill");
-      const toast = $("toast");
-
-      const acts = [
-        { key:"intro", label:"Intro" },
-        { key:"intent", label:"Act I · Intention" },
-        { key:"use", label:"Act II · Use" },
-        { key:"context", label:"Act III · Context" },
-        { key:"feel", label:"Act IV · Feeling" },
-        { key:"report", label:"Project Snapshot" },
-      ];
-
-      const state = {
-        step: 0,
-        answers: {
-          intention: null,
-          priorities: [],
-          lifespan: null,
-          supports: [],
-          location: null,
-          timeframe: null,
-          sliders: { calm: 25, immersive: 25, rich: 25 },
-          name: "",
-          email: ""
-        }
-      };
-
-      function showToast(msg){
-        toast.textContent = msg;
-        toast.classList.add("show");
-        setTimeout(()=>toast.classList.remove("show"), 1400);
-      }
-
-      const steps = [
-        { act:"intro", render: renderIntro },
-        { act:"intent", render: renderIntention },
-        { act:"intent", render: renderPriorities },
-        { act:"use", render: renderLifespan },
-        { act:"use", render: renderSupports },
-        { act:"context", render: renderLocation },
-        { act:"context", render: renderTimeframe },
-        { act:"feel", render: renderSliders },
-        { act:"report", render: renderReport },
-        { act:"report", render: renderCTA },
-      ];
-
-      function setHeader(){
-        const s = steps[state.step];
-        const idx = Math.min(state.step+1, steps.length);
-        progressPill.textContent = acts.find(a=>a.key===s.act)?.label || "";
-        stepPill.textContent = `${idx} / ${steps.length}`;
-      }
-
-      function next(){
-        if(state.step < steps.length-1){ state.step++; paint(); }
-      }
-      function prev(){
-        if(state.step > 0){ state.step--; paint(); }
-      }
-
-      function paint(){
-        setHeader();
-        app.classList.remove("fade");
-        void app.offsetWidth;
-        app.classList.add("fade");
-        steps[state.step].render();
-        window.scrollTo({top:0, behavior:"smooth"});
-      }
-
-      // ---- Rendering helpers
-      function h(html){ app.innerHTML = html; }
-      function btnRow(primaryLabel, onPrimary, secondaryLabel, onSecondary){
-        return `
-          <div class="btnrow">
-            <button class="primary" id="primaryBtn">${primaryLabel}</button>
-            ${secondaryLabel ? `<button id="secondaryBtn">${secondaryLabel}</button>` : ``}
-          </div>
-        ` + `
-          <div class="btnrow" style="margin-top:10px;">
-            ${state.step>0 ? `<button id="backBtn">Back</button>` : ``}
-          </div>
-        `;
-      }
-
-      function bindNav(onPrimary, onSecondary){
-        const p = $("primaryBtn"); if(p) p.onclick = onPrimary;
-        const s = $("secondaryBtn"); if(s) s.onclick = onSecondary;
-        const b = $("backBtn"); if(b) b.onclick = prev;
-      }
-
-      // ---- Steps
-      function renderIntro(){
-        h(`
-          <h1>Every project starts with a question.</h1>
-          <p class="lead">Let’s take a moment to understand what really matters.<br/>No right or wrong answers — just what feels true.</p>
-          ${btnRow("Start", next, null, null)}
-        `);
-        bindNav(()=>next());
-      }
-
-      function renderIntention(){
-        const options = [
-          { id:"understood", title:"A place or a brand that needs to be understood", desc:"Context, atmosphere, identity." },
-          { id:"shared", title:"A story meant to be shared", desc:"Narrative, meaning, real life." },
-          { id:"remembered", title:"A moment meant to be remembered", desc:"Memory, emotion, simplicity." },
-        ];
-        h(`
-          <h1>What best describes what you want to create?</h1>
-          <p class="lead">Go with what feels closest — not what sounds right.</p>
-          <div class="choices">
-            ${options.map(o=>`
-              <div class="choice ${state.answers.intention===o.id?'sel':''}" data-id="${o.id}">
-                <div class="dot"><span></span></div>
-                <div>
-                  <div class="title">${o.title}</div>
-                  <div class="desc">${o.desc}</div>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-          <div class="meta">one choice</div>
-          ${btnRow("Continue", ()=> {
-            if(!state.answers.intention){ showToast("Choose one option"); return; }
-            next();
-          }, null, null)}
-        `);
-
-        document.querySelectorAll(".choice").forEach(el=>{
-          el.onclick = ()=>{
-            state.answers.intention = el.dataset.id;
-            paint();
-          };
-        });
-        bindNav(()=>{
-          if(!state.answers.intention){ showToast("Choose one option"); return; }
-          next();
-        });
-      }
-
-      function renderPriorities(){
-        const opts = ["Atmosphere","Authenticity","Narrative","Impact"];
-        h(`
-          <h1>What matters most in the final images?</h1>
-          <p class="lead">Choose up to two.</p>
-          <div class="checks">
-            ${opts.map(o=>`
-              <div class="check ${state.answers.priorities.includes(o)?'sel':''}" data-id="${o}">
-                <div class="box">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <div class="title">${o}</div>
-              </div>
-            `).join("")}
-          </div>
-          <div class="meta">max two</div>
-          ${btnRow("Continue", ()=>{
-            if(state.answers.priorities.length===0){ showToast("Pick at least one"); return; }
-            next();
-          }, null, null)}
-        `);
-
-        document.querySelectorAll(".check").forEach(el=>{
-          el.onclick = ()=>{
-            const id = el.dataset.id;
-            const a = state.answers.priorities;
-            if(a.includes(id)){
-              state.answers.priorities = a.filter(x=>x!==id);
-              paint();
-              return;
-            }
-            if(a.length>=2){ showToast("Max two"); return; }
-            state.answers.priorities = [...a, id];
-            paint();
-          };
-        });
-        bindNav(()=>{
-          if(state.answers.priorities.length===0){ showToast("Pick at least one"); return; }
-          next();
-        });
-      }
-
-      function renderLifespan(){
-        const options = [
-          { id:"once", title:"Once, for a specific moment", desc:"A focused need: launch, event, one-time update." },
-          { id:"base", title:"Over time, as a visual base", desc:"Reusable library, consistent presence." },
-          { id:"ongoing", title:"Recurrently, as an ongoing collaboration", desc:"A visual system that evolves." },
-        ];
-        h(`
-          <h1>Is this project meant to live…</h1>
-          <p class="lead">Images don’t exist on their own. They live somewhere, over time.</p>
-          <div class="choices">
-            ${options.map(o=>`
-              <div class="choice ${state.answers.lifespan===o.id?'sel':''}" data-id="${o.id}">
-                <div class="dot"><span></span></div>
-                <div>
-                  <div class="title">${o.title}</div>
-                  <div class="desc">${o.desc}</div>
-                </div>
-              </div>
-            `).join("")}
-          </div>
-          ${btnRow("Continue", ()=>{
-            if(!state.answers.lifespan){ showToast("Choose one option"); return; }
-            next();
-          }, null, null)}
-        `);
-        document.querySelectorAll(".choice").forEach(el=>{
-          el.onclick = ()=>{
-            state.answers.lifespan = el.dataset.id;
-            paint();
-          };
-        });
-        bindNav(()=>{
-          if(!state.answers.lifespan){ showToast("Choose one option"); return; }
-          next();
-        });
-      }
-
-      function renderSupports(){
-        const opts = [
-          { id:"website", label:"Website (brand presence)" },
-          { id:"social", label:"Social (real life)" },
-          { id:"editorial", label:"Editorial / press" },
-          { id:"print", label:"Print / physical spaces" },
-        ];
-        h(`
-          <h1>Where will these images matter the most?</h1>
-          <p class="lead">Choose what’s central — not everything that’s possible (max two).</p>
-          <div class="checks">
-            ${opts.map(o=>`
-              <div class="check ${state.answers.supports.includes(o.id)?'sel':''}" data-id="${o.id}">
-                <div class="box">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <div class="title">${o.label}</div>
-              </div>
-            `).join("")}
-          </div>
-          ${btnRow("Continue", ()=>{
-            if(state.answers.supports.length===0){ showToast("Pick at least one"); return; }
-            next();
-          }, null, null)}
-        `);
-        document.querySelectorAll(".check").forEach(el=>{
-          el.onclick = ()=>{
-            const id = el.dataset.id;
-            const a = state.answers.supports;
-            if(a.includes(id)){
-              state.answers.supports = a.filter(x=>x!==id);
-              paint(); return;
-            }
-            if(a.length>=2){ showToast("Max two"); return; }
-            state.answers.supports = [...a, id];
-            paint();
-          };
-        });
-        bindNav(()=>{
-          if(state.answers.supports.length===0){ showToast("Pick at least one"); return; }
-          next();
-        });
-      }
-
-      function renderLocation(){
-        const options = [
-          { id:"sitges", title:"Sitges or nearby" },
-          { id:"barcelona", title:"Barcelona" },
-          { id:"elsewhere", title:"Elsewhere" },
-        ];
-        h(`
-          <h1>Where does the story take place?</h1>
-          <div class="choices">
-            ${options.map(o=>`
-              <div class="choice ${state.answers.location===o.id?'sel':''}" data-id="${o.id}">
-                <div class="dot"><span></span></div>
-                <div class="title">${o.title}</div>
-              </div>
-            `).join("")}
-          </div>
-          ${btnRow("Continue", ()=>{
-            if(!state.answers.location){ showToast("Choose one option"); return; }
-            next();
-          }, null, null)}
-        `);
-        document.querySelectorAll(".choice").forEach(el=>{
-          el.onclick = ()=>{
-            state.answers.location = el.dataset.id;
-            paint();
-          };
-        });
-        bindNav(()=>{
-          if(!state.answers.location){ showToast("Choose one option"); return; }
-          next();
-        });
-      }
-
-      function renderTimeframe(){
-        const options = [
-          { id:"fixed", title:"Yes, the date is fixed" },
-          { id:"approx", title:"Approximate timeframe" },
-          { id:"exploring", title:"Still exploring" },
-        ];
-        h(`
-          <h1>Do you already have a timeframe in mind?</h1>
-          <div class="choices">
-            ${options.map(o=>`
-              <div class="choice ${state.answers.timeframe===o.id?'sel':''}" data-id="${o.id}">
-                <div class="dot"><span></span></div>
-                <div class="title">${o.title}</div>
-              </div>
-            `).join("")}
-          </div>
-          ${btnRow("Continue", ()=>{
-            if(!state.answers.timeframe){ showToast("Choose one option"); return; }
-            next();
-          }, null, null)}
-        `);
-        document.querySelectorAll(".choice").forEach(el=>{
-          el.onclick = ()=>{
-            state.answers.timeframe = el.dataset.id;
-            paint();
-          };
-        });
-        bindNav(()=>{
-          if(!state.answers.timeframe){ showToast("Choose one option"); return; }
-          next();
-        });
-      }
-
-      function renderSliders(){
-        const s = state.answers.sliders;
-        h(`
-          <h1>Answer instinctively.</h1>
-          <p class="lead">Don’t overthink it.</p>
-          <div class="grid2">
-            ${sliderCard("Calm", "Expressive", "calm", s.calm)}
-            ${sliderCard("Observational", "Immersive", "immersive", s.immersive)}
-            ${sliderCard("Minimal", "Rich", "rich", s.rich)}
-          </div>
-          ${btnRow("Generate snapshot", ()=> next(), null, null)}
-        `);
-
-        document.querySelectorAll('input[type="range"]').forEach(inp=>{
-          inp.oninput = (e)=>{
-            const k = inp.dataset.key;
-            state.answers.sliders[k] = Number(inp.value);
-            // subtle bg reaction (simple)
-            const calm = state.answers.sliders.calm/100;
-            document.body.style.background = `radial-gradient(900px 420px at 18% 20%, rgba(255,255,255,${0.06+calm*0.08}), transparent 60%), #0b0d10`;
-          };
-        });
-        bindNav(()=>next());
-      }
-
-      function sliderCard(left, right, key, value){
-        return `
-          <div class="slider">
-            <div class="slab"><span>${left}</span><span>${right}</span></div>
-            <input type="range" min="0" max="100" value="${value}" data-key="${key}" />
-          </div>
-        `;
-      }
-
-      // ---- Snapshot generation
-      function computeSnapshot(){
-        const a = state.answers;
-
-        const supportLabels = {
-          website:"Website (brand presence)",
-          social:"Social (real life)",
-          editorial:"Editorial / press",
-          print:"Print / physical spaces"
-        };
-
-        // Usage weights for bars
-        const weights = { website:10, social:10, editorial:10, print:10 };
-        a.supports.forEach(s=>weights[s]+=24);
-
-        if(a.lifespan==="base"){ Object.keys(weights).forEach(k=>weights[k]+=10); }
-        if(a.lifespan==="ongoing"){ Object.keys(weights).forEach(k=>weights[k]+=14); }
-        if(a.lifespan==="once"){ a.supports.forEach(s=>weights[s]+=10); }
-
-        // “long-term value”
-        const longTerm = a.lifespan==="once" ? 35 : a.lifespan==="base" ? 70 : 85;
-
-        // Collaboration suggestion
-        const collab =
-          a.lifespan==="once" ? "One focused shoot (clear scope, strong delivery)." :
-          a.lifespan==="base" ? "A modular shoot designed for reuse over time." :
-          "An ongoing visual partnership (a system that evolves).";
-
-        // Mirror text (simple but premium)
-        const prio = a.priorities.map(p=>p.toLowerCase()).join(", ");
-        const where =
-          a.location==="sitges" ? "Sitges (or nearby)" :
-          a.location==="barcelona" ? "Barcelona" : "another location";
-
-        const timeframe =
-          a.timeframe==="fixed" ? "with a fixed date" :
-          a.timeframe==="approx" ? "within an approximate timeframe" :
-          "with a flexible timeline";
-
-        const sliders = a.sliders;
-        const tone =
-          sliders.calm > 60 ? "calm and grounded" :
-          sliders.calm < 35 ? "more expressive and energetic" :
-          "balanced and natural";
-
-        const approach =
-          sliders.immersive > 60 ? "immersive" :
-          sliders.immersive < 35 ? "observational" : "observational yet present";
-
-        const density =
-          sliders.rich > 60 ? "rich and detailed" :
-          sliders.rich < 35 ? "minimal and airy" : "balanced in density";
-
-        const supportList = a.supports.map(s=>supportLabels[s]).join(" · ");
-
-        const mirror = [
-          "You’re not just looking for images.",
-          `This project is about creating a visual presence that feels ${tone}, with a focus on ${prio || "clarity"} — aligned with your context.`,
-          `The story takes place in ${where}, ${timeframe}.`,
-          `Primary contexts: ${supportList}.`
-        ];
-
-        const photoFocus = [
-          "Images designed to work in series, not as isolated shots",
-          "Attention to rhythm, consistency and natural light",
-          `An ${approach} approach, ${density} in composition`,
-          longTerm >= 70 ? "Built for reuse across time and platforms" : "Designed for immediate clarity and impact"
-        ];
-
-        return {
-          mirror,
-          weights,
-          longTerm,
-          collab,
-          tone, approach, density,
-          supportList,
-          photoFocus
-        };
-      }
-
-      function renderReport(){
-        const snap = computeSnapshot();
-
-        const bars = [
-          { key:"website", label:"Website" },
-          { key:"social", label:"Social" },
-          { key:"editorial", label:"Editorial" },
-          { key:"print", label:"Print" },
-        ].map(b=>{
-          const v = clamp(snap.weights[b.key], 8, 100);
-          return { ...b, v };
-        });
-
-        const longTerm = snap.longTerm;
-
-        h(`
-          <h1>Project Snapshot</h1>
-          <h2>Here’s how I understand your project so far.</h2>
-
-          <div class="kpis">
-            <div class="kpi">
-              <div class="k">Tone</div>
-              <div class="v">${cap(snap.tone)}</div>
-            </div>
-            <div class="kpi">
-              <div class="k">Approach</div>
-              <div class="v">${cap(snap.approach)}</div>
-            </div>
-            <div class="kpi">
-              <div class="k">Long-term value</div>
-              <div class="v">${longTerm >= 75 ? "High" : longTerm >= 55 ? "Medium" : "Focused"}</div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <h2>First reading</h2>
-          <p class="lead" style="margin:0">
-            ${snap.mirror.map(line=>`${escapeHtml(line)}`).join("<br/>")}
-          </p>
-
-          <div class="divider"></div>
-
-          <h2>How these images could live</h2>
-          <div class="bars">
-            ${bars.map(b=>`
-              <div class="bar">
-                <div class="barhead"><span>${b.label}</span><span>${b.v}%</span></div>
-                <div class="track"><div class="fill" style="width:${b.v}%"></div></div>
-              </div>
-            `).join("")}
-            <div class="bar">
-              <div class="barhead"><span>Long-term value</span><span>${longTerm}%</span></div>
-              <div class="track"><div class="fill" style="width:${longTerm}%"></div></div>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <h2>What this means photographically</h2>
-          <div class="checks" style="margin-top:10px">
-            ${snap.photoFocus.map(t=>`
-              <div class="check sel" style="cursor:default">
-                <div class="box">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="display:block">
-                    <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <div class="title">${escapeHtml(t)}</div>
-              </div>
-            `).join("")}
-          </div>
-
-          <div class="divider"></div>
-
-          <h2>A collaboration approach that would make sense</h2>
-          <p class="lead" style="margin:0">${escapeHtml(snap.collab)}</p>
-
-          ${btnRow("Continue", next, "Download PDF", downloadPDF)}
-        `);
-
-        bindNav(()=>next(), ()=>downloadPDF());
-      }
-
-      function renderCTA(){
-        h(`
-          <h1>Next step</h1>
-          <p class="lead">If this approach feels aligned with your project, the next step would be to talk it through together.</p>
-
-          <label>Your name</label>
-          <input class="field" id="nameField" placeholder="Name" value="${escapeAttr(state.answers.name)}"/>
-
-          <label>Your email</label>
-          <input class="field" id="emailField" placeholder="Email" value="${escapeAttr(state.answers.email)}"/>
-
-          <div class="btnrow">
-            <button class="primary" id="sendBtn">Discuss this project</button>
-            <button id="pdfBtn">Download snapshot (PDF)</button>
-          </div>
-          <div class="btnrow" style="margin-top:10px;">
-            <button id="backBtn">Back</button>
-          </div>
-
-          <div class="meta">
-            This is a demo. In your real site, this button can open an email, a form, or a calendar booking.
-          </div>
-        `);
-
-        $("nameField").oninput = (e)=> state.answers.name = e.target.value;
-        $("emailField").oninput = (e)=> state.answers.email = e.target.value;
-
-        $("sendBtn").onclick = ()=>{
-          // Simple mailto demo
-          const snap = computeSnapshot();
-          const subject = encodeURIComponent("Project discussion — Visual Project Snapshot");
-          const body = encodeURIComponent(
-            `Hi,\n\nHere is my Project Snapshot:\n\n` +
-            snap.mirror.join("\n") + "\n\n" +
-            "Photographic meaning:\n- " + snap.photoFocus.join("\n- ") + "\n\n" +
-            "Collaboration suggestion:\n" + snap.collab + "\n\n" +
-            `Name: ${state.answers.name}\nEmail: ${state.answers.email}\n`
-          );
-          window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        };
-
-        $("pdfBtn").onclick = downloadPDF;
-        $("backBtn").onclick = prev;
-      }
-
-      function downloadPDF(){
-        const snap = computeSnapshot();
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit:"pt", format:"a4" });
-
-        const margin = 56;
-        let y = margin;
-
-        doc.setFont("helvetica","bold");
-        doc.setFontSize(18);
-        doc.text("Project Snapshot", margin, y);
-        y += 22;
-
-        doc.setFont("helvetica","normal");
-        doc.setFontSize(11);
-        doc.setTextColor(80);
-        doc.text("First reading (auto-generated)", margin, y);
-        y += 18;
-
-        doc.setTextColor(20);
-        doc.setFontSize(12);
-        const lines = doc.splitTextToSize(snap.mirror.join(" "), 480);
-        doc.text(lines, margin, y);
-        y += lines.length*16 + 14;
-
-        doc.setFont("helvetica","bold");
-        doc.text("How these images could live", margin, y);
-        y += 16;
-        doc.setFont("helvetica","normal");
-
-        const bars = [
-          ["Website", clamp(snap.weights.website, 8, 100)],
-          ["Social", clamp(snap.weights.social, 8, 100)],
-          ["Editorial", clamp(snap.weights.editorial, 8, 100)],
-          ["Print", clamp(snap.weights.print, 8, 100)],
-          ["Long-term value", snap.longTerm]
-        ];
-
-        bars.forEach(([label,val])=>{
-          doc.setTextColor(40);
-          doc.text(`${label}  ${val}%`, margin, y);
-          y += 8;
-          // track
-          doc.setDrawColor(220);
-          doc.setFillColor(235);
-          doc.roundedRect(margin, y, 480, 10, 5, 5, "F");
-          // fill
-          doc.setFillColor(40);
-          doc.roundedRect(margin, y, 4.8*val, 10, 5, 5, "F");
-          y += 22;
-          if(y > 740){ doc.addPage(); y = margin; }
-        });
-
-        doc.setTextColor(20);
-        doc.setFont("helvetica","bold");
-        doc.text("What this means photographically", margin, y);
-        y += 16;
-        doc.setFont("helvetica","normal");
-
-        snap.photoFocus.forEach(t=>{
-          const l = doc.splitTextToSize("• " + t, 480);
-          doc.text(l, margin, y);
-          y += l.length*16 + 4;
-          if(y > 760){ doc.addPage(); y = margin; }
-        });
-
-        y += 6;
-        doc.setFont("helvetica","bold");
-        doc.text("Collaboration suggestion", margin, y);
-        y += 16;
-        doc.setFont("helvetica","normal");
-        const cl = doc.splitTextToSize(snap.collab, 480);
-        doc.text(cl, margin, y);
-
-        doc.save("project-snapshot.pdf");
-      }
-
-      function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-      function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
-      function escapeHtml(str){ return (str||"").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
-      function escapeAttr(str){ return (str||"").replace(/"/g,"&quot;"); }
-
-      // start
-      paint();
-    </script>
-  </body>
+    <div id="app"></div>
+  </div>
+</div>
+
+<script>
+const t = {
+en:{
+ intro_h1:"I know what an image means to you.",
+ intro_p:"Even when it’s not entirely clear yet.\nThis is simply a way to take a moment and understand it together.",
+ start:"Start",
+
+ name_h1:"How should I refer to you?",
+ name_meta:"This helps me keep things human.",
+
+ project_h1:"How would you call this project?",
+ project_meta:"It doesn’t have to be final. Just something to hold onto.",
+
+ core_h1:"At its core, this project feels more like…",
+ core_opts:["A place that needs to be felt","A story that needs to be told","A moment you want to remember"],
+
+ intent_h1:"When someone encounters these images for the first time, what should stay with them?",
+ intent_opts:["A natural feeling","A strong atmosphere","A sense of truth","A quiet elegance"],
+
+ time_h1:"How long do you feel these images need to be there for you?",
+ time_opts:["For a specific moment","Over time","As something that grows with the project"],
+
+ where_h1:"Where do you imagine seeing these images most often?",
+ where_opts:["On a website","On social media","In editorial or press contexts","In printed or physical spaces"],
+
+ sliders_h1:"Instinctively, where would you place this project?",
+
+ report_h1:"Project Snapshot",
+ report_h2:"A first photographic reading",
+
+ cta:"Let’s talk about this project"
+},
+fr:{
+ intro_h1:"Je sais ce que représente une image pour vous.",
+ intro_p:"Même quand ce n’est pas encore très clair.\nPrenons simplement un moment pour le comprendre ensemble.",
+ start:"Commencer",
+
+ name_h1:"Comment dois-je m’adresser à vous ?",
+ name_meta:"Pour garder les choses humaines.",
+
+ project_h1:"Comment appelleriez-vous ce projet ?",
+ project_meta:"Ce n’est pas définitif. Juste un point d’ancrage.",
+
+ core_h1:"Au fond, ce projet ressemble plutôt à…",
+ core_opts:["Un lieu à ressentir","Une histoire à raconter","Un moment à garder en mémoire"],
+
+ intent_h1:"Quand quelqu’un découvre ces images, qu’est-ce qui devrait rester ?",
+ intent_opts:["Une sensation naturelle","Une atmosphère forte","Un sentiment de vérité","Une élégance discrète"],
+
+ time_h1:"Combien de temps sentez-vous que ces images doivent vous accompagner ?",
+ time_opts:["Pour un moment précis","Dans le temps","En évoluant avec le projet"],
+
+ where_h1:"Où imaginez-vous voir ces images le plus souvent ?",
+ where_opts:["Sur un site web","Sur les réseaux sociaux","Dans un contexte éditorial / presse","Dans des espaces imprimés ou physiques"],
+
+ sliders_h1:"Instinctivement, où placeriez-vous ce projet ?",
+
+ report_h1:"Lecture du projet",
+ report_h2:"Une première lecture photographique",
+
+ cta:"Parlons de ce projet"
+},
+es:{
+ intro_h1:"Sé lo que significa una imagen para ti.",
+ intro_p:"Incluso cuando aún no está del todo claro.\nTomemos un momento para entenderlo juntos.",
+ start:"Empezar",
+
+ name_h1:"¿Cómo debería dirigirme a ti?",
+ name_meta:"Para mantener las cosas humanas.",
+
+ project_h1:"¿Cómo llamarías a este proyecto?",
+ project_meta:"No tiene que ser definitivo. Solo un punto de apoyo.",
+
+ core_h1:"En esencia, este proyecto se siente más como…",
+ core_opts:["Un lugar que hay que sentir","Una historia que contar","Un momento que recordar"],
+
+ intent_h1:"Cuando alguien se encuentra con estas imágenes, ¿qué debería permanecer?",
+ intent_opts:["Una sensación natural","Una atmósfera fuerte","Una sensación de verdad","Una elegancia silenciosa"],
+
+ time_h1:"¿Durante cuánto tiempo sientes que estas imágenes deben acompañarte?",
+ time_opts:["Para un momento concreto","A lo largo del tiempo","Creciendo con el proyecto"],
+
+ where_h1:"¿Dónde imaginas ver estas imágenes con más frecuencia?",
+ where_opts:["En una web","En redes sociales","En contextos editoriales / prensa","En espacios impresos o físicos"],
+
+ sliders_h1:"Instintivamente, ¿dónde situarías este proyecto?",
+
+ report_h1:"Lectura del proyecto",
+ report_h2:"Una primera lectura fotográfica",
+
+ cta:"Hablemos de este proyecto"
+}
+};
+
+let lang="en";
+let step=0;
+const state={
+ name:"",
+ project:"",
+ core:"",
+ intent:[],
+ time:"",
+ where:[],
+ sliders:{calm:50,present:50,rich:50}
+};
+
+function setLang(l){
+ lang=l;
+ document.querySelectorAll(".lang button").forEach(b=>b.classList.remove("active"));
+ document.getElementById(l).classList.add("active");
+ render();
+}
+
+function render(){
+ const a=document.getElementById("app");
+ a.innerHTML="";
+ const tr=t[lang];
+
+ if(step===0){
+  a.innerHTML=`<h1>${tr.intro_h1}</h1><p>${tr.intro_p.replace(/\n/g,"<br>")}</p>
+  <div class="btns"><button class="primary" onclick="next()">${tr.start}</button></div>`;
+ }
+ if(step===1){
+  a.innerHTML=`<h1>${tr.name_h1}</h1>
+  <input oninput="state.name=this.value" placeholder="…">
+  <div class="meta">${tr.name_meta}</div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===2){
+  a.innerHTML=`<h1>${tr.project_h1}</h1>
+  <input oninput="state.project=this.value" placeholder="…">
+  <div class="meta">${tr.project_meta}</div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===3){
+  a.innerHTML=`<h1>${tr.core_h1}</h1>
+  <div class="choices">
+   ${tr.core_opts.map(o=>`<div class="choice ${state.core===o?"sel":""}" onclick="state.core='${o}';render()">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===4){
+  a.innerHTML=`<h1>${tr.intent_h1}</h1>
+  <div class="checks">
+   ${tr.intent_opts.map(o=>`<div class="check ${state.intent.includes(o)?"sel":""}" onclick="toggleIntent('${o}')">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===5){
+  a.innerHTML=`<h1>${tr.time_h1}</h1>
+  <div class="choices">
+   ${tr.time_opts.map(o=>`<div class="choice ${state.time===o?"sel":""}" onclick="state.time='${o}';render()">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===6){
+  a.innerHTML=`<h1>${tr.where_h1}</h1>
+  <div class="checks">
+   ${tr.where_opts.map(o=>`<div class="check ${state.where.includes(o)?"sel":""}" onclick="toggleWhere('${o}')">${o}</div>`).join("")}
+  </div>
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===7){
+  a.innerHTML=`<h1>${tr.sliders_h1}</h1>
+  ${slider("Calm","Lively","calm")}
+  ${slider("Discreet","Present","present")}
+  ${slider("Simple","Rich","rich")}
+  <div class="btns"><button class="primary" onclick="next()">→</button></div>`;
+ }
+ if(step===8){
+  a.innerHTML=`<h1>${tr.report_h1}</h1>
+  <h2>${tr.report_h2}</h2>
+  <p><strong>${state.project||"This project"}</strong> seems to be about <em>${state.core.toLowerCase()}</em>.
+  It’s meant to exist <em>${state.time.toLowerCase()}</em>, with an emphasis on
+  <em>${state.intent.join(", ").toLowerCase()}</em>.</p>
+
+  <div class="bar"><div class="track"><div class="fill" style="width:${state.sliders.calm}%"></div></div></div>
+  <div class="bar"><div class="track"><div class="fill" style="width:${state.sliders.present}%"></div></div></div>
+  <div class="bar"><div class="track"><div class="fill" style="width:${state.sliders.rich}%"></div></div></div>
+
+  <p>This suggests images that are less about effect, and more about presence —
+  images that can stay with you and continue to make sense.</p>
+
+  <div class="btns"><button class="primary">${tr.cta}</button></div>`;
+ }
+}
+
+function slider(l,r,k){
+ return `<div class="slider">
+ <label><span>${l}</span><span>${r}</span></label>
+ <input type="range" min="0" max="100" value="${state.sliders[k]}" 
+ oninput="state.sliders['${k}']=this.value">
+ </div>`;
+}
+
+function toggleIntent(o){
+ if(state.intent.includes(o)) state.intent=state.intent.filter(x=>x!==o);
+ else if(state.intent.length<2) state.intent.push(o);
+ render();
+}
+function toggleWhere(o){
+ if(state.where.includes(o)) state.where=state.where.filter(x=>x!==o);
+ else if(state.where.length<2) state.where.push(o);
+ render();
+}
+function next(){step++; render();}
+setLang("en");
+</script>
+</body>
 </html>
