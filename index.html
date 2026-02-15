@@ -4,85 +4,247 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Marina — Project Snapshot</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --bg: #0d0f12;
-            --card: rgba(255, 255, 255, 0.05);
-            --line: rgba(255, 255, 255, 0.12);
-            --txt: rgba(255, 255, 255, 0.95);
-            --muted: rgba(255, 255, 255, 0.5);
+            --card: #16181b;
+            --line: rgba(255, 255, 255, 0.1);
+            --txt: #ffffff;
+            --muted: #a0a0a0;
             --accent: #ffffff;
-            --radius: 24px;
+            --radius: 20px;
         }
-        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        * { box-sizing: border-box; transition: all 0.2s ease-out; }
+
         body {
-            margin: 0; font-family: 'Inter', system-ui, sans-serif;
+            margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg); color: var(--txt);
             min-height: 100vh; display: flex; justify-content: center; align-items: center;
         }
-        .shell { width: min(850px, 95%); padding: 20px; }
+
+        .shell { width: min(800px, 95%); padding: 20px; }
+
         .card {
-            background: var(--card); border: 1px solid var(--line);
-            border-radius: var(--radius); backdrop-filter: blur(20px);
-            padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: var(--card); border-radius: var(--radius);
+            padding: 40px; border: 1px solid var(--line);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
         }
-        .topbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
-        .lang button {
-            background: none; border: 1px solid transparent; color: var(--muted);
-            cursor: pointer; padding: 5px 10px; border-radius: 8px; font-weight: 600;
+
+        .topbar {
+            position: absolute; top: 25px; right: 40px;
+            display: flex; gap: 15px; font-size: 12px; font-weight: 700;
         }
-        .lang button.active { color: var(--accent); border-color: var(--line); }
-        
-        h1 { font-size: 32px; margin: 0 0 25px; font-weight: 700; line-height: 1.2; }
+
+        .lang-btn { 
+            background: none; border: none; color: var(--muted); 
+            cursor: pointer; text-transform: uppercase; padding: 5px;
+        }
+        .lang-btn.active { color: #fff; border-bottom: 2px solid #fff; }
+
+        h1 { font-size: 36px; margin-bottom: 30px; line-height: 1.2; font-weight: 700; max-width: 90%; }
+
+        /* Champs texte */
         input[type="text"] {
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--line);
-            background: rgba(255,255,255,0.03); color: #fff; font-size: 18px; margin-bottom: 20px;
+            width: 100%; padding: 18px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--line); border-radius: 12px;
+            color: #fff; font-size: 18px; outline: none; margin-bottom: 20px;
         }
-        .choice-btn {
-            width: 100%; text-align: left; padding: 18px; margin-bottom: 10px;
-            border-radius: 15px; border: 1px solid var(--line);
-            background: rgba(255,255,255,0.02); color: var(--txt); cursor: pointer; font-size: 16px;
+        input[type="text"]:focus { border-color: #fff; }
+
+        /* Boutons de choix (Etapes 3 & 4) */
+        .choice-list { display: flex; flex-direction: column; gap: 10px; }
+        .choice-item {
+            padding: 20px; border: 1px solid var(--line); border-radius: 15px;
+            background: rgba(255,255,255,0.02); color: #fff; text-align: left;
+            font-size: 17px; cursor: pointer; width: 100%;
         }
-        .choice-btn:hover { background: rgba(255,255,255,0.07); }
-        .choice-btn.sel { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+        .choice-item:hover { background: rgba(255,255,255,0.07); transform: translateX(5px); }
+        .choice-item.selected { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+        /* Sliders (Etape 5) */
+        .slider-group { margin: 35px 0; }
+        .slider-header { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; color: var(--muted); font-weight: 500; }
+        input[type="range"] {
+            width: 100%; height: 5px; background: var(--line); border-radius: 5px;
+            -webkit-appearance: none; outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 22px; height: 22px; background: #fff;
+            border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Boutons Navigation */
+        .nav-box { margin-top: 30px; }
+        .btn-next {
+            background: #fff; color: #000; border: none; padding: 12px 30px;
+            border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 16px;
+        }
+        .btn-circle {
+            width: 50px; height: 50px; border-radius: 50%; border: none;
+            background: #fff; color: #000; font-size: 20px; cursor: pointer;
+        }
+
+        /* Rapport final */
+        .report-layout { display: grid; grid-template-columns: 1fr 300px; gap: 40px; margin-top: 20px; }
+        @media (max-width: 700px) { .report-layout { grid-template-columns: 1fr; } }
         
-        .slider-row { margin: 30px 0; }
-        .slider-labels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-        input[type="range"] { width: 100%; height: 4px; background: var(--line); border-radius: 2px; -webkit-appearance: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff; cursor: pointer; }
-        
-        .nav-btns { display: flex; gap: 10px; margin-top: 30px; }
-        button.next { 
-            background: #fff; color: #000; border: none; padding: 12px 25px; 
-            border-radius: 50px; font-weight: 700; cursor: pointer;
-        }
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
-        @media (max-width: 650px) { .report-grid { grid-template-columns: 1fr; } }
-        .fade { animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
     <div class="shell">
-        <div class="topbar">
-            <div class="lang">
-                <button onclick="setLang('en')" id="btnEN">EN</button>
-                <button onclick="setLang('fr')" id="btnFR">FR</button>
+        <div class="card fade" id="main-card">
+            <div class="topbar">
+                <button class="lang-btn" id="btn-en" onclick="changeLang('en')">EN</button>
+                <button class="lang-btn" id="btn-fr" onclick="changeLang('fr')">FR</button>
+                <button class="lang-btn" id="btn-es" onclick="changeLang('es')">ES</button>
             </div>
+            <div id="content"></div>
         </div>
-        <div id="app" class="card"></div>
     </div>
 
 <script>
-const i18n = {
-    fr: {
-        s1_h: "Comment t'appelles-tu ?",
-        s2_h: "Sur quel projet travailles-tu ?",
-        s3_h: "Quelle est l'essence du projet ?",
-        s3_opts: ["Un lieu à ressentir", "Une histoire à raconter", "Un moment à préserver"],
-        s4_h: "Quand quelqu'un découvre ces images, qu'est-ce qui devrait rester ?",
-        s4_opts: ["Une sensation naturelle", "Une atmosphère forte", "Un sentiment de vérité", "Une élégance discrète"],
-        s5_h: "Instinctivement, où placeriez-vous ce projet ?",
-        sliders: { calm: ["Calm", "Lively"], present: ["Discreet", "Present"], rich: ["Simple", "Rich"] },
-        report
+    const i18n = {
+        fr: {
+            s1_h: "Comment t'appelles-tu ?",
+            s2_h: "Sur quel projet travailles-tu ?",
+            s3_h: "Quelle est l'essence du projet ?",
+            s3_opts: ["Un lieu à ressentir", "Une histoire à raconter", "Un moment à préserver"],
+            s4_h: "Quand quelqu'un découvre ces images, qu'est-ce qui devrait rester ?",
+            s4_opts: ["Une sensation naturelle", "Une atmosphère forte", "Un sentiment de vérité", "Une élégance discrète"],
+            s5_h: "Instinctivement, où placeriez-vous ce projet ?",
+            sliders: { calm: ["Calm", "Lively"], present: ["Discreet", "Present"], rich: ["Simple", "Rich"] },
+            rep_h: "Lecture du projet",
+            rep_sub: "Une première lecture photographique",
+            cta: "Parlons de ce projet"
+        },
+        en: {
+            s1_h: "What is your name?",
+            s2_h: "What project are you working on?",
+            s3_h: "What is the essence of the project?",
+            s3_opts: ["A place to feel", "A story to tell", "A moment to preserve"],
+            s4_h: "When someone discovers these images, what should remain?",
+            s4_opts: ["A natural feel", "A strong atmosphere", "A sense of truth", "A discreet elegance"],
+            s5_h: "Instinctively, where would you place this project?",
+            sliders: { calm: ["Calm", "Lively"], present: ["Discreet", "Present"], rich: ["Simple", "Rich"] },
+            rep_h: "Project Reading",
+            rep_sub: "A first photographic reading",
+            cta: "Discuss this project"
+        }
+    };
+
+    let lang = 'fr';
+    let step = 1;
+    let state = {
+        name: "",
+        project: "",
+        essence: "",
+        impression: "",
+        sliders: { calm: 50, present: 50, rich: 50 }
+    };
+
+    function changeLang(l) {
+        lang = l;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + l).classList.add('active');
+        render();
+    }
+
+    function render() {
+        const t = i18n[lang] || i18n['en'];
+        const container = document.getElementById('content');
+        container.innerHTML = "";
+
+        if (step === 1) {
+            container.innerHTML = `<h1>${t.s1_h}</h1>
+                <input type="text" id="nameInp" placeholder="..." value="${state.name}">
+                <div class="nav-box"><button class="btn-circle" onclick="saveName()">→</button></div>`;
+        } 
+        else if (step === 2) {
+            container.innerHTML = `<h1>${t.s2_h}</h1>
+                <input type="text" id="projInp" placeholder="..." value="${state.project}">
+                <div class="nav-box"><button class="btn-circle" onclick="saveProj()">→</button></div>`;
+        }
+        else if (step === 3) {
+            container.innerHTML = `<h1>${t.s3_h}</h1>
+                <div class="choice-list">${t.s3_opts.map(o => `<button class="choice-item ${state.essence===o?'selected':''}" onclick="saveEssence('${o}')">${o}</button>`).join('')}</div>`;
+        }
+        else if (step === 4) {
+            container.innerHTML = `<h1>${t.s4_h}</h1>
+                <div class="choice-list">${t.s4_opts.map(o => `<button class="choice-item ${state.impression===o?'selected':''}" onclick="saveImpression('${o}')">${o}</button>`).join('')}</div>
+                <div class="nav-box" style="margin-top:20px"><button class="btn-circle" onclick="step=5;render()">→</button></div>`;
+        }
+        else if (step === 5) {
+            container.innerHTML = `<h1>${t.s5_h}</h1>
+                ${renderSlider('calm', t.sliders.calm)}
+                ${renderSlider('present', t.sliders.present)}
+                ${renderSlider('rich', t.sliders.rich)}
+                <div class="nav-box"><button class="btn-next" onclick="step=6;render()">Générer le Snapshot</button></div>`;
+        }
+        else {
+            renderReport(t);
+        }
+    }
+
+    function renderSlider(key, labels) {
+        return `<div class="slider-group">
+            <div class="slider-header"><span>${labels[0]}</span><span>${labels[1]}</span></div>
+            <input type="range" min="0" max="100" value="${state.sliders[key]}" oninput="state.sliders.${key}=this.value">
+        </div>`;
+    }
+
+    // Sauvegardes
+    function saveName() { state.name = document.getElementById('nameInp').value; step = 2; render(); }
+    function saveProj() { state.project = document.getElementById('projInp').value; step = 3; render(); }
+    function saveEssence(o) { state.essence = o; step = 4; render(); }
+    function saveImpression(o) { state.impression = o; render(); }
+
+    function renderReport(t) {
+        const container = document.getElementById('content');
+        container.innerHTML = `
+            <h1>${t.rep_h}</h1>
+            <p style="color:var(--muted); margin-top:-20px; margin-bottom:30px">${t.rep_sub}</p>
+            <div class="report-layout">
+                <div>
+                    <p style="font-size:18px; line-height:1.6">
+                        <b>${state.project || "Projet"}</b> semble porter sur <i>${state.essence.toLowerCase()}</i>. 
+                        L'intention est d'évoluer avec le projet, en mettant l'accent sur <b>${state.impression.toLowerCase()}</b>.
+                    </p>
+                    <p style="color:var(--muted); font-size:15px; margin-top:20px">
+                        Cela suggère des images moins centrées sur l'effet, et plus sur la présence — des images qui durent.
+                    </p>
+                    <button class="btn-next" style="margin-top:30px" onclick="location.reload()">${t.cta}</button>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); border-radius: 15px; padding: 20px;">
+                    <canvas id="visionChart"></canvas>
+                </div>
+            </div>`;
+
+        new Chart(document.getElementById('visionChart'), {
+            type: 'radar',
+            data: {
+                labels: [t.sliders.calm[1], t.sliders.present[1], t.sliders.rich[1]],
+                datasets: [{
+                    data: [state.sliders.calm, state.sliders.present, state.sliders.rich],
+                    backgroundColor: 'rgba(255,255,255,0.2)', borderColor: '#fff', borderWidth: 2
+                }]
+            },
+            options: {
+                scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' }, angleLines: { color: 'rgba(255,255,255,0.1)' } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // Start
+    window.onload = () => changeLang('fr');
+</script>
+</body>
+</html>
