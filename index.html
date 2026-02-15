@@ -4,9 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Marina — Project Snapshot</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         :root {
             --bg: #0d0f12;
@@ -15,219 +13,76 @@
             --txt: rgba(255, 255, 255, 0.95);
             --muted: rgba(255, 255, 255, 0.5);
             --accent: #ffffff;
-            --radius: 28px;
+            --radius: 24px;
         }
-
-        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-
+        * { box-sizing: border-box; transition: all 0.3s ease; }
         body {
-            margin: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--txt);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            -webkit-font-smoothing: antialiased;
+            margin: 0; font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg); color: var(--txt);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
         }
-
-        .bg-grain {
-            position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%), #0d0f12;
-        }
-
-        .shell { width: min(900px, 90%); padding: 40px 0; }
-
+        .shell { width: min(850px, 95%); padding: 20px; }
         .card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            backdrop-filter: blur(20px);
-            padding: 50px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: var(--card); border: 1px solid var(--line);
+            border-radius: var(--radius); backdrop-filter: blur(20px);
+            padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-
-        .topbar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px; font-size: 12px; letter-spacing: 1px;
-        }
-
+        .topbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
         .lang button {
             background: none; border: 1px solid transparent; color: var(--muted);
             cursor: pointer; padding: 5px 10px; border-radius: 8px; font-weight: 600;
         }
-        .lang button.active { color: var(--accent); border-color: var(--line); background: rgba(255,255,255,0.05); }
-
-        h1 { font-size: 42px; margin: 0 0 20px; letter-spacing: -1px; line-height: 1.1; }
-        .lead { font-size: 20px; color: var(--muted); line-height: 1.5; margin-bottom: 30px; }
-
-        .item {
-            padding: 20px; border-radius: 18px; border: 1px solid var(--line);
-            background: rgba(255,255,255,0.02); cursor: pointer; margin-bottom: 12px;
+        .lang button.active { color: var(--accent); border-color: var(--line); }
+        
+        h1 { font-size: 32px; margin: 0 0 25px; font-weight: 700; line-height: 1.2; }
+        input[type="text"] {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03); color: #fff; font-size: 18px; margin-bottom: 20px;
         }
-        .item:hover { background: rgba(255,255,255,0.05); }
-        .item.sel { border-color: var(--accent); background: rgba(255,255,255,0.08); }
-
-        input[type="range"] {
-            width: 100%; height: 6px; border-radius: 5px; background: var(--line);
-            outline: none; -webkit-appearance: none; margin: 20px 0;
+        .choice-btn {
+            width: 100%; text-align: left; padding: 18px; margin-bottom: 10px;
+            border-radius: 15px; border: 1px solid var(--line);
+            background: rgba(255,255,255,0.02); color: var(--txt); cursor: pointer; font-size: 16px;
         }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer;
+        .choice-btn:hover { background: rgba(255,255,255,0.07); }
+        .choice-btn.sel { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+        
+        .slider-row { margin: 30px 0; }
+        .slider-labels { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+        input[type="range"] { width: 100%; height: 4px; background: var(--line); border-radius: 2px; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff; cursor: pointer; }
+        
+        .nav-btns { display: flex; gap: 10px; margin-top: 30px; }
+        button.next { 
+            background: #fff; color: #000; border: none; padding: 12px 25px; 
+            border-radius: 50px; font-weight: 700; cursor: pointer;
         }
-
-        button.primary {
-            padding: 15px 30px; border-radius: 999px; border: none; background: var(--accent);
-            color: #000; font-weight: 700; cursor: pointer; font-size: 16px;
-        }
-
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
-        @media (max-width: 700px) { .report-grid { grid-template-columns: 1fr; } }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
+        @media (max-width: 650px) { .report-grid { grid-template-columns: 1fr; } }
+        .fade { animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
-    <div class="bg-grain"></div>
     <div class="shell">
         <div class="topbar">
-            <div id="stepCounter">—</div>
             <div class="lang">
                 <button onclick="setLang('en')" id="btnEN">EN</button>
                 <button onclick="setLang('fr')" id="btnFR">FR</button>
-                <button onclick="setLang('es')" id="btnES">ES</button>
             </div>
         </div>
-        <div class="card fade-in" id="app"></div>
+        <div id="app" class="card"></div>
     </div>
 
 <script>
 const i18n = {
     fr: {
-        intro_h1: "Chaque projet a une âme.",
-        intro_p: "Prenons un instant pour capturer l'essence de votre vision photographique. Ce snapshot servira de boussole pour notre collaboration.",
-        start: "Commencer l'expérience",
-        feel_h1: "Instinctivement, quel est le tempo ?",
-        sliders: {
-            calm: {l:"Calme", r:"Vibrant"},
-            present: {l:"Discret", r:"Affirmé"},
-            rich: {l:"Épuré", r:"Riche"}
-        },
-        report_h1: "Lecture du projet",
-        report_sub: "Une première lecture photographique",
-        cta: "Parlons de ce projet"
-    },
-    en: {
-        intro_h1: "Every project has a soul.",
-        intro_p: "Let's take a moment to capture the essence of your photographic vision. This snapshot will be our compass.",
-        start: "Start Experience",
-        feel_h1: "Instinctively, what is the tempo?",
-        sliders: {
-            calm: {l:"Calm", r:"Lively"},
-            present: {l:"Discreet", r:"Present"},
-            rich: {l:"Simple", r:"Rich"}
-        },
-        report_h1: "Project Snapshot",
-        report_sub: "A first photographic reading",
-        cta: "Let's talk about it"
-    }
-};
-
-let lang = 'fr';
-let step = 0;
-const state = { sliders: { calm: 50, present: 50, rich: 50 } };
-
-function setLang(l) {
-    lang = l;
-    document.querySelectorAll('.lang button').forEach(b => b.classList.remove('active'));
-    const activeBtn = document.getElementById('btn' + l.toUpperCase());
-    if(activeBtn) activeBtn.classList.add('active');
-    render();
-}
-
-function render() {
-    const app = document.getElementById('app');
-    const t = i18n[lang] || i18n['en'];
-    document.getElementById('stepCounter').innerText = step === 0 ? "INTRO" : `STEP ${step}`;
-
-    app.classList.remove('fade-in');
-    void app.offsetWidth;
-    app.classList.add('fade-in');
-
-    if (step === 0) {
-        app.innerHTML = `
-            <h1>${t.intro_h1}</h1>
-            <p class="lead">${t.intro_p}</p>
-            <button class="primary" onclick="step=1;render()">${t.start}</button>
-        `;
-    } else if (step === 1) {
-        app.innerHTML = `
-            <h1>${t.feel_h1}</h1>
-            ${renderSlider('calm', t.sliders.calm)}
-            ${renderSlider('present', t.sliders.present)}
-            ${renderSlider('rich', t.sliders.rich)}
-            <div style="margin-top:40px">
-                <button class="primary" onclick="step=2;render()">Générer le Snapshot</button>
-            </div>
-        `;
-    } else if (step === 2) {
-        renderReport();
-    }
-}
-
-function renderSlider(id, labels) {
-    return `
-        <div style="margin: 30px 0;">
-            <div style="display:flex; justify-content:space-between; font-weight:600; font-size:14px; color:var(--muted)">
-                <span>${labels.l}</span><span>${labels.r}</span>
-            </div>
-            <input type="range" min="0" max="100" value="${state.sliders[id]}" oninput="state.sliders['${id}']=this.value">
-        </div>
-    `;
-}
-
-function renderReport() {
-    const app = document.getElementById('app');
-    const t = i18n[lang];
-    app.innerHTML = `
-        <h1>${t.report_h1}</h1>
-        <p class="lead">${t.report_sub}</p>
-        <div class="report-grid">
-            <div style="font-size:18px; line-height:1.6; color:var(--muted)">
-                Votre projet semble privilégier une atmosphère <b>${state.sliders.calm > 50 ? 'vibrante' : 'calme'}</b> 
-                avec un regard <b>${state.sliders.present > 50 ? 'affirmé' : 'discret'}</b>. 
-                L'esthétique tend vers le <b>${state.sliders.rich > 50 ? 'détail riche' : 'minimalisme'}</b>.
-            </div>
-            <div style="background:rgba(255,255,255,0.02); border-radius:20px; padding:20px;">
-                <canvas id="radarChart"></canvas>
-            </div>
-        </div>
-        <button class="primary" style="margin-top:30px" onclick="location.reload()">${t.cta}</button>
-    `;
-
-    const ctx = document.getElementById('radarChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: [t.sliders.calm.r, t.sliders.present.r, t.sliders.rich.r],
-            datasets: [{
-                data: [state.sliders.calm, state.sliders.present, state.sliders.rich],
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                borderColor: '#ffffff',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' } } },
-            plugins: { legend: { display: false } }
-        }
-    });
-}
-
-// Initialisation sécurisée
-window.onload = () => setLang('fr');
-</script>
-</body>
-</html>
+        s1_h: "Comment t'appelles-tu ?",
+        s2_h: "Sur quel projet travailles-tu ?",
+        s3_h: "Quelle est l'essence du projet ?",
+        s3_opts: ["Un lieu à ressentir", "Une histoire à raconter", "Un moment à préserver"],
+        s4_h: "Quand quelqu'un découvre ces images, qu'est-ce qui devrait rester ?",
+        s4_opts: ["Une sensation naturelle", "Une atmosphère forte", "Un sentiment de vérité", "Une élégance discrète"],
+        s5_h: "Instinctivement, où placeriez-vous ce projet ?",
+        sliders: { calm: ["Calm", "Lively"], present: ["Discreet", "Present"], rich: ["Simple", "Rich"] },
+        report
