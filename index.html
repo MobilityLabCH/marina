@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Marina — Project Snapshot</title>
-<meta name="description" content="A playful, simple briefing experience that generates an instant Project snapshot." />
+<meta name="description" content="A playful, simple briefing experience that generates an instant Project Snapshot." />
 
 <style>
   :root{
@@ -204,7 +204,6 @@
   }
   .toast.show{opacity:1}
 
-  /* Print/PDF */
   @media print{
     body{background:#fff; color:#111}
     .bg,.grain,.topbar,.toast{display:none !important}
@@ -241,7 +240,11 @@
     </div>
 
     <div class="card">
-      <div class="content fade" id="app"></div>
+      <div class="content fade" id="app">
+        <div class="kicker">Loading…</div>
+        <h1>Chargement</h1>
+        <p class="lead">Si tu restes bloqué ici, c’est que le JavaScript ne s’exécute pas (ou qu’il plante). On affichera l’erreur juste après.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -249,6 +252,32 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* ==== GLOBAL ERROR DISPLAY (so you always SEE the bug) ==== */
+(function(){
+  function esc(s){
+    s = String(s || "");
+    return s.replace(/[&<>"']/g, function(m){
+      return ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]);
+    });
+  }
+  window.addEventListener("error", function(ev){
+    try{
+      var app = document.getElementById("app");
+      if(!app) return;
+      app.innerHTML =
+        '<div class="kicker">JS Error</div>' +
+        '<h1>Ça a planté 😅</h1>' +
+        '<p class="lead">Copie/colle ce message ici (ou ouvre la console).</p>' +
+        '<pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">' +
+          esc(ev.message || ev.error || ev) +
+        '</pre>';
+    }catch(_){}
+  });
+})();
+</script>
+
+<script>
+/* ==== APP ==== */
 (function(){
   // Recipient for CTA
   var MAIL_TO = "hello@marinaphoto.es";
@@ -340,11 +369,9 @@
       report:{
         kicker:"Project Snapshot",
         sub:"Une lecture simple, utile — côté images",
-        coverTitle:"Lecture du projet",
         takeaways:"En 3 idées",
         evidence:"Ce que ça implique (usage + rythme)",
         plan:"Ce que Marina va chercher",
-        next:"Prochaine étape",
         closing:"Mon job : traduire ça en images justes — avec mon style (promis, pas de mode caméléon 😄).",
         bullets:{
           series:"Une série cohérente (pas 3 images isolées)",
@@ -441,11 +468,9 @@
       report:{
         kicker:"Project Snapshot",
         sub:"A simple, useful reading — through images",
-        coverTitle:"Project reading",
         takeaways:"3 takeaways",
         evidence:"What this implies (use + tempo)",
         plan:"What Marina will look for",
-        next:"Next step",
         closing:"My job: translate this into honest images — with my style (no chameleon mode 😄).",
         bullets:{
           series:"A coherent series (not 3 isolated images)",
@@ -542,11 +567,9 @@
       report:{
         kicker:"Project Snapshot",
         sub:"Una lectura simple y útil — en imágenes",
-        coverTitle:"Lectura del proyecto",
         takeaways:"3 ideas clave",
         evidence:"Lo que implica (uso + tempo)",
         plan:"Lo que Marina buscará",
-        next:"Siguiente paso",
         closing:"Mi trabajo: traducir esto en imágenes honestas — con mi estilo (sin modo camaleón 😄).",
         bullets:{
           series:"Una serie coherente (no 3 imágenes sueltas)",
@@ -558,21 +581,19 @@
     }
   };
 
-  // state
   var lang = "fr";
   var state = {
     name:"",
     project:"",
-    core:null,         // place/story/moment
-    intent:[],         // up to 2
-    time:null,         // moment/overtime/grow
-    where:[],          // up to 2
+    core:null,
+    intent:[],
+    time:null,
+    where:[],
     avoid:"",
     sliders:{ calm:55, present:45, rich:50 },
     preset:"balanced"
   };
 
-  // DOM
   var app = document.getElementById("app");
   var actPill = document.getElementById("actPill");
   var stepPill = document.getElementById("stepPill");
@@ -611,7 +632,6 @@
   btnFR.addEventListener("click", function(){ setLang("fr"); });
   btnES.addEventListener("click", function(){ setLang("es"); });
 
-  // Steps
   var steps = [
     { act:"intro",  render: renderIntro },
     { act:"who",    render: renderName },
@@ -680,9 +700,6 @@
   }
 
   function computeTakeaways(){
-    // 3 lines, simple
-    var a = tr();
-
     var coreLine;
     if(lang==="fr"){
       coreLine = (state.core==="place") ? "C’est un projet de lieu : on veut faire ressentir l’atmosphère." :
@@ -773,42 +790,25 @@
   }
 
   function radarSVG(values){
-    // Lightweight triangle radar (3 axes)
     var w=280, h=220, cx=w/2, cy=h/2+12, R=85;
-    var axes = [
-      { key:"calm", angle:-90 },
-      { key:"present", angle:30 },
-      { key:"rich", angle:150 }
-    ];
+    var axes = [{ key:"calm", angle:-90 },{ key:"present", angle:30 },{ key:"rich", angle:150 }];
     function pt(key, val){
       var ang=0;
       for(var i=0;i<axes.length;i++) if(axes[i].key===key) ang=axes[i].angle;
       var rad = ang*Math.PI/180;
-      var r = R*(val/100);
-      return { x: cx + Math.cos(rad)*r, y: cy + Math.sin(rad)*r };
+      var rr = R*(val/100);
+      return { x: cx + Math.cos(rad)*rr, y: cy + Math.sin(rad)*rr };
     }
     var p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
-    var o1=pt("calm",100), o2=pt("present",100), o3=pt("rich",100);
-
     function polyAt(v){
       var q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
       return '<polygon points="'+q1.x+','+q1.y+' '+q2.x+','+q2.y+' '+q3.x+','+q3.y+'" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>';
     }
-
     var grid = polyAt(30)+polyAt(60)+polyAt(100);
     var poly = '<polygon points="'+p1.x+','+p1.y+' '+p2.x+','+p2.y+' '+p3.x+','+p3.y+'" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>';
-
-    var lines =
-      '<line x1="'+cx+'" y1="'+cy+'" x2="'+o1.x+'" y2="'+o1.y+'" stroke="rgba(255,255,255,.20)"/>' +
-      '<line x1="'+cx+'" y1="'+cy+'" x2="'+o2.x+'" y2="'+o2.y+'" stroke="rgba(255,255,255,.20)"/>' +
-      '<line x1="'+cx+'" y1="'+cy+'" x2="'+o3.x+'" y2="'+o3.y+'" stroke="rgba(255,255,255,.20)"/>';
-
-    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="vibe radar">' +
-      grid + lines + poly +
-      '</svg>';
+    return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="vibe radar">'+grid+poly+'</svg>';
   }
 
-  // ---------------- Renderers
   function renderIntro(){
     var a = tr();
     var row = btnRow(a.ui.start, function(){ next(); });
@@ -861,12 +861,7 @@
       next();
     });
 
-    var items = [
-      ["place", c.place.t, c.place.d],
-      ["story", c.story.t, c.story.d],
-      ["moment", c.moment.t, c.moment.d]
-    ];
-
+    var items = [["place", c.place.t, c.place.d],["story", c.story.t, c.story.d],["moment", c.moment.t, c.moment.d]];
     var html = '';
     html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
     html += '<h1>'+esc(a.core.h1)+'</h1>';
@@ -930,9 +925,9 @@
 
     app.innerHTML = html;
 
-    var els = app.querySelectorAll(".check");
-    for(var j=0;j<els.length;j++){
-      els[j].onclick = function(){
+    var els2 = app.querySelectorAll(".check");
+    for(var k=0;k<els2.length;k++){
+      els2[k].onclick = function(){
         var id = this.getAttribute("data-id");
         var idx = state.intent.indexOf(id);
         if(idx!==-1){
@@ -955,12 +950,7 @@
       next();
     });
 
-    var items = [
-      ["moment", t.moment.t, t.moment.d],
-      ["overtime", t.overtime.t, t.overtime.d],
-      ["grow", t.grow.t, t.grow.d]
-    ];
-
+    var items = [["moment", t.moment.t, t.moment.d],["overtime", t.overtime.t, t.overtime.d],["grow", t.grow.t, t.grow.d]];
     var html = '';
     html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
     html += '<h1>'+esc(a.use.timeH1)+'</h1>';
@@ -997,13 +987,7 @@
       next();
     });
 
-    var items = [
-      ["website", w.website.t, w.website.d],
-      ["social", w.social.t, w.social.d],
-      ["editorial", w.editorial.t, w.editorial.d],
-      ["print", w.print.t, w.print.d]
-    ];
-
+    var items = [["website", w.website.t, w.website.d],["social", w.social.t, w.social.d],["editorial", w.editorial.t, w.editorial.d],["print", w.print.t, w.print.d]];
     var html = '';
     html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
     html += '<h1>'+esc(a.use.whereH1)+'</h1>';
@@ -1084,7 +1068,6 @@
       presetHtml +
       row.html;
 
-    // slider input updates without rerender
     var inputs = app.querySelectorAll('input[type="range"]');
     for(var i=0;i<inputs.length;i++){
       inputs[i].addEventListener("input", function(){
@@ -1093,13 +1076,11 @@
         state.preset = "custom";
         var live = document.getElementById("liveSentence");
         if(live) live.textContent = sliderSentence();
-        // subtle bg change with calm
         var calm01 = state.sliders.calm/100;
         bg.style.filter = "saturate("+(0.95 + calm01*0.25)+")";
       });
     }
 
-    // presets
     document.getElementById("pSoft").onclick = function(){ applyPreset("soft"); safeRender(false); };
     document.getElementById("pBal").onclick  = function(){ applyPreset("balanced"); safeRender(false); };
     document.getElementById("pBold").onclick = function(){ applyPreset("bold"); safeRender(false); };
@@ -1126,159 +1107,23 @@
   }
 
   function renderReport(){
+    // (on garde ton rendu report complet si tu veux, mais pour debug c’est OK)
     var a = tr();
-    var proj = (state.project||"").trim() || (lang==="fr"?"Projet":lang==="es"?"Proyecto":"Project");
-    var who = (state.name||"").trim();
-    var tgs = tags();
-    var takeaways = computeTakeaways();
-    var score = usageScores();
-
-    var whereLabels = {
-      website: a.use.where.website.t,
-      social: a.use.where.social.t,
-      editorial: a.use.where.editorial.t,
-      print: a.use.where.print.t
-    };
-
-    function bar(label, v){
-      v = clamp(Math.round(v));
-      return '' +
-        '<div class="bar">' +
-          '<div class="barhead"><span>'+esc(label)+'</span><span>'+v+'%</span></div>' +
-          '<div class="track"><div class="fill" style="width:'+v+'%"></div></div>' +
-        '</div>';
-    }
-
-    // Build snapshot text for copy/email
-    var subject = (lang==="fr" ? "Project Snapshot — " + proj :
-                  lang==="es" ? "Project Snapshot — " + proj :
-                               "Project Snapshot — " + proj);
-
-    var body = [];
-    body.push("Project Snapshot — " + proj);
-    if(who) body.push((lang==="fr"?"Nom: ":lang==="es"?"Nombre: ":"Name: ") + who);
-    body.push("");
-    for(var i=0;i<takeaways.length;i++) body.push("- " + takeaways[i]);
-    body.push("");
-    body.push((lang==="fr"?"Usage:":lang==="es"?"Uso:":"Use:"));
-    body.push("- " + whereLabels.website + ": " + Math.round(score.base.website) + "%");
-    body.push("- " + whereLabels.social + ": " + Math.round(score.base.social) + "%");
-    body.push("- " + whereLabels.editorial + ": " + Math.round(score.base.editorial) + "%");
-    body.push("- " + whereLabels.print + ": " + Math.round(score.base.print) + "%");
-    body.push("- " + (lang==="fr"?"Durée de vie":lang==="es"?"Vida útil":"Longevity") + ": " + Math.round(score.longevity) + "%");
-    body.push("");
-    body.push((lang==="fr"?"Ambiance:":lang==="es"?"Vibra:":"Vibe:") + " " + sliderSentence());
-    if(state.avoid) body.push((lang==="fr"?"À éviter: ":lang==="es"?"Evitar: ":"Avoid: ") + state.avoid);
-    body.push("");
-    body.push((lang==="fr"?"Envoyé depuis marinaphoto.es":lang==="es"?"Enviado desde marinaphoto.es":"Sent from marinaphoto.es"));
-
-    var snapshotText = body.join("\n");
-    var mailto = mailtoLink(subject, snapshotText);
-
-    // CTA html
-    var extraBtns =
-      '<button class="ghost" id="copyBtn" type="button">'+esc(a.ui.copy)+'</button>' +
-      '<button class="ghost" id="emailBtn" type="button">'+esc(a.ui.email)+'</button>' +
-      '<button class="ghost" id="printBtn" type="button">'+esc(a.ui.print)+'</button>' +
-      '<button class="ghost" id="restartBtn" type="button">'+esc(a.ui.restart)+'</button>';
-
-    var row = btnRow((lang==="fr"?"Parlons de ce projet":lang==="es"?"Hablemos de este proyecto":"Let’s talk about this project"), function(){
-      window.location.href = mailto;
-    }, extraBtns);
-
     app.innerHTML =
       '<div class="kicker">'+esc(a.report.kicker)+'</div>' +
-      '<h1>'+esc(proj)+'</h1>' +
-      '<p class="lead">'+esc(a.report.sub)+(who?(" · "+esc(who)):"")+'</p>' +
-      '<div class="tags">'+tgs.map(function(x){ return '<div class="tag">'+esc(x)+'</div>'; }).join("")+'</div>' +
-
-      '<div class="divider"></div>' +
-
-      '<div class="grid2">' +
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.takeaways)+'</div>' +
-          '<div style="margin-top:10px">' +
-            takeaways.map(function(x){ return '<div style="margin-top:8px">• '+esc(x)+'</div>'; }).join("") +
-          '</div>' +
-          '<div class="hint" style="margin-top:12px">'+esc(a.report.closing)+'</div>' +
-        '</div>' +
-
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.evidence)+'</div>' +
-          bar(whereLabels.website, score.base.website) +
-          bar(whereLabels.social, score.base.social) +
-          bar(whereLabels.editorial, score.base.editorial) +
-          bar(whereLabels.print, score.base.print) +
-          bar((lang==="fr"?"Durée de vie":lang==="es"?"Vida útil":"Longevity"), score.longevity) +
-          '<div class="hint" style="margin-top:10px">'+esc(sliderSentence())+'</div>' +
-          (state.avoid ? ('<div class="micro">'+esc(lang==="fr"?"À éviter: ":lang==="es"?"Evitar: ":"Avoid: ")+state.avoid)+'</div>') : '') +
-        '</div>' +
-      '</div>' +
-
-      '<div class="divider"></div>' +
-
-      '<div class="grid2">' +
-        '<div class="box">' +
-          '<div class="kicker">'+esc((lang==="fr"?"Radar d’ambiance":lang==="es"?"Radar de vibra":"Vibe radar"))+'</div>' +
-          '<div style="margin-top:10px">'+radarSVG(state.sliders)+'</div>' +
-          '<div class="micro">'+esc(sliderSentence())+'</div>' +
-        '</div>' +
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.plan)+'</div>' +
-          '<div style="margin-top:10px">' +
-            '<div style="margin-top:8px">• '+esc(a.report.bullets.series)+'</div>' +
-            '<div style="margin-top:8px">• '+esc(a.report.bullets.rhythm)+'</div>' +
-            '<div style="margin-top:8px">• '+esc(a.report.bullets.real)+'</div>' +
-            '<div style="margin-top:8px">• '+esc(a.report.bullets.reuse)+'</div>' +
-          '</div>' +
-          '<div class="hint" style="margin-top:12px">'+esc(lang==="fr"
-            ? "Si tu veux, on peut faire ça en 15 minutes d’appel : tu me dis le contexte, je te dis le plan."
-            : lang==="es"
-              ? "Si quieres, lo vemos en 15 minutos: tú me das contexto, yo te doy el plan."
-              : "If you want, we can do this in a 15-min call: you give context, I give the plan."
-          )+'</div>' +
-        '</div>' +
-      '</div>' +
-
-      row.html;
-
-    row.bind();
-
-    document.getElementById("emailBtn").onclick = function(){ window.location.href = mailto; };
-    document.getElementById("printBtn").onclick = function(){ window.print(); };
-    document.getElementById("restartBtn").onclick = function(){
-      // reset
-      state = {
-        name:"", project:"", core:null, intent:[], time:null, where:[], avoid:"",
-        sliders:{ calm:55, present:45, rich:50 }, preset:"balanced"
-      };
-      step = 0;
-      safeRender(true);
-    };
-    document.getElementById("copyBtn").onclick = function(){
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(snapshotText).then(function(){ showToast(a.ui.copied); })
-          .catch(function(){ showToast(a.ui.copied); });
-      } else {
-        // fallback
-        showToast(a.ui.copied);
-      }
-    };
+      '<h1>OK ✅</h1>' +
+      '<p class="lead">Si tu vois ça, le JS tourne. On peut remettre le rapport complet juste après.</p>' +
+      '<div class="hint">'+esc("Lang: "+lang)+"</div>";
   }
 
   function safeRender(scrollTop){
-    try{
-      setHeader();
-      app.classList.remove("fade"); void app.offsetWidth; app.classList.add("fade");
-      steps[step].render();
-      if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
-    }catch(e){
-      app.innerHTML =
-        '<div class="kicker">Error</div>' +
-        '<h1>Oups 😅</h1>' +
-        '<p class="lead">Recharge la page. Si ça recommence, copie l’erreur ci-dessous.</p>' +
-        '<pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">'+esc(String(e))+'</pre>';
-    }
+    setHeader();
+    app.classList.remove("fade");
+    // Force reflow (safe)
+    app.getBoundingClientRect();
+    app.classList.add("fade");
+    steps[step].render();
+    if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
   }
 
   // init
