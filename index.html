@@ -1,215 +1,1218 @@
-function pick(arr, seed){
-  // deterministic pick (no randomness across refresh)
-  const i = Math.abs(hash(seed)) % arr.length;
-  return arr[i];
-}
-function hash(s){
-  let h=0;
-  for(let i=0;i<s.length;i++) h = (h<<5)-h + s.charCodeAt(i), h|=0;
-  return h;
-}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marina — Project Snapshot</title>
 
-function storyLines(){
-  const a = tr();
-  const who = (state.name||"").trim();
-  const proj = (state.project||"").trim();
-  const seed = `${lang}|${who}|${proj}|${state.core}|${state.intent.join(",")}|${state.time}|${state.where.join(",")}|${state.sliders.calm}|${state.sliders.present}|${state.sliders.rich}`;
+  <style>
+    :root{
+      --bg:#0c0e11;
+      --card:rgba(255,255,255,.06);
+      --line:rgba(255,255,255,.14);
+      --txt:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --accent:rgba(255,255,255,.92);
+      --shadow:0 18px 50px rgba(0,0,0,.55);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--txt);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    .bg{
+      position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(900px 420px at 18% 20%, rgba(255,255,255,.11), transparent 60%),
+        radial-gradient(900px 520px at 82% 30%, rgba(255,255,255,.08), transparent 62%),
+        radial-gradient(900px 520px at 55% 92%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
+    }
+    .grain{
+      position:fixed; inset:-40px; z-index:-1; opacity:.10; pointer-events:none;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>');
+      mix-blend-mode:overlay;
+    }
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:26px 14px;
+    }
+    .shell{ width:min(1040px,100%); }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 6px;
+      font-size:13px;
+      color:var(--muted);
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      max-width:100%;
+    }
+    .lang{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      padding:4px;
+      border-radius:999px;
+    }
+    .lang button{
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      font-weight:800;
+      cursor:pointer;
+      padding:6px 10px;
+      border-radius:999px;
+      letter-spacing:.02em;
+    }
+    .lang button.active{
+      color:#0c0e11;
+      background:var(--accent);
+    }
 
-  const projLabel = proj ? `“${proj}”` : (lang==="fr"?"ce projet":lang==="es"?"este proyecto":"this project");
-  const whoLabel = who ? who : (lang==="fr"?"vous":lang==="es"?"tú":"you");
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.03));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .content{padding:28px}
+    @media (max-width:720px){ .content{padding:20px} }
 
-  // --- Core (place/story/moment)
-  const coreLines = {
+    .fade{animation:fade .32s ease both}
+    @keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:translateY(0)}}
+
+    h1{font-size:34px; margin:0 0 10px; letter-spacing:-.02em}
+    h2{font-size:18px; margin:0 0 10px; color:var(--muted); font-weight:650}
+    p{margin:0 0 12px; line-height:1.55}
+    .lead{color:var(--muted)}
+    .kicker{font-size:12px; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.58)}
+    .bigtitle{font-size:34px; margin:8px 0 6px; letter-spacing:-.02em}
+    .subtitle{color:var(--muted); margin:0}
+
+    .fieldlabel{display:block; margin-top:14px; font-size:12px; color:var(--muted)}
+    input[type="text"]{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--txt);
+      outline:none;
+      margin-top:8px;
+    }
+
+    .choices,.checks{display:grid; gap:10px; margin-top:14px}
+    .choice,.check{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+    }
+    .choice:hover,.check:hover{background:rgba(255,255,255,.06)}
+    .choice.sel,.check.sel{
+      background:rgba(255,255,255,.09);
+      border-color:rgba(255,255,255,.25);
+    }
+    .optTitle{font-weight:850}
+    .optDesc{margin-top:6px; font-size:12px; color:var(--muted); line-height:1.35}
+    .meta{margin-top:10px; font-size:13px; color:var(--muted)}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
+    button{
+      border-radius:999px;
+      border:1px solid var(--line);
+      padding:11px 16px;
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      cursor:pointer;
+      font-weight:850;
+    }
+    button.primary{
+      background:var(--accent);
+      color:#0c0e11;
+      border-color:rgba(255,255,255,.18);
+    }
+    button.ghost{background:transparent}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:900px){ .grid2{grid-template-columns:1fr} }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+    }
+    .divider{height:1px; background:var(--line); margin:18px 0}
+
+    .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.05);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:13px;
+      color:rgba(255,255,255,.86);
+    }
+
+    .bar{margin-top:12px}
+    .barhead{display:flex; justify-content:space-between; font-size:13px; color:var(--muted)}
+    .track{height:10px; border-radius:999px; background:rgba(255,255,255,.10); margin-top:8px; overflow:hidden}
+    .fill{height:100%; border-radius:999px; background:rgba(255,255,255,.86); width:40%}
+
+    .slider{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+      margin-top:12px;
+    }
+    .slab{display:flex; justify-content:space-between; color:var(--muted); font-size:13px}
+    input[type="range"]{width:100%; margin-top:10px}
+    .smallhelp{font-size:12px; color:var(--muted); margin-top:8px; line-height:1.35}
+
+    #app{min-height:320px}
+
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.18);
+      color:rgba(255,255,255,.9);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      max-width:min(92vw,700px);
+      text-align:center;
+    }
+    .toast.show{opacity:1}
+  </style>
+</head>
+
+<body>
+  <div class="bg"></div>
+  <div class="grain"></div>
+
+  <div class="wrap">
+    <div class="shell">
+      <div class="topbar">
+        <div class="pill" id="actPill">—</div>
+        <div class="pill">
+          <span id="stepPill">—</span>
+          <span class="lang" style="margin-left:10px" aria-label="Language">
+            <button id="btnEN" type="button">EN</button>
+            <button id="btnFR" type="button">FR</button>
+            <button id="btnES" type="button">ES</button>
+          </span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="content fade" id="app"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  /* =============================
+     Copy: simpler, less theory,
+     a pinch of humour, fully i18n
+  ============================== */
+
+  const I18N = {
     fr:{
-      place:[
-        "Ce projet ressemble à un lieu qu’on doit pouvoir ressentir — sa lumière, sa matière, sa présence.",
-        "On est ici dans une histoire de lieu : une présence, une atmosphère, quelque chose qui se tient dans l’air.",
-        "Ce projet semble demander des images qui laissent respirer le lieu — sans forcer, sans surjouer."
-      ],
-      story:[
-        "Ce projet ressemble à une histoire : des gestes, des humains, une continuité.",
-        "On sent une narration — pas forcément racontée, mais portée par le rythme et la présence.",
-        "Ce projet semble demander des images qui suivent une histoire plus que des “moments parfaits”."
-      ],
-      moment:[
-        "Ce projet ressemble à un moment à garder — quelque chose de juste, simple, vrai.",
-        "On est dans l’idée de mémoire : un instant qu’on veut pouvoir retrouver plus tard.",
-        "Ce projet semble demander des images qui protègent l’essentiel, sans bruit."
-      ]
+      acts:{ intro:"Intro", who:"Toi & le projet", core:"Le coeur", live:"Usage", feel:"Ambiance", report:"Rapport" },
+      ui:{
+        start:"C’est parti",
+        continue:"Continuer",
+        back:"Retour",
+        optional:"(optionnel)",
+        pickOne:"Choisis une option 🙂",
+        pickAtLeastOne:"Choisis au moins une option 🙂",
+        maxTwo:"Max 2 choix",
+        copied:"Copié ✨",
+        talk:"Parlons de ce projet",
+        copy:"Copier le snapshot",
+        email:"Ouvrir un email",
+        longTerm:"Durée de vie"
+      },
+      intro:{
+        kicker:"Project Snapshot",
+        h1:"On va parler d’images. Pas de stratégie. Promis.",
+        p:"Quelques questions rapides pour comprendre ce que ces images doivent vraiment faire pour toi.\n(Et non, il n’y a pas de mauvaise réponse.)"
+      },
+      who:{
+        nameH1:"Comment je t’appelle ?",
+        nameHelp:"Prénom, pseudo… comme tu veux.",
+        namePh:"Ex : Alex",
+        projH1:"Ce projet, tu l’appelles comment ?",
+        projHelp:"Même un nom provisoire, ça marche très bien.",
+        projPh:"Ex : Maison Sitges, Hotel opening…"
+      },
+      core:{
+        h1:"Si tu devais l’expliquer en une phrase, ce serait plutôt…",
+        help:"Choisis ce qui te ressemble le plus aujourd’hui.",
+        opts:{
+          place:{t:"🏠 Un lieu", d:"Un endroit à montrer / à faire ressentir."},
+          story:{t:"📖 Une histoire", d:"Des gens, des gestes, une ambiance."},
+          moment:{t:"⏳ Un moment", d:"Quelque chose qu’on ne veut pas oublier."}
+        },
+        intentH1:"Quand quelqu’un tombe sur ces images, tu aimerais qu’il se dise…",
+        intentHelp:"Choisis 1 ou 2. Instinctif = parfait.",
+        intent:{
+          natural:{t:"“C’est naturel, ça sonne vrai.”", d:"Rien de forcé. Ça respire."},
+          atmosphere:{t:"“Il y a une vraie ambiance.”", d:"On sent le lieu / le moment."},
+          truth:{t:"“C’est sincère.”", d:"Quelque chose de réel, pas fabriqué."},
+          elegance:{t:"“Simple, mais élégant.”", d:"Sobre, précis, intemporel."}
+        }
+      },
+      live:{
+        timeH1:"Ces images, tu les imagines surtout…",
+        timeHelp:"Ça m’aide à doser. Pas à te juger 😄",
+        time:{
+          moment:{t:"📆 Pour un moment précis", d:"Un lancement, une période, un événement."},
+          overtime:{t:"🔁 Pour les réutiliser souvent", d:"Une base solide, qui tient dans le temps."},
+          grow:{t:"🌱 Comme quelque chose qui va évoluer", d:"Un langage visuel qui s’installe."}
+        },
+        whereH1:"Tu verras surtout ces images…",
+        whereHelp:"Max 2. Là où tu penses les croiser le plus souvent.",
+        where:{
+          website:{t:"sur ton site", d:"Lecture plus lente, plus posée."},
+          social:{t:"sur Instagram / réseaux", d:"Rythme, répétition, série."},
+          editorial:{t:"dans des articles / presse", d:"Contexte, narration, détails."},
+          print:{t:"imprimées / affichées", d:"Impact, matière, permanence."}
+        }
+      },
+      feel:{
+        h1:"Dernière chose. Réponds vite, sans trop réfléchir.",
+        help:"Ces curseurs ne changent pas mon style — ils m’aident juste à régler le tempo.",
+        s:{
+          calm:{l:"😌 calme", r:"⚡ vivant", hl:"posé, respirations", hr:"énergie, mouvement"},
+          present:{l:"👀 discret", r:"🤍 très présent", hl:"observer", hr:"plus proche"},
+          rich:{l:"✂️ simple", r:"🧱 riche", hl:"épuré", hr:"détails, matière"}
+        }
+      },
+      report:{
+        kicker:"Lecture du projet",
+        sub:"Une première lecture — côté images",
+        sec1:"Ce que j’ai compris",
+        sec2:"Comment ces images peuvent vivre",
+        sec3:"Ambiance générale",
+        sec4:"Ce que je vais chercher en photo",
+        sec5:"Comment on peut travailler ensemble",
+        bullets:{
+          series:"Une série cohérente (pas juste 3 images isolées)",
+          rhythm:"Un rythme (respiration, lumière, continuité)",
+          real:"Du vrai : gestes, présence, matière",
+          reuse:"Des images qui tiennent dans le temps"
+        },
+        collab:{
+          moment:"On fait un shooting ciblé, simple, efficace.",
+          overtime:"On construit une base réutilisable (un set solide).",
+          grow:"On crée une continuité (collab dans le temps)."
+        }
+      }
     },
+
     en:{
-      place:[
-        "This feels like a place that needs to be felt — its light, texture and presence.",
-        "This is about place: atmosphere, materiality, and a quiet presence in the air.",
-        "It seems to ask for images that let the place breathe — without forcing anything."
-      ],
-      story:[
-        "This feels like a story: people, gestures, continuity.",
-        "There’s a narrative here — not explained, but carried by rhythm and presence.",
-        "It asks for images that follow a story more than “perfect moments”."
-      ],
-      moment:[
-        "This feels like a moment to hold onto — something simple, truthful, precise.",
-        "It’s about memory: an instant you want to be able to return to later.",
-        "It asks for images that protect what matters, quietly."
-      ]
+      acts:{ intro:"Intro", who:"You & project", core:"The core", live:"Use", feel:"Vibe", report:"Report" },
+      ui:{
+        start:"Let’s go",
+        continue:"Continue",
+        back:"Back",
+        optional:"(optional)",
+        pickOne:"Pick one 🙂",
+        pickAtLeastOne:"Pick at least one 🙂",
+        maxTwo:"Max 2",
+        copied:"Copied ✨",
+        talk:"Let’s talk about this project",
+        copy:"Copy snapshot",
+        email:"Open email",
+        longTerm:"Longevity"
+      },
+      intro:{
+        kicker:"Project Snapshot",
+        h1:"We’ll talk images. Not strategy. Promise.",
+        p:"A few quick questions to understand what these images need to do for you.\n(And yes, there’s no wrong answer.)"
+      },
+      who:{
+        nameH1:"How should I call you?",
+        nameHelp:"First name, nickname… your choice.",
+        namePh:"e.g. Alex",
+        projH1:"What do you call this project?",
+        projHelp:"Even a temporary name is totally fine.",
+        projPh:"e.g. Sitges house, Hotel opening…"
+      },
+      core:{
+        h1:"If you had to explain it in one sentence, it’s more like…",
+        help:"Pick what feels closest today.",
+        opts:{
+          place:{t:"🏠 A place", d:"A place to show / to make people feel."},
+          story:{t:"📖 A story", d:"People, gestures, atmosphere."},
+          moment:{t:"⏳ A moment", d:"Something you don’t want to forget."}
+        },
+        intentH1:"When someone lands on these images, you’d love them to think…",
+        intentHelp:"Pick 1 or 2. Instinct is perfect.",
+        intent:{
+          natural:{t:"“It feels natural and real.”", d:"Nothing forced. It breathes."},
+          atmosphere:{t:"“There’s a real vibe.”", d:"You can feel the place / moment."},
+          truth:{t:"“It feels sincere.”", d:"Something real, not manufactured."},
+          elegance:{t:"“Simple, but elegant.”", d:"Understated, precise, timeless."}
+        }
+      },
+      live:{
+        timeH1:"You mostly imagine these images…",
+        timeHelp:"This helps me calibrate — not judge 😄",
+        time:{
+          moment:{t:"📆 For a specific moment", d:"A launch, a period, an event."},
+          overtime:{t:"🔁 To reuse often", d:"A solid base that lasts."},
+          grow:{t:"🌱 As something that evolves", d:"A visual language that settles in."}
+        },
+        whereH1:"You’ll mostly see these images…",
+        whereHelp:"Max 2. Where you’ll actually meet them most.",
+        where:{
+          website:{t:"on your website", d:"Slower, calmer reading."},
+          social:{t:"on Instagram / social", d:"Rhythm, repetition, series."},
+          editorial:{t:"in editorial / press", d:"Context, narrative, details."},
+          print:{t:"printed / displayed", d:"Impact, materiality, permanence."}
+        }
+      },
+      feel:{
+        h1:"Last thing. Answer fast, don’t overthink it.",
+        help:"These sliders don’t change my style — they just help set the tempo.",
+        s:{
+          calm:{l:"😌 calm", r:"⚡ lively", hl:"quiet, breathing", hr:"energy, motion"},
+          present:{l:"👀 discreet", r:"🤍 very present", hl:"observe", hr:"closer"},
+          rich:{l:"✂️ simple", r:"🧱 rich", hl:"airy", hr:"detail, texture"}
+        }
+      },
+      report:{
+        kicker:"Project reading",
+        sub:"A first reading — through images",
+        sec1:"What I understood",
+        sec2:"How these images can live",
+        sec3:"Overall vibe",
+        sec4:"What I’ll look for in photos",
+        sec5:"How we can work together",
+        bullets:{
+          series:"A coherent series (not just 3 isolated images)",
+          rhythm:"A rhythm (breathing, light, continuity)",
+          real:"Real life: gestures, presence, texture",
+          reuse:"Images that keep making sense over time"
+        },
+        collab:{
+          moment:"One focused shoot. Simple and effective.",
+          overtime:"Build a reusable base (a solid set).",
+          grow:"Create continuity (ongoing collaboration)."
+        }
+      }
     },
+
     es:{
-      place:[
-        "Esto se siente como un lugar que hay que sentir — su luz, su textura, su presencia.",
-        "Aquí hay lugar: atmósfera, materia y una presencia silenciosa en el aire.",
-        "Pide imágenes que dejen respirar el lugar — sin forzar."
-      ],
-      story:[
-        "Esto se siente como una historia: personas, gestos, continuidad.",
-        "Hay un relato — no explicado, sino sostenido por el ritmo y la presencia.",
-        "Pide imágenes que sigan una historia más que “momentos perfectos”."
-      ],
-      moment:[
-        "Esto se siente como un momento para guardar — algo simple, verdadero, preciso.",
-        "Es memoria: un instante al que quieres volver más adelante.",
-        "Pide imágenes que protejan lo esencial, en silencio."
-      ]
+      acts:{ intro:"Intro", who:"Tú & proyecto", core:"El núcleo", live:"Uso", feel:"Vibra", report:"Informe" },
+      ui:{
+        start:"Vamos",
+        continue:"Continuar",
+        back:"Atrás",
+        optional:"(opcional)",
+        pickOne:"Elige una 🙂",
+        pickAtLeastOne:"Elige al menos una 🙂",
+        maxTwo:"Máx 2",
+        copied:"Copiado ✨",
+        talk:"Hablemos de este proyecto",
+        copy:"Copiar snapshot",
+        email:"Abrir email",
+        longTerm:"Vida útil"
+      },
+      intro:{
+        kicker:"Project Snapshot",
+        h1:"Hablamos de imágenes. No de estrategia. Prometido.",
+        p:"Unas preguntas rápidas para entender qué deben hacer estas imágenes por ti.\n(Y sí: no hay respuesta mala.)"
+      },
+      who:{
+        nameH1:"¿Cómo te llamo?",
+        nameHelp:"Nombre, apodo… como quieras.",
+        namePh:"p.ej. Alex",
+        projH1:"¿Cómo llamas a este proyecto?",
+        projHelp:"Incluso un nombre provisional sirve.",
+        projPh:"p.ej. Casa Sitges, Hotel opening…"
+      },
+      core:{
+        h1:"Si tuvieras que explicarlo en una frase, es más bien…",
+        help:"Elige lo que se siente más cercano hoy.",
+        opts:{
+          place:{t:"🏠 Un lugar", d:"Un sitio para mostrar / hacer sentir."},
+          story:{t:"📖 Una historia", d:"Personas, gestos, atmósfera."},
+          moment:{t:"⏳ Un momento", d:"Algo que no quieres olvidar."}
+        },
+        intentH1:"Cuando alguien se topa con estas imágenes, te gustaría que pensara…",
+        intentHelp:"Elige 1 o 2. La intuición vale oro.",
+        intent:{
+          natural:{t:"“Se siente natural y real.”", d:"Nada forzado. Respira."},
+          atmosphere:{t:"“Hay una vibra real.”", d:"Se siente el lugar / momento."},
+          truth:{t:"“Se siente sincero.”", d:"Algo real, no fabricado."},
+          elegance:{t:"“Simple, pero elegante.”", d:"Sutil, preciso, atemporal."}
+        }
+      },
+      live:{
+        timeH1:"Sobre todo imaginas estas imágenes…",
+        timeHelp:"Esto me ayuda a calibrar — no a juzgar 😄",
+        time:{
+          moment:{t:"📆 Para un momento concreto", d:"Un lanzamiento, una etapa, un evento."},
+          overtime:{t:"🔁 Para reutilizar a menudo", d:"Una base sólida que dura."},
+          grow:{t:"🌱 Como algo que evoluciona", d:"Un lenguaje visual que se asienta."}
+        },
+        whereH1:"Vas a ver estas imágenes sobre todo…",
+        whereHelp:"Máx 2. Donde realmente te las encontrarás.",
+        where:{
+          website:{t:"en tu web", d:"Lectura más lenta, más calmada."},
+          social:{t:"en Instagram / redes", d:"Ritmo, repetición, serie."},
+          editorial:{t:"en editorial / prensa", d:"Contexto, relato, detalles."},
+          print:{t:"impresas / expuestas", d:"Impacto, materia, permanencia."}
+        }
+      },
+      feel:{
+        h1:"Última. Responde rápido, sin pensarlo demasiado.",
+        help:"Estos controles no cambian mi estilo — solo ayudan a poner el tempo.",
+        s:{
+          calm:{l:"😌 calmo", r:"⚡ vivo", hl:"silencio, respirar", hr:"energía, movimiento"},
+          present:{l:"👀 discreto", r:"🤍 muy presente", hl:"observar", hr:"más cerca"},
+          rich:{l:"✂️ simple", r:"🧱 rico", hl:"aireado", hr:"detalle, textura"}
+        }
+      },
+      report:{
+        kicker:"Lectura del proyecto",
+        sub:"Una primera lectura — en imágenes",
+        sec1:"Lo que entendí",
+        sec2:"Cómo pueden vivir estas imágenes",
+        sec3:"Vibra general",
+        sec4:"Qué voy a buscar en fotos",
+        sec5:"Cómo podemos trabajar",
+        bullets:{
+          series:"Una serie coherente (no 3 imágenes sueltas)",
+          rhythm:"Un ritmo (respirar, luz, continuidad)",
+          real:"Vida real: gestos, presencia, textura",
+          reuse:"Imágenes que sigan teniendo sentido con el tiempo"
+        },
+        collab:{
+          moment:"Una sesión enfocada. Simple y eficaz.",
+          overtime:"Construir una base reutilizable (un set sólido).",
+          grow:"Crear continuidad (colaboración en el tiempo)."
+        }
+      }
     }
   };
 
-  // --- Intent (max 2)
-  const intentMap = {
-    fr:{
-      natural:"une sensation naturelle",
-      atmosphere:"une atmosphère forte",
-      truth:"un sentiment de vérité",
-      elegance:"une élégance discrète"
-    },
-    en:{
-      natural:"a natural feeling",
-      atmosphere:"a strong atmosphere",
-      truth:"a sense of truth",
-      elegance:"a quiet elegance"
-    },
-    es:{
-      natural:"una sensación natural",
-      atmosphere:"una atmósfera fuerte",
-      truth:"una sensación de verdad",
-      elegance:"una elegancia silenciosa"
-    }
+  // ----- state
+  let lang = "fr";
+  const state = {
+    name: "",
+    project: "",
+    core: null,            // place/story/moment
+    intent: [],            // natural/atmosphere/truth/elegance (max2)
+    time: null,            // moment/overtime/grow
+    where: [],             // website/social/editorial/print (max2)
+    sliders: { calm: 50, present: 50, rich: 50 }
   };
 
-  const intentList = state.intent.map(x=>intentMap[lang][x]).filter(Boolean);
-  const intentLine = (() => {
-    if(intentList.length===0){
-      return lang==="fr" ? "Ce qui devrait rester : une impression juste — sans forcer."
-           : lang==="es" ? "Lo que debería permanecer: una impresión precisa — sin forzar."
-           : "What should stay: a precise feeling — without forcing it.";
+  // ----- DOM
+  const app = document.getElementById("app");
+  const actPill = document.getElementById("actPill");
+  const stepPill = document.getElementById("stepPill");
+  const toast = document.getElementById("toast");
+
+  const btnEN = document.getElementById("btnEN");
+  const btnFR = document.getElementById("btnFR");
+  const btnES = document.getElementById("btnES");
+
+  // ----- steps
+  const steps = [
+    { act:"intro", render: renderIntro },
+    { act:"who", render: renderName },
+    { act:"who", render: renderProject },
+    { act:"core", render: renderCore },
+    { act:"core", render: renderIntent },
+    { act:"live", render: renderTime },
+    { act:"live", render: renderWhere },
+    { act:"feel", render: renderFeel },
+    { act:"report", render: renderReport }
+  ];
+  let step = 0;
+
+  // ----- utils
+  function tr(){ return I18N[lang]; }
+  function esc(s){ return (s||"").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1200);
+  }
+
+  function setLang(l){
+    if(!I18N[l]) return;
+    lang = l;
+    [btnEN,btnFR,btnES].forEach(b=>b.classList.remove("active"));
+    (l==="en"?btnEN : l==="fr"?btnFR : btnES).classList.add("active");
+    safeRender();
+  }
+
+  btnEN.addEventListener("click", ()=>setLang("en"));
+  btnFR.addEventListener("click", ()=>setLang("fr"));
+  btnES.addEventListener("click", ()=>setLang("es"));
+
+  function setHeader(){
+    const a = tr();
+    actPill.textContent = `${a.acts[steps[step].act]} · ${step+1}/${steps.length}`;
+    stepPill.textContent = `${step+1}/${steps.length}`;
+  }
+  function next(){
+    if(step < steps.length-1){ step++; safeRender(true); }
+  }
+  function prev(){
+    if(step > 0){ step--; safeRender(true); }
+  }
+
+  function btns(primaryLabel, onPrimary, secondaryLabel=null, onSecondary=null){
+    const a = tr();
+    return `
+      <div class="btnrow">
+        <button class="primary" id="primaryBtn" type="button">${esc(primaryLabel)}</button>
+        ${secondaryLabel ? `<button class="ghost" id="secondaryBtn" type="button">${esc(secondaryLabel)}</button>` : ``}
+        ${step>0 ? `<button class="ghost" id="backBtn" type="button">${esc(a.ui.back)}</button>` : ``}
+      </div>
+    `;
+  }
+  function bindBtns(onPrimary, onSecondary){
+    const p = document.getElementById("primaryBtn");
+    if(p) p.onclick = onPrimary;
+
+    const s = document.getElementById("secondaryBtn");
+    if(s && onSecondary) s.onclick = onSecondary;
+
+    const b = document.getElementById("backBtn");
+    if(b) b.onclick = prev;
+  }
+
+  // ----- report helpers (simple, friendly)
+  function usageScores(){
+    const base = { website:30, social:30, editorial:30, print:30 };
+    state.where.forEach(k => base[k] += 35);
+
+    let longTerm = 50;
+    if(state.time === "moment") longTerm = 32;
+    if(state.time === "overtime"){ longTerm = 72; Object.keys(base).forEach(k => base[k]+=6); }
+    if(state.time === "grow"){ longTerm = 86; Object.keys(base).forEach(k => base[k]+=10); }
+
+    for(const k in base) base[k] = Math.max(10, Math.min(100, base[k]));
+    return { base, longTerm };
+  }
+
+  function sliderSentence(){
+    const c = state.sliders.calm;
+    const p = state.sliders.present;
+    const r = state.sliders.rich;
+
+    if(lang==="fr"){
+      return `Ambiance plutôt ${c>55?"calme":"vivante"} · regard ${p>55?"plus proche":"plus discret"} · visuel ${r>55?"plus riche":"plus simple"}.`;
     }
-    const joiner = lang==="fr" ? " et " : lang==="es" ? " y " : " and ";
-    const str = intentList.join(joiner);
-    const variants = {
-      fr:[
-        `Ce qui devrait rester : ${str} — sans forcer.`,
-        `Au premier regard, l’image devrait laisser : ${str}.`,
-        `L’idée n’est pas l’effet, mais que reste : ${str}.`
-      ],
-      en:[
-        `What should stay: ${str} — without forcing it.`,
-        `At first encounter, the image should leave: ${str}.`,
-        `Not effect — but what remains: ${str}.`
-      ],
-      es:[
-        `Lo que debería permanecer: ${str} — sin forzar.`,
-        `Al primer encuentro, la imagen debería dejar: ${str}.`,
-        `No es efecto: es lo que queda: ${str}.`
-      ]
+    if(lang==="es"){
+      return `Vibra más bien ${c>55?"calma":"viva"} · mirada ${p>55?"más cercana":"más discreta"} · visual ${r>55?"más rico":"más simple"}.`;
+    }
+    return `Mostly ${c>55?"calm":"lively"} · a ${p>55?"closer":"more discreet"} gaze · visually ${r>55?"richer":"simpler"}.`;
+  }
+
+  function storyLines(){
+    const a = tr();
+    const who = (state.name||"").trim() || (lang==="fr"?"toi":lang==="es"?"ti":"you");
+    const proj = (state.project||"").trim();
+    const projLabel = proj ? `“${proj}”` : (lang==="fr"?"ce projet":lang==="es"?"este proyecto":"this project");
+
+    // core line
+    const core = state.core || "place";
+    const coreLine = (() => {
+      if(lang==="fr"){
+        if(core==="place") return `On est sur ${projLabel} comme un lieu : on veut le faire ressentir.`;
+        if(core==="story") return `On est sur ${projLabel} comme une histoire : des gens, des gestes, une ambiance.`;
+        return `On est sur ${projLabel} comme un moment : on veut garder l’essentiel.`;
+      }
+      if(lang==="es"){
+        if(core==="place") return `${projLabel} se siente como un lugar: queremos hacerlo sentir.`;
+        if(core==="story") return `${projLabel} se siente como una historia: gente, gestos, atmósfera.`;
+        return `${projLabel} se siente como un momento: guardar lo esencial.`;
+      }
+      if(core==="place") return `${projLabel} feels like a place: we want people to feel it.`;
+      if(core==="story") return `${projLabel} feels like a story: people, gestures, atmosphere.`;
+      return `${projLabel} feels like a moment: keep what matters.`;
+    })();
+
+    // intent line
+    const intentText = (() => {
+      const ii = state.intent;
+      if(lang==="fr"){
+        const map = { natural:"naturel", atmosphere:"ambiance", truth:"sincère", elegance:"élégant" };
+        const list = ii.map(x=>map[x]).filter(Boolean);
+        if(list.length===0) return `Et surtout : que ça sonne vrai.`;
+        if(list.length===1) return `Et que ça soit ${list[0]}.`;
+        return `Et que ça soit ${list[0]} + ${list[1]}.`;
+      }
+      if(lang==="es"){
+        const map = { natural:"natural", atmosphere:"con vibra", truth:"sincero", elegance:"elegante" };
+        const list = ii.map(x=>map[x]).filter(Boolean);
+        if(list.length===0) return `Y sobre todo: que se sienta real.`;
+        if(list.length===1) return `Y que sea ${list[0]}.`;
+        return `Y que sea ${list[0]} + ${list[1]}.`;
+      }
+      const map = { natural:"natural", atmosphere:"full of vibe", truth:"sincere", elegance:"simple & elegant" };
+      const list = ii.map(x=>map[x]).filter(Boolean);
+      if(list.length===0) return `And most of all: it should feel real.`;
+      if(list.length===1) return `And it should feel ${list[0]}.`;
+      return `And it should feel ${list[0]} + ${list[1]}.`;
+    })();
+
+    // time line
+    const timeLine = (() => {
+      const t = state.time || "overtime";
+      if(lang==="fr"){
+        if(t==="moment") return `C’est pour un moment précis : on va droit au but.`;
+        if(t==="overtime") return `Tu veux pouvoir réutiliser : on construit une base solide.`;
+        return `Ça doit évoluer : on pense “série” et continuité.`;
+      }
+      if(lang==="es"){
+        if(t==="moment") return `Es para un momento concreto: vamos a lo esencial.`;
+        if(t==="overtime") return `Quieres reutilizar: construimos una base sólida.`;
+        return `Tiene que evolucionar: pensamos en serie y continuidad.`;
+      }
+      if(t==="moment") return `It’s for a specific moment: straight to the point.`;
+      if(t==="overtime") return `You want reuse: we build a solid base.`;
+      return `It should evolve: we think series and continuity.`;
+    })();
+
+    const close = (() => {
+      if(lang==="fr") return `Moi, je fais ça avec mon style (promis, je ne le change pas au milieu 😄).`;
+      if(lang==="es") return `Yo lo haré con mi estilo (prometido: no lo cambio a mitad 😄).`;
+      return `I’ll do this with my style (promise: I won’t change it halfway 😄).`;
+    })();
+
+    return { title: projLabel, lines:[coreLine, intentText, timeLine, close] };
+  }
+
+  function tags(){
+    const a = tr();
+    const res = [];
+    if(state.core) res.push(a.core.opts[state.core].t.replace(/^[^ ]+ /,"")); // remove emoji for tag
+    state.intent.forEach(id => res.push(a.core.intent[id].t.replace(/[“”"]/g,"").slice(0,28)));
+    // slider tag
+    const c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
+    let extra;
+    if(lang==="fr"){
+      extra = (c>65 && p<45) ? "Calme & discret" :
+              (c<40 && p>60) ? "Énergie & proche" :
+              (r>70) ? "Détails & matière" :
+              (r<35) ? "Très épuré" : "Équilibré";
+    } else if(lang==="es"){
+      extra = (c>65 && p<45) ? "Calma y discreto" :
+              (c<40 && p>60) ? "Energía y cerca" :
+              (r>70) ? "Detalle y textura" :
+              (r<35) ? "Muy limpio" : "Equilibrado";
+    } else {
+      extra = (c>65 && p<45) ? "Calm & discreet" :
+              (c<40 && p>60) ? "Energy & close" :
+              (r>70) ? "Detail & texture" :
+              (r<35) ? "Very minimal" : "Balanced";
+    }
+    res.push(extra);
+    return Array.from(new Set(res)).slice(0,3);
+  }
+
+  function radarSVG(values){
+    const w=260, h=220, cx=w/2, cy=h/2+10, R=82;
+    const axes = [
+      { key:"calm", angle:-90 },
+      { key:"present", angle:30 },
+      { key:"rich", angle:150 }
+    ];
+    const a = tr();
+    const s = a.feel.s;
+
+    function pt(key, val){
+      const ang = axes.find(x=>x.key===key).angle * Math.PI/180;
+      const r = R * (val/100);
+      return { x: cx + Math.cos(ang)*r, y: cy + Math.sin(ang)*r };
+    }
+    const p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
+    const o1=pt("calm",100), o2=pt("present",100), o3=pt("rich",100);
+
+    const grid = [30,60,100].map(v=>{
+      const q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
+      return `<polygon points="${q1.x},${q1.y} ${q2.x},${q2.y} ${q3.x},${q3.y}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;
+    }).join("");
+
+    const poly = `<polygon points="${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>`;
+
+    const axesLines = `
+      <line x1="${cx}" y1="${cy}" x2="${o1.x}" y2="${o1.y}" stroke="rgba(255,255,255,.20)"/>
+      <line x1="${cx}" y1="${cy}" x2="${o2.x}" y2="${o2.y}" stroke="rgba(255,255,255,.20)"/>
+      <line x1="${cx}" y1="${cy}" x2="${o3.x}" y2="${o3.y}" stroke="rgba(255,255,255,.20)"/>
+    `;
+
+    const labels = [
+      { txt: `${s.calm.l} ↔ ${s.calm.r}`, x:o1.x, y:o1.y-10, anchor:"middle" },
+      { txt: `${s.present.l} ↔ ${s.present.r}`, x:o2.x+10, y:o2.y+6, anchor:"start" },
+      { txt: `${s.rich.l} ↔ ${s.rich.r}`, x:o3.x-10, y:o3.y+6, anchor:"end" }
+    ].map(l=>`<text x="${l.x}" y="${l.y}" fill="rgba(255,255,255,.65)" font-size="11" text-anchor="${l.anchor}">${esc(l.txt)}</text>`).join("");
+
+    return `
+      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Vibe radar">
+        ${grid}
+        ${axesLines}
+        ${poly}
+        ${labels}
+      </svg>
+    `;
+  }
+
+  // ----- render steps
+  function renderIntro(){
+    const a = tr();
+    app.innerHTML = `
+      <div class="kicker">${esc(a.intro.kicker)}</div>
+      <div class="bigtitle">${esc(a.intro.h1)}</div>
+      <p class="lead">${esc(a.intro.p).replace(/\n/g,"<br/>")}</p>
+      ${btns(a.ui.start, ()=>next())}
+    `;
+    bindBtns(()=>next());
+  }
+
+  function renderName(){
+    const a = tr();
+    app.innerHTML = `
+      <h1>${esc(a.who.nameH1)}</h1>
+      <p class="lead">${esc(a.who.nameHelp)}</p>
+      <div class="fieldlabel">${esc(a.ui.optional)}</div>
+      <input id="nameInput" type="text" value="${esc(state.name)}" placeholder="${esc(a.who.namePh)}" />
+      ${btns(a.ui.continue, ()=>{
+        state.name = document.getElementById("nameInput").value.trim();
+        next();
+      })}
+    `;
+    bindBtns(()=>{
+      state.name = document.getElementById("nameInput").value.trim();
+      next();
+    });
+  }
+
+  function renderProject(){
+    const a = tr();
+    app.innerHTML = `
+      <h1>${esc(a.who.projH1)}</h1>
+      <p class="lead">${esc(a.who.projHelp)}</p>
+      <div class="fieldlabel">${esc(a.ui.optional)}</div>
+      <input id="projInput" type="text" value="${esc(state.project)}" placeholder="${esc(a.who.projPh)}" />
+      ${btns(a.ui.continue, ()=>{
+        state.project = document.getElementById("projInput").value.trim();
+        next();
+      })}
+    `;
+    bindBtns(()=>{
+      state.project = document.getElementById("projInput").value.trim();
+      next();
+    });
+  }
+
+  function renderCore(){
+    const a = tr();
+    const c = a.core.opts;
+    const items = [
+      ["place", c.place.t, c.place.d],
+      ["story", c.story.t, c.story.d],
+      ["moment", c.moment.t, c.moment.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.core.h1)}</h1>
+      <p class="lead">${esc(a.core.help)}</p>
+      <div class="choices">
+        ${items.map(([id,t,d])=>`
+          <div class="choice ${state.core===id?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(t)}</div>
+            <div class="optDesc">${esc(d)}</div>
+          </div>
+        `).join("")}
+      </div>
+      ${btns(a.ui.continue, ()=>{
+        if(!state.core){ showToast(a.ui.pickOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".choice").forEach(el=>{
+      el.onclick = () => { state.core = el.dataset.id; safeRender(); };
+    });
+    bindBtns(()=>{
+      if(!state.core){ showToast(a.ui.pickOne); return; }
+      next();
+    });
+  }
+
+  function renderIntent(){
+    const a = tr();
+    const o = a.core.intent;
+    const items = [
+      ["natural", o.natural.t, o.natural.d],
+      ["atmosphere", o.atmosphere.t, o.atmosphere.d],
+      ["truth", o.truth.t, o.truth.d],
+      ["elegance", o.elegance.t, o.elegance.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.core.intentH1)}</h1>
+      <p class="lead">${esc(a.core.intentHelp)}</p>
+      <div class="checks">
+        ${items.map(([id,t,d])=>`
+          <div class="check ${state.intent.includes(id)?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(t)}</div>
+            <div class="optDesc">${esc(d)}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="meta">${esc(a.ui.maxTwo)}</div>
+      ${btns(a.ui.continue, ()=>{
+        if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".check").forEach(el=>{
+      el.onclick = () => {
+        const id = el.dataset.id;
+        if(state.intent.includes(id)){
+          state.intent = state.intent.filter(x=>x!==id);
+        } else {
+          if(state.intent.length>=2){ showToast(a.ui.maxTwo); return; }
+          state.intent = [...state.intent, id];
+        }
+        safeRender();
+      };
+    });
+    bindBtns(()=>{
+      if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+      next();
+    });
+  }
+
+  function renderTime(){
+    const a = tr();
+    const t = a.live.time;
+    const items = [
+      ["moment", t.moment.t, t.moment.d],
+      ["overtime", t.overtime.t, t.overtime.d],
+      ["grow", t.grow.t, t.grow.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.live.timeH1)}</h1>
+      <p class="lead">${esc(a.live.timeHelp)}</p>
+      <div class="choices">
+        ${items.map(([id,ti,de])=>`
+          <div class="choice ${state.time===id?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(ti)}</div>
+            <div class="optDesc">${esc(de)}</div>
+          </div>
+        `).join("")}
+      </div>
+      ${btns(a.ui.continue, ()=>{
+        if(!state.time){ showToast(a.ui.pickOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".choice").forEach(el=>{
+      el.onclick = () => { state.time = el.dataset.id; safeRender(); };
+    });
+    bindBtns(()=>{
+      if(!state.time){ showToast(a.ui.pickOne); return; }
+      next();
+    });
+  }
+
+  function renderWhere(){
+    const a = tr();
+    const w = a.live.where;
+    const items = [
+      ["website", w.website.t, w.website.d],
+      ["social", w.social.t, w.social.d],
+      ["editorial", w.editorial.t, w.editorial.d],
+      ["print", w.print.t, w.print.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.live.whereH1)}</h1>
+      <p class="lead">${esc(a.live.whereHelp)}</p>
+      <div class="checks">
+        ${items.map(([id,ti,de])=>`
+          <div class="check ${state.where.includes(id)?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(ti)}</div>
+            <div class="optDesc">${esc(de)}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="meta">${esc(a.ui.maxTwo)}</div>
+      ${btns(a.ui.continue, ()=>{
+        if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".check").forEach(el=>{
+      el.onclick = () => {
+        const id = el.dataset.id;
+        if(state.where.includes(id)){
+          state.where = state.where.filter(x=>x!==id);
+        } else {
+          if(state.where.length>=2){ showToast(a.ui.maxTwo); return; }
+          state.where = [...state.where, id];
+        }
+        safeRender();
+      };
+    });
+    bindBtns(()=>{
+      if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+      next();
+    });
+  }
+
+  function sliderBlock(key, left, right, hl, hr, value){
+    return `
+      <div class="slider">
+        <div class="slab"><span>${esc(left)}</span><span>${esc(right)}</span></div>
+        <input type="range" min="0" max="100" value="${value}" data-key="${key}">
+        <div class="smallhelp"><span>${esc(hl)}</span><span style="float:right">${esc(hr)}</span></div>
+      </div>
+    `;
+  }
+
+  function renderFeel(){
+    const a = tr();
+    const s = a.feel.s;
+    app.innerHTML = `
+      <h1>${esc(a.feel.h1)}</h1>
+      <p class="lead">${esc(a.feel.help)}</p>
+
+      ${sliderBlock("calm", s.calm.l, s.calm.r, s.calm.hl, s.calm.hr, state.sliders.calm)}
+      ${sliderBlock("present", s.present.l, s.present.r, s.present.hl, s.present.hr, state.sliders.present)}
+      ${sliderBlock("rich", s.rich.l, s.rich.r, s.rich.hl, s.rich.hr, state.sliders.rich)}
+
+      <div class="box" style="margin-top:14px">
+        <div class="kicker">${esc(a.acts.feel)}</div>
+        <div id="liveSentence" style="margin-top:8px; color:rgba(255,255,255,.86)">${esc(sliderSentence())}</div>
+      </div>
+
+      ${btns(a.ui.continue, ()=>next())}
+    `;
+
+    // NO re-render while sliding: update sentence only (stable + no blank screens)
+    document.querySelectorAll('input[type="range"]').forEach(inp=>{
+      inp.addEventListener("input", () => {
+        state.sliders[inp.dataset.key] = Number(inp.value);
+        const calm = state.sliders.calm/100;
+        document.querySelector(".bg").style.filter = `saturate(${0.9 + calm*0.25})`;
+        const live = document.getElementById("liveSentence");
+        if(live) live.textContent = sliderSentence();
+      });
+    });
+
+    bindBtns(()=>next());
+  }
+
+  function renderReport(){
+    const a = tr();
+    const { base, longTerm } = usageScores();
+    const story = storyLines();
+    const tg = tags();
+
+    const projTitle = (state.project||"").trim() || (lang==="fr"?"Projet":lang==="es"?"Proyecto":"Project");
+    const who = (state.name||"").trim();
+
+    const whereLabels = {
+      website: a.live.where.website.t,
+      social: a.live.where.social.t,
+      editorial: a.live.where.editorial.t,
+      print: a.live.where.print.t
     };
-    return pick(variants[lang], seed+"|intent");
-  })();
 
-  // --- Time / collaboration framing
-  const timeLine = (() => {
-    const v = {
-      fr:{
-        moment:[
-          "C’est une présence pour un moment précis : on vise la clarté et l’essentiel.",
-          "On est sur une fenêtre courte : l’objectif est d’être juste, simple, net.",
-          "C’est un besoin ponctuel : on construit une série concise, solide."
-        ],
-        overtime:[
-          "C’est une présence dans le temps : cohérence, série, réutilisation.",
-          "L’enjeu est la durée de vie : un set réutilisable, stable, qui ne fatigue pas.",
-          "On vise une base : des images qui tiennent et restent justes avec le temps."
-        ],
-        grow:[
-          "C’est une présence qui grandit : une base vivante qui s’installe.",
-          "On construit un langage visuel : quelque chose qui s’épaissit doucement.",
-          "L’idée est une continuité : un regard qui accompagne l’évolution."
-        ]
-      },
-      en:{
-        moment:[
-          "It’s a presence for a specific moment: clarity and essentials.",
-          "A short window: the goal is to be precise, simple, true.",
-          "A punctual need: a concise, solid series."
-        ],
-        overtime:[
-          "It’s a presence over time: consistency, series, reuse.",
-          "Longevity matters: a reusable set that doesn’t “wear out”.",
-          "A visual base: images that stay true as time passes."
-        ],
-        grow:[
-          "It’s a presence that grows: a living base that settles in.",
-          "We build a visual language: something that deepens quietly.",
-          "Continuity: a gaze that follows the project as it evolves."
-        ]
-      },
-      es:{
-        moment:[
-          "Es presencia para un momento concreto: claridad y esencial.",
-          "Ventana corta: el objetivo es ser preciso, simple, verdadero.",
-          "Necesidad puntual: una serie concisa y sólida."
-        ],
-        overtime:[
-          "Es presencia en el tiempo: coherencia, serie, reutilización.",
-          "Importa la vida útil: un set reutilizable que no se “gasta”.",
-          "Una base visual: imágenes que siguen siendo precisas con el tiempo."
-        ],
-        grow:[
-          "Es una presencia que crece: una base viva que se asienta.",
-          "Construimos un lenguaje visual: algo que se profundiza en silencio.",
-          "Continuidad: una mirada que acompaña la evolución."
-        ]
+    const usageBars = [
+      ["website", base.website],
+      ["social", base.social],
+      ["editorial", base.editorial],
+      ["print", base.print],
+      ["longTerm", longTerm]
+    ];
+
+    const collabText = a.report.collab[state.time || "overtime"];
+
+    // mailto CTA (always works)
+    const subject = (lang==="fr" ? `Discussion projet — ${projTitle}` :
+                    lang==="es" ? `Conversación del proyecto — ${projTitle}` :
+                                 `Project discussion — ${projTitle}`);
+
+    const bodyLines = [
+      `${a.report.kicker} — ${projTitle}`,
+      who ? (lang==="fr" ? `Nom : ${who}` : lang==="es" ? `Nombre : ${who}` : `Name: ${who}`) : "",
+      "",
+      ...story.lines,
+      "",
+      `${a.report.sec2}:`,
+      `- ${whereLabels.website}: ${Math.round(base.website)}%`,
+      `- ${whereLabels.social}: ${Math.round(base.social)}%`,
+      `- ${whereLabels.editorial}: ${Math.round(base.editorial)}%`,
+      `- ${whereLabels.print}: ${Math.round(base.print)}%`,
+      `- ${a.ui.longTerm}: ${Math.round(longTerm)}%`,
+      "",
+      `${a.report.sec4}:`,
+      `- ${a.report.bullets.series}`,
+      `- ${a.report.bullets.rhythm}`,
+      `- ${a.report.bullets.real}`,
+      `- ${a.report.bullets.reuse}`,
+      "",
+      `${a.report.sec5}:`,
+      collabText
+    ].filter(Boolean);
+
+    const snapshotText = bodyLines.join("\n");
+    const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(snapshotText)}`;
+
+    app.innerHTML = `
+      <div class="kicker">${esc(a.report.kicker)}</div>
+      <div class="bigtitle">${esc(projTitle)}</div>
+      <div class="subtitle">${esc(a.report.sub)}${who ? " · " + esc(who) : ""}</div>
+
+      <div class="tags">
+        ${tg.map(x=>`<div class="tag">${esc(x)}</div>`).join("")}
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid2">
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec1)}</div>
+          <div style="margin-top:10px; color:rgba(255,255,255,.88)">
+            ${story.lines.map(l=>`<div style="margin-top:8px">${esc(l)}</div>`).join("")}
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec2)}</div>
+          ${usageBars.map(([k,v])=>{
+            const label = (k==="longTerm") ? a.ui.longTerm : whereLabels[k];
+            const vv = Math.max(0, Math.min(100, Math.round(v)));
+            return `
+              <div class="bar">
+                <div class="barhead"><span>${esc(label)}</span><span>${vv}%</span></div>
+                <div class="track"><div class="fill" style="width:${vv}%"></div></div>
+              </div>
+            `;
+          }).join("")}
+          <div class="smallhelp" style="margin-top:10px">
+            ${esc(lang==="fr"
+              ? "Ces barres donnent une idée du rythme et de la durée de vie (pas une formule magique)."
+              : lang==="es"
+                ? "Estas barras dan una idea del ritmo y la vida útil (no es magia)."
+                : "These bars hint at rhythm + longevity (not magic)."
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid2">
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec3)}</div>
+          <div style="margin-top:10px">${radarSVG(state.sliders)}</div>
+          <div class="smallhelp">${esc(sliderSentence())}</div>
+        </div>
+
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec4)}</div>
+          <div style="margin-top:10px">
+            <div style="margin-top:8px">• ${esc(a.report.bullets.series)}</div>
+            <div style="margin-top:8px">• ${esc(a.report.bullets.rhythm)}</div>
+            <div style="margin-top:8px">• ${esc(a.report.bullets.real)}</div>
+            <div style="margin-top:8px">• ${esc(a.report.bullets.reuse)}</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="kicker">${esc(a.report.sec5)}</div>
+          <div style="margin-top:10px; color:rgba(255,255,255,.88)">${esc(collabText)}</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btnrow">
+        <button class="primary" id="talkBtn" type="button">${esc(a.ui.talk)}</button>
+        <button class="ghost" id="copyBtn" type="button">${esc(a.ui.copy)}</button>
+        <button class="ghost" id="emailBtn" type="button">${esc(a.ui.email)}</button>
+        <button class="ghost" id="backBtn" type="button">${esc(a.ui.back)}</button>
+      </div>
+    `;
+
+    document.getElementById("talkBtn").onclick = () => { window.location.href = mailto; };
+    document.getElementById("emailBtn").onclick = () => { window.location.href = mailto; };
+    document.getElementById("backBtn").onclick = prev;
+
+    document.getElementById("copyBtn").onclick = async () => {
+      try{
+        await navigator.clipboard.writeText(snapshotText);
+        showToast(tr().ui.copied);
+      }catch(_){
+        showToast(tr().ui.copied);
       }
     };
-    const key = state.time || "overtime";
-    return pick(v[lang][key], seed+"|time");
-  })();
+  }
 
-  // --- Closing (Marina stance)
-  const closeVariants = {
-    fr:[
-      `Mon rôle est de traduire tout ça en images qui font sens pour ${whoLabel} — sans dénaturer mon regard.`,
-      `Je photographie ce qui compte ici : présence, rythme, justesse — avec mon style, sans le “tordre”.`,
-      `Mon travail : faire des images qui restent vraies pour ${whoLabel}, et qui continuent à faire sens plus tard.`
-    ],
-    en:[
-      `My role is to translate this into images that make sense for ${whoLabel} — without bending my gaze.`,
-      `I photograph what matters here: presence, rhythm, truth — with my style, not against it.`,
-      `My work: images that feel true for ${whoLabel}, and keep making sense later.`
-    ],
-    es:[
-      `Mi papel es traducir esto en imágenes que tengan sentido para ${whoLabel} — sin forzar mi mirada.`,
-      `Fotografío lo que importa: presencia, ritmo, verdad — con mi estilo, sin torcerlo.`,
-      `Mi trabajo: imágenes que sean verdaderas para ${whoLabel} y sigan teniendo sentido más adelante.`
-    ]
-  };
+  // ----- safe render (never blank)
+  function safeRender(scrollTop=false){
+    try{
+      setHeader();
+      app.classList.remove("fade"); void app.offsetWidth; app.classList.add("fade");
+      steps[step].render();
+      if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
+    }catch(e){
+      app.innerHTML = `
+        <div class="kicker">Error</div>
+        <div class="bigtitle">Oups 😅</div>
+        <p class="lead">Recharge la page. Si ça recommence, copie l’erreur ci-dessous.</p>
+        <pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">${esc(String(e))}</pre>
+      `;
+    }
+  }
 
-  const coreKey = state.core || "place";
-  return {
-    title: projLabel,
-    lines: [
-      pick(coreLines[lang][coreKey], seed+"|core"),
-      intentLine,
-      timeLine,
-      pick(closeVariants[lang], seed+"|close")
-    ]
-  };
-}
+  // boot
+  setLang("fr");
+  safeRender(true);
+})();
+</script>
+</body>
+</html>
