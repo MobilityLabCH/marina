@@ -1,1256 +1,1371 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Marinaphoto 4 you — Snapshot</title>
-<meta name="description" content="A playful, simple photo-brief experience that generates an instant, beautiful report." />
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marinaphoto 4 you</title>
 <style>
-  :root{
-    --bg:#0b0d10;
-    --card:rgba(255,255,255,.06);
-    --line:rgba(255,255,255,.14);
-    --txt:rgba(255,255,255,.92);
-    --muted:rgba(255,255,255,.62);
-    --muted2:rgba(255,255,255,.48);
-    --accent:rgba(255,255,255,.92);
-    --shadow:0 18px 60px rgba(0,0,0,.60);
-    --r:26px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    color:var(--txt);
-    background:var(--bg);
-    overflow-x:hidden;
-  }
-  .bg{
-    position:fixed; inset:0; z-index:-3;
-    background:
-      radial-gradient(980px 520px at 18% 18%, rgba(255,255,255,.11), transparent 62%),
-      radial-gradient(860px 520px at 85% 28%, rgba(255,255,255,.085), transparent 65%),
-      radial-gradient(980px 560px at 52% 96%, rgba(255,255,255,.065), transparent 60%),
-      linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
-    transition:filter .25s ease;
-  }
-  .grain{
-    position:fixed; inset:-40px; z-index:-2; opacity:.10; pointer-events:none;
-    background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>');
-    mix-blend-mode:overlay;
-  }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .wrap{min-height:100vh; display:flex; justify-content:center; align-items:center; padding:26px 14px;}
-  .shell{ width:min(1100px,100%); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0b0d10;
+  color: #ffffff;
+  line-height: 1.6;
+}
 
-  .topbar{
-    display:flex; justify-content:space-between; align-items:center;
-    gap:10px; flex-wrap:wrap;
-    padding:10px 6px;
-    color:var(--muted);
-    font-size:13px;
-  }
-  .pill{
-    display:inline-flex; align-items:center; gap:10px;
-    padding:7px 10px;
-    border-radius:999px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.04);
-    min-height:34px;
-  }
-  .brand{
-    display:flex; align-items:center; gap:10px;
-    font-weight:950; color:rgba(255,255,255,.86);
-    letter-spacing:.01em;
-    white-space:nowrap;
-  }
-  .brand small{font-weight:750; color:rgba(255,255,255,.55)}
-  .progress{
-    width:260px; height:10px; border-radius:999px; overflow:hidden;
-    background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.10);
-  }
-  .progress > div{
-    height:100%; width:0%;
-    background:rgba(255,255,255,.86);
-    border-radius:999px;
-    transition:width .35s ease;
-  }
-  @media(max-width:720px){ .progress{ width:180px; } }
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: 
+    radial-gradient(980px 520px at 18% 18%, rgba(255,255,255,.11), transparent 62%),
+    radial-gradient(860px 520px at 85% 28%, rgba(255,255,255,.085), transparent 65%),
+    linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
+}
 
-  .lang{
-    display:inline-flex; gap:6px; align-items:center;
-    border:1px solid rgba(255,255,255,.12);
-    background:rgba(255,255,255,.03);
-    padding:4px; border-radius:999px;
-  }
-  .lang button{
-    border:none; background:transparent; color:var(--muted);
-    font-weight:900; cursor:pointer; padding:6px 10px; border-radius:999px;
-    letter-spacing:.02em;
-  }
-  .lang button.active{ color:#0c0e11; background:var(--accent); }
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
 
-  .card{
-    border:1px solid var(--line);
-    background:linear-gradient(180deg, var(--card), rgba(255,255,255,.035));
-    border-radius:var(--r);
-    box-shadow:var(--shadow);
-    overflow:hidden;
-  }
-  .content{padding:28px}
-  @media (max-width:720px){ .content{padding:20px} }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  padding: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
 
-  .fade{animation:fade .32s ease both}
-  @keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:translateY(0)}}
+.brand {
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
+}
 
-  .kicker{font-size:12px; letter-spacing:.11em; text-transform:uppercase; color:rgba(255,255,255,.56)}
-  h1{font-size:34px; margin:10px 0 10px; letter-spacing:-.02em}
-  h2{font-size:20px; margin:0 0 10px; letter-spacing:-.01em}
-  p{margin:0 0 12px; line-height:1.55}
-  .lead{color:var(--muted); font-size:16px}
-  .hint{color:var(--muted2); font-size:13px; margin-top:10px; line-height:1.45}
-  .micro{color:var(--muted2); font-size:12px; margin-top:10px}
-  .divider{height:1px; background:rgba(255,255,255,.12); margin:18px 0}
+.brand small {
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  margin-left: 8px;
+}
 
-  input[type="text"], textarea{
-    width:100%;
-    padding:12px 14px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.04);
-    color:var(--txt);
-    outline:none;
-    margin-top:10px;
-    font-size:15px;
-  }
-  textarea{min-height:90px; resize:vertical}
+.lang-buttons {
+  display: flex;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  padding: 4px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
 
-  .choices,.checks{display:grid; gap:10px; margin-top:14px}
-  .choice,.check{
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:18px;
-    padding:14px;
-    background:rgba(255,255,255,.04);
-    cursor:pointer;
-    transition:background .15s ease, border-color .15s ease, transform .08s ease;
-  }
-  .choice:hover,.check:hover{background:rgba(255,255,255,.06)}
-  .choice:active,.check:active{transform:scale(.997)}
-  .choice.sel,.check.sel{background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.28);}
-  .optTitle{font-weight:950}
-  .optDesc{margin-top:6px; font-size:12px; color:var(--muted); line-height:1.35}
+.lang-buttons button {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  padding: 8px 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 13px;
+  transition: all 0.2s;
+}
 
-  .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
-  button{
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.18);
-    padding:11px 16px;
-    background:rgba(255,255,255,.06);
-    color:var(--txt);
-    cursor:pointer;
-    font-weight:950;
-  }
-  button.primary{ background:var(--accent); color:#0c0e11; border-color:rgba(255,255,255,.18); }
-  button.ghost{ background:transparent; }
+.lang-buttons button:hover {
+  color: #ffffff;
+}
 
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  @media (max-width:900px){ .grid2{grid-template-columns:1fr} }
+.lang-buttons button.active {
+  background: #ffffff;
+  color: #000000;
+}
 
-  .box{
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:18px;
-    padding:14px;
-    background:rgba(255,255,255,.04);
-  }
+.card {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
 
-  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-  .tag{
-    border:1px solid rgba(255,255,255,.16);
-    background:rgba(255,255,255,.05);
-    padding:7px 10px;
-    border-radius:999px;
-    font-size:13px;
-    color:rgba(255,255,255,.86);
-    white-space:nowrap;
-  }
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
 
-  .bar{margin-top:12px}
-  .barhead{display:flex; justify-content:space-between; font-size:13px; color:var(--muted)}
-  .track{height:10px; border-radius:999px; background:rgba(255,255,255,.10); margin-top:8px; overflow:hidden}
-  .fill{height:100%; border-radius:999px; background:rgba(255,255,255,.86); width:40%}
+.progress-fill {
+  height: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.3s;
+}
 
-  .slider{
-    border:1px solid rgba(255,255,255,.16);
-    border-radius:18px;
-    padding:14px;
-    background:rgba(255,255,255,.04);
-    margin-top:12px;
-  }
-  .slab{display:flex; justify-content:space-between; color:var(--muted); font-size:13px}
-  input[type="range"]{width:100%; margin-top:10px}
-  .sliderHelp{display:flex; justify-content:space-between; gap:10px; margin-top:8px; font-size:12px; color:var(--muted2)}
+.step-label {
+  text-align: center;
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
 
-  .toast{
-    position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
-    background:rgba(0,0,0,.55);
-    border:1px solid rgba(255,255,255,.18);
-    color:rgba(255,255,255,.9);
-    padding:10px 12px;
-    border-radius:999px;
-    font-size:13px;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .2s ease;
-    max-width:min(92vw,700px);
-    text-align:center;
-  }
-  .toast.show{opacity:1}
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
 
-  .noPrint{display:block}
+h1 {
+  font-size: 36px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
 
-  @media print{
-    body{background:#fff; color:#111}
-    .bg,.grain,.topbar,.toast,.noPrint{display:none !important}
-    .wrap{padding:0}
-    .card{box-shadow:none; border:1px solid #ddd}
-    .content{padding:22px}
-    .tag{border-color:#ddd; color:#111}
-    .box{border-color:#ddd}
-    .track{background:#eee}
-    .fill{background:#111}
-  }
+h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 12px;
+}
+
+.lead {
+  font-size: 17px;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 20px;
+}
+
+.hint {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 16px;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: inherit;
+  margin-top: 12px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.4);
+}
+
+input[type="text"]::placeholder,
+textarea::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.option {
+  padding: 18px;
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.option.selected {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.option-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.option-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 14px 28px;
+  border-radius: 30px;
+  border: none;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+button.primary {
+  background: #ffffff;
+  color: #000000;
+}
+
+button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,255,255,0.2);
+}
+
+button.secondary {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  border: 2px solid rgba(255,255,255,0.25);
+}
+
+button.secondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.slider-container {
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.slider-hints {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.report-section {
+  margin: 24px 0;
+  padding: 24px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.15);
+  line-height: 1.8;
+}
+
+.report-section h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.report-section h3 {
+  font-size: 17px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  color: rgba(255,255,255,0.95);
+  font-weight: 700;
+}
+
+.report-section p {
+  margin-bottom: 14px;
+  color: rgba(255,255,255,0.85);
+}
+
+.report-section strong {
+  color: rgba(255,255,255,0.95);
+  font-weight: 700;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.tag {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .card { padding: 24px; }
+  h1 { font-size: 28px; }
+  .topbar { justify-content: center; }
+}
 </style>
 </head>
-
 <body>
-<div class="bg" id="bg"></div>
-<div class="grain"></div>
 
-<div class="wrap">
-  <div class="shell">
-    <div class="topbar">
-      <div class="pill">
-        <div class="brand" id="brandText">Marinaphoto 4 you <small>—</small></div>
-      </div>
+<div class="bg"></div>
 
-      <div class="pill" style="gap:12px">
-        <div class="progress"><div id="progFill"></div></div>
-        <span id="stepPill">—</span>
-        <span class="lang">
-          <button id="btnEN" type="button">EN</button>
-          <button id="btnFR" type="button">FR</button>
-          <button id="btnES" type="button">ES</button>
-        </span>
-      </div>
+<div class="container">
+  <div class="topbar">
+    <div class="brand">
+      Marinaphoto 4 you
+      <small>—</small>
     </div>
+    <div class="lang-buttons">
+      <button onclick="setLang('en')" id="btn-en">EN</button>
+      <button onclick="setLang('fr')" id="btn-fr" class="active">FR</button>
+      <button onclick="setLang('es')" id="btn-es">ES</button>
+    </div>
+  </div>
 
-    <div class="card">
-      <div class="content fade" id="app"></div>
+  <div class="card">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+    <div class="step-label" id="step-label">—</div>
+    <div id="content" class="fade-in">
+      <!-- Content wird hier eingefügt -->
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<noscript>
-  <div style="position:fixed;left:12px;right:12px;bottom:12px;padding:12px;border-radius:14px;background:#111;color:#fff;border:1px solid rgba(255,255,255,.2);z-index:9999">
-    This tool needs JavaScript enabled.
-  </div>
-</noscript>
-
 <script>
-/* Marinaphoto 4 you — single-file, ES5-safe (no arrow functions, no trailing commas) */
-(function(){
-  // Run only after DOM exists (prevents null refs)
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
+// Globale Variablen
+let currentStep = 0;
+let currentLang = 'fr';
+let state = {
+  name: '',
+  project: '',
+  core: null,
+  intent: [],
+  time: null,
+  where: [],
+  avoid: '',
+  sliders: { calm: 50, present: 50, rich: 50 }
+};
+
+// Translations
+const translations = {
+  fr: {
+    toolName: 'Marinaphoto 4 you',
+    toolTagline: '« Je sais ce qu\'une image signifie pour vous. »',
+    steps: ['Intro', 'Vous', 'Projet', 'Essence', 'Intention', 'Usage', 'Canaux', 'Ambiance', 'Détails', 'Rapport'],
+    intro: {
+      kicker: 'Un brief photo (pas un brief de marque)',
+      title: '3 minutes. Zéro jargon. Un rapport clair.',
+      text: 'Vous répondez à l\'instinct. Je transforme vos réponses en un snapshot lisible : ce qu\'il faut raconter, où ça va vivre, et comment le rendre juste.',
+      button: 'Commencer'
+    },
+    name: {
+      kicker: 'Vous & le projet',
+      title: 'Quel est votre prénom ?',
+      text: 'Prénom ou pseudo — comme vous préférez.',
+      placeholder: 'Ex : Alex',
+      button: 'Continuer'
+    },
+    project: {
+      kicker: 'Vous & le projet',
+      title: 'Nom du projet',
+      text: 'Même provisoire. Ça m\'aide à personnaliser le rapport.',
+      placeholder: 'Ex : Clinica Vinyet / Opening...',
+      button: 'Continuer'
+    },
+    core: {
+      kicker: 'Essence',
+      title: 'En une phrase, votre projet, c\'est plutôt…',
+      text: 'Choisissez l\'option la plus évidente.',
+      options: [
+        { id: 'place', title: '🏠 Un lieu', desc: 'Faire ressentir : lumière, matière, atmosphère.' },
+        { id: 'story', title: '📖 Une histoire', desc: 'Des gens, des gestes, une narration.' },
+        { id: 'moment', title: '⏳ Un moment', desc: 'Aller à l\'essentiel, sans surjouer.' }
+      ],
+      button: 'Continuer'
+    },
+    intent: {
+      kicker: 'Essence',
+      title: 'Quand quelqu\'un voit ces images, vous voulez qu\'il se dise…',
+      text: 'Choisissez 1 ou 2.',
+      options: [
+        { id: 'notAI', title: '« Ce ne sont pas des images IA. »', desc: 'On sent du vrai : présence, matière, lumière.' },
+        { id: 'brand', title: '« Ça reflète parfaitement ma marque. »', desc: 'Cohérent, reconnaissable, aligné.' },
+        { id: 'fresh', title: '« C\'est un regard artistique, neuf. »', desc: 'Pas du déjà-vu. Une vraie signature.' },
+        { id: 'trust', title: '« Ça me donne confiance. »', desc: 'Crédible, humain, juste.' }
+      ],
+      button: 'Continuer',
+      hint: 'Max 2 choix'
+    },
+    time: {
+      kicker: 'Usage',
+      title: 'Ces images doivent surtout servir…',
+      text: 'Ça aide à doser le rythme et la quantité.',
+      options: [
+        { id: 'moment', title: '📆 Un moment précis', desc: 'Lancement, campagne, événement.' },
+        { id: 'overtime', title: '🔁 Une base réutilisable', desc: 'Des visuels qui durent et se déclinent.' },
+        { id: 'grow', title: '🌱 Une continuité', desc: 'Série + suivi : ça évolue dans le temps.' }
+      ],
+      button: 'Continuer'
+    },
+    where: {
+      kicker: 'Usage',
+      title: 'Où ces images vont vivre le plus souvent ?',
+      text: 'Max 2. Là où vous allez vraiment les utiliser.',
+      options: [
+        { id: 'website', title: 'Site web', desc: 'Lecture posée, crédibilité.' },
+        { id: 'social', title: 'Réseaux', desc: 'Rythme, répétition, série.' },
+        { id: 'editorial', title: 'Presse / editorial', desc: 'Contexte, narration, détails.' },
+        { id: 'print', title: 'Print', desc: 'Impact, matière, permanence.' }
+      ],
+      button: 'Continuer',
+      hint: 'Max 2 choix'
+    },
+    vibe: {
+      kicker: 'Ambiance',
+      title: 'Comment je dois photographier ?',
+      text: 'Ajustez les curseurs selon l\'ambiance souhaitée. Cela guide mon approche sans changer ma signature visuelle.',
+      sliders: [
+        { 
+          id: 'calm', 
+          left: '😌 Calme', 
+          right: '⚡ Vivant',
+          leftDesc: 'Images posées, contemplatives',
+          rightDesc: 'Énergie, mouvement, dynamisme'
+        },
+        { 
+          id: 'present', 
+          left: '👀 Discret', 
+          right: '🤍 Proche',
+          leftDesc: 'Observer de loin, contexte large',
+          rightDesc: 'Intimité, détails, proximité'
+        },
+        { 
+          id: 'rich', 
+          left: '✂️ Épuré', 
+          right: '🧱 Texturé',
+          leftDesc: 'Minimalisme, simplicité',
+          rightDesc: 'Matières, textures, richesse'
+        }
+      ],
+      button: 'Continuer'
+    },
+    avoid: {
+      kicker: 'Détails',
+      title: 'Une chose à éviter absolument ?',
+      text: 'Même un mot suffit.',
+      placeholder: 'Ex : trop lisse / trop "pub" / trop sombre...',
+      button: 'Voir le rapport'
+    },
+    report: {
+      kicker: 'Rapport',
+      title: 'Votre projet',
+      text: 'Voilà comment je comprends votre projet.',
+      buttons: {
+        restart: 'Recommencer',
+        email: 'Envoyer à Marina'
+      }
+    },
+    back: 'Retour',
+    pickOne: 'Choisissez une option 🙂'
+  },
+  en: {
+    toolName: 'Marinaphoto 4 you',
+    toolTagline: '"I know what an image means to you."',
+    steps: ['Intro', 'You', 'Project', 'Essence', 'Intent', 'Use', 'Channels', 'Vibe', 'Details', 'Report'],
+    intro: {
+      kicker: 'A photo brief (not a brand deck)',
+      title: '3 minutes. No jargon. A clear report.',
+      text: 'Answer by instinct. I turn it into a readable snapshot: what to say, where it will live, and how to make it feel true.',
+      button: 'Start'
+    },
+    name: {
+      kicker: 'You & project',
+      title: 'What\'s your first name?',
+      text: 'First name or nickname — your choice.',
+      placeholder: 'e.g. Alex',
+      button: 'Continue'
+    },
+    project: {
+      kicker: 'You & project',
+      title: 'Project name',
+      text: 'Even temporary. Helps personalize the report.',
+      placeholder: 'e.g. Clinica Vinyet / Opening...',
+      button: 'Continue'
+    },
+    core: {
+      kicker: 'Essence',
+      title: 'In one sentence, your project is mostly…',
+      text: 'Pick the most obvious option.',
+      options: [
+        { id: 'place', title: '🏠 A place', desc: 'Make people feel it: light, texture, atmosphere.' },
+        { id: 'story', title: '📖 A story', desc: 'People, gestures, a narrative thread.' },
+        { id: 'moment', title: '⏳ A moment', desc: 'Keep what matters, no overacting.' }
+      ],
+      button: 'Continue'
+    },
+    intent: {
+      kicker: 'Essence',
+      title: 'When people see these images, you want them to think…',
+      text: 'Pick 1 or 2.',
+      options: [
+        { id: 'notAI', title: '"These are not AI images."', desc: 'It feels real: presence, texture, light.' },
+        { id: 'brand', title: '"This perfectly matches my brand."', desc: 'Consistent, recognizable, aligned.' },
+        { id: 'fresh', title: '"It\'s a fresh artistic eye."', desc: 'Not generic. A real signature.' },
+        { id: 'trust', title: '"This makes me trust you."', desc: 'Credible, human, true.' }
+      ],
+      button: 'Continue',
+      hint: 'Max 2'
+    },
+    time: {
+      kicker: 'Use',
+      title: 'These images should mainly serve…',
+      text: 'Helps set tempo and scope.',
+      options: [
+        { id: 'moment', title: '📆 A specific moment', desc: 'Launch, campaign, event.' },
+        { id: 'overtime', title: '🔁 A reusable base', desc: 'Visuals that last and can be reused.' },
+        { id: 'grow', title: '🌱 Continuity', desc: 'Series + follow-up over time.' }
+      ],
+      button: 'Continue'
+    },
+    where: {
+      kicker: 'Use',
+      title: 'Where will these images live most often?',
+      text: 'Max 2. Where you\'ll really use them.',
+      options: [
+        { id: 'website', title: 'Website', desc: 'Calm reading, credibility.' },
+        { id: 'social', title: 'Social', desc: 'Rhythm, repetition, series.' },
+        { id: 'editorial', title: 'Editorial / press', desc: 'Context, narrative, detail.' },
+        { id: 'print', title: 'Print', desc: 'Impact, materiality, permanence.' }
+      ],
+      button: 'Continue',
+      hint: 'Max 2'
+    },
+    vibe: {
+      kicker: 'Vibe',
+      title: 'How should I photograph?',
+      text: 'Adjust the sliders to match your desired vibe. This guides my approach without changing my visual signature.',
+      sliders: [
+        { 
+          id: 'calm', 
+          left: '😌 Calm', 
+          right: '⚡ Lively',
+          leftDesc: 'Still, contemplative images',
+          rightDesc: 'Energy, movement, dynamism'
+        },
+        { 
+          id: 'present', 
+          left: '👀 Discreet', 
+          right: '🤍 Close',
+          leftDesc: 'Observe from distance, wide context',
+          rightDesc: 'Intimacy, details, closeness'
+        },
+        { 
+          id: 'rich', 
+          left: '✂️ Minimal', 
+          right: '🧱 Textured',
+          leftDesc: 'Minimalism, simplicity',
+          rightDesc: 'Materials, textures, richness'
+        }
+      ],
+      button: 'Continue'
+    },
+    avoid: {
+      kicker: 'Details',
+      title: 'One thing to avoid at all costs?',
+      text: 'Even one word is enough.',
+      placeholder: 'e.g. too polished / too "ad" / too dark...',
+      button: 'See report'
+    },
+    report: {
+      kicker: 'Report',
+      title: 'Your project',
+      text: 'Here\'s how I read your project.',
+      buttons: {
+        restart: 'Restart',
+        email: 'Send to Marina'
+      }
+    },
+    back: 'Back',
+    pickOne: 'Pick one 🙂'
+  },
+  es: {
+    toolName: 'Marinaphoto 4 you',
+    toolTagline: '« Sé lo que una imagen significa para usted. »',
+    steps: ['Intro', 'Usted', 'Proyecto', 'Esencia', 'Intención', 'Uso', 'Canales', 'Vibra', 'Detalles', 'Informe'],
+    intro: {
+      kicker: 'Un brief de foto (no un dossier de marca)',
+      title: '3 minutos. Sin jerga. Un informe claro.',
+      text: 'Usted responde por instinto. Yo lo convierto en un snapshot legible: qué contar, dónde vivirá, y cómo hacerlo verdadero.',
+      button: 'Empezar'
+    },
+    name: {
+      kicker: 'Usted & proyecto',
+      title: '¿Cuál es su nombre?',
+      text: 'Nombre o apodo — como prefiera.',
+      placeholder: 'p.ej. Alex',
+      button: 'Continuar'
+    },
+    project: {
+      kicker: 'Usted & proyecto',
+      title: 'Nombre del proyecto',
+      text: 'Aunque sea provisional. Me ayuda a personalizar el informe.',
+      placeholder: 'p.ej. Clinica Vinyet / Opening...',
+      button: 'Continuar'
+    },
+    core: {
+      kicker: 'Esencia',
+      title: 'En una frase, su proyecto es sobre todo…',
+      text: 'Elija la opción más evidente.',
+      options: [
+        { id: 'place', title: '🏠 Un lugar', desc: 'Sentir: luz, textura, atmósfera.' },
+        { id: 'story', title: '📖 Una historia', desc: 'Personas, gestos, un hilo narrativo.' },
+        { id: 'moment', title: '⏳ Un momento', desc: 'Lo esencial, sin exagerar.' }
+      ],
+      button: 'Continuar'
+    },
+    intent: {
+      kicker: 'Esencia',
+      title: 'Cuando alguien vea estas imágenes, usted quiere que piense…',
+      text: 'Elija 1 o 2.',
+      options: [
+        { id: 'notAI', title: '« No son imágenes IA. »', desc: 'Se siente lo real: presencia, materia, luz.' },
+        { id: 'brand', title: '« Refleja perfectamente mi marca. »', desc: 'Coherente, reconocible, alineado.' },
+        { id: 'fresh', title: '« Es una mirada artística, nueva. »', desc: 'No genérico. Una firma real.' },
+        { id: 'trust', title: '« Me da confianza. »', desc: 'Creíble, humano, verdadero.' }
+      ],
+      button: 'Continuar',
+      hint: 'Máx 2'
+    },
+    time: {
+      kicker: 'Uso',
+      title: 'Estas imágenes deben servir sobre todo para…',
+      text: 'Ayuda a definir ritmo y alcance.',
+      options: [
+        { id: 'moment', title: '📆 Un momento concreto', desc: 'Lanzamiento, campaña, evento.' },
+        { id: 'overtime', title: '🔁 Una base reutilizable', desc: 'Visuales que duran y se reutilizan.' },
+        { id: 'grow', title: '🌱 Continuidad', desc: 'Serie + seguimiento con el tiempo.' }
+      ],
+      button: 'Continuar'
+    },
+    where: {
+      kicker: 'Uso',
+      title: '¿Dónde vivirán estas imágenes la mayor parte del tiempo?',
+      text: 'Máx 2. Donde realmente las usará.',
+      options: [
+        { id: 'website', title: 'Web', desc: 'Lectura calmada, credibilidad.' },
+        { id: 'social', title: 'Redes', desc: 'Ritmo, repetición, serie.' },
+        { id: 'editorial', title: 'Editorial / prensa', desc: 'Contexto, relato, detalle.' },
+        { id: 'print', title: 'Print', desc: 'Impacto, materia, permanencia.' }
+      ],
+      button: 'Continuar',
+      hint: 'Máx 2'
+    },
+    vibe: {
+      kicker: 'Vibra',
+      title: '¿Cómo debo fotografiar?',
+      text: 'Ajuste los cursores según la vibra deseada. Esto guía mi enfoque sin cambiar mi firma visual.',
+      sliders: [
+        { 
+          id: 'calm', 
+          left: '😌 Calmo', 
+          right: '⚡ Vivo',
+          leftDesc: 'Imágenes serenas, contemplativas',
+          rightDesc: 'Energía, movimiento, dinamismo'
+        },
+        { 
+          id: 'present', 
+          left: '👀 Discreto', 
+          right: '🤍 Cercano',
+          leftDesc: 'Observar desde lejos, contexto amplio',
+          rightDesc: 'Intimidad, detalles, cercanía'
+        },
+        { 
+          id: 'rich', 
+          left: '✂️ Limpio', 
+          right: '🧱 Texturado',
+          leftDesc: 'Minimalismo, simplicidad',
+          rightDesc: 'Materiales, texturas, riqueza'
+        }
+      ],
+      button: 'Continuar'
+    },
+    avoid: {
+      kicker: 'Detalles',
+      title: '¿Una cosa a evitar sí o sí?',
+      text: 'Incluso una palabra basta.',
+      placeholder: 'p.ej. demasiado pulido / "anuncio" / oscuro...',
+      button: 'Ver informe'
+    },
+    report: {
+      kicker: 'Informe',
+      title: 'Su proyecto',
+      text: 'Así entiendo su proyecto.',
+      buttons: {
+        restart: 'Reiniciar',
+        email: 'Enviar a Marina'
+      }
+    },
+    back: 'Atrás',
+    pickOne: 'Elija una 🙂'
+  }
+};
+
+// Helper functions
+function t(key) {
+  const keys = key.split('.');
+  let result = translations[currentLang];
+  for (let k of keys) {
+    result = result[k];
+  }
+  return result;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-en').classList.remove('active');
+  document.getElementById('btn-fr').classList.remove('active');
+  document.getElementById('btn-es').classList.remove('active');
+  document.getElementById('btn-' + lang).classList.add('active');
+  render();
+}
+
+function updateProgress() {
+  const progress = ((currentStep + 1) / 10) * 100;
+  document.getElementById('progress').style.width = progress + '%';
+  document.getElementById('step-label').textContent = 
+    (currentStep + 1) + '/10 · ' + t('steps')[currentStep];
+}
+
+function nextStep() {
+  if (currentStep < 9) {
+    currentStep++;
+    render();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    render();
+  }
+}
+
+function toggleOption(id, multi = false) {
+  if (multi) {
+    const idx = state.intent.indexOf(id);
+    if (idx > -1) {
+      state.intent.splice(idx, 1);
+    } else {
+      if (state.intent.length < 2) {
+        state.intent.push(id);
+      } else {
+        alert(t('intent.hint'));
+        return;
+      }
+    }
   } else {
-    boot();
+    state.core = id;
   }
+  render();
+}
 
-  function boot(){
-    var MARINA_MAIL = "hello@marinaphoto.es";
-
-    var I18N = {
-      fr:{
-        toolName:"Marinaphoto 4 you",
-        toolTagline:"Je sais ce qu’une image signifie pour vous.",
-        acts:{ intro:"Intro", who:"Vous & le projet", core:"Essence", use:"Usage", vibe:"Ambiance", extra:"Détails", report:"Rapport" },
-        ui:{
-          start:"Commencer",
-          continue:"Continuer",
-          back:"Retour",
-          pickOne:"Choisissez une option 🙂",
-          pickAtLeastOne:"Choisissez au moins une option 🙂",
-          maxTwo:"Max 2 choix",
-          copied:"Copié ✨",
-          copy:"Copier le rapport",
-          pdf:"Exporter en PDF",
-          emailMarina:"Envoyer à Marina",
-          restart:"Recommencer",
-          ifHesitate:"Si vous hésitez : choisissez ce qui vous semble le plus vrai aujourd’hui."
-        },
-        intro:{
-          kicker:"Un brief photo (pas un brief de marque)",
-          h1:"3 minutes. Zéro jargon. Un rapport clair.",
-          p:"Vous répondez à l’instinct. Je transforme vos réponses en un snapshot lisible :\nce qu’il faut raconter, où ça va vivre, et comment le rendre juste (sans changer mon style)."
-        },
-        who:{
-          nameH1:"Quel est votre prénom ?",
-          nameHelp:"Prénom ou pseudo — comme vous préférez.",
-          namePh:"Ex : Alex",
-          projH1:"Nom du projet",
-          projHelp:"Même provisoire. Ça m’aide à personnaliser le rapport.",
-          projPh:"Ex : Clinica Vinyet / Nouveau menu / Opening…"
-        },
-        core:{
-          h1:"En une phrase, votre projet, c’est plutôt…",
-          help:"Choisissez l’option la plus évidente.",
-          opts:{
-            place:{t:"🏠 Un lieu", d:"Faire ressentir : lumière, matière, atmosphère."},
-            story:{t:"📖 Une histoire", d:"Des gens, des gestes, une narration."},
-            moment:{t:"⏳ Un moment", d:"Aller à l’essentiel, sans surjouer."}
-          },
-          intentH1:"Quand quelqu’un voit ces images, vous voulez qu’il se dise…",
-          intentHelp:"Choisissez 1 ou 2.",
-          intent:{
-            notAI:{t:"« Ce ne sont pas des images IA. »", d:"On sent du vrai : présence, matière, lumière."},
-            brand:{t:"« Ça reflète parfaitement ma marque. »", d:"Cohérent, reconnaissable, aligné."},
-            fresh:{t:"« C’est un regard artistique, neuf. »", d:"Pas du déjà-vu. Une vraie signature."},
-            trust:{t:"« Ça me met en confiance. »", d:"Crédible, humain, juste (pas “trop pub”)."}
-          }
-        },
-        use:{
-          timeH1:"Ces images doivent surtout servir…",
-          timeHelp:"Ça aide à doser le rythme et la quantité.",
-          time:{
-            moment:{t:"📆 Un moment précis", d:"Lancement, campagne, événement."},
-            overtime:{t:"🔁 Une base réutilisable", d:"Des visuels qui durent et se déclinent."},
-            grow:{t:"🌱 Une continuité", d:"Série + suivi : ça évolue dans le temps."}
-          },
-          whereH1:"Où ces images vont vivre le plus souvent ?",
-          whereHelp:"Max 2. Là où vous allez vraiment les utiliser.",
-          where:{
-            website:{t:"Site web", d:"Lecture posée, crédibilité."},
-            social:{t:"Réseaux", d:"Rythme, répétition, série."},
-            editorial:{t:"Presse / editorial", d:"Contexte, narration, détails."},
-            print:{t:"Print", d:"Impact, matière, permanence."}
-          }
-        },
-        vibe:{
-          h1:"Ambiance (réponse rapide).",
-          help:"Ça ne change pas mon style. Ça règle juste le tempo.",
-          s:{
-            calm:{l:"😌 Calme", r:"⚡ Vivant", hl:"posé", hr:"énergique"},
-            present:{l:"👀 Discret", r:"🤍 Proche", hl:"observer", hr:"être dedans"},
-            rich:{l:"✂️ Épuré", r:"🧱 Texturé", hl:"simple", hr:"matière"}
-          }
-        },
-        extra:{
-          h1:"Une chose à éviter absolument ?",
-          help:"Même un mot suffit.",
-          ph:"Ex : trop lisse / trop “pub” / trop sombre / trop figé…"
-        },
-        report:{
-          kicker:"Rapport",
-          sub:"Voici comment je comprends votre projet (et comment je le traduirais en images).",
-          sections:{ reading:"Lecture", usage:"Usage", vibe:"Ambiance", plan:"Plan", next:"Prochaine étape" },
-          closing:"Mon rôle : traduire votre intention en images justes — avec ma signature (sans mode caméléon).",
-          nextLead:"Si vous le souhaitez : exportez en PDF, ou envoyez ce rapport à Marina."
-        }
-      },
-
-      en:{
-        toolName:"Marinaphoto 4 you",
-        toolTagline:"I know what an image means to you.",
-        acts:{ intro:"Intro", who:"You & project", core:"Essence", use:"Use", vibe:"Vibe", extra:"Details", report:"Report" },
-        ui:{
-          start:"Start",
-          continue:"Continue",
-          back:"Back",
-          pickOne:"Pick one 🙂",
-          pickAtLeastOne:"Pick at least one 🙂",
-          maxTwo:"Max 2",
-          copied:"Copied ✨",
-          copy:"Copy report",
-          pdf:"Export PDF",
-          emailMarina:"Send to Marina",
-          restart:"Restart",
-          ifHesitate:"If you hesitate: pick what feels most true today."
-        },
-        intro:{
-          kicker:"A photo brief (not a brand deck)",
-          h1:"3 minutes. No jargon. A clear report.",
-          p:"Answer by instinct. I turn it into a readable snapshot:\nwhat to say, where it will live, and how to make it feel true (without changing my style)."
-        },
-        who:{
-          nameH1:"What’s your first name?",
-          nameHelp:"First name or nickname — your choice.",
-          namePh:"e.g. Alex",
-          projH1:"Project name",
-          projHelp:"Even temporary. Helps personalize the report.",
-          projPh:"e.g. Clinica Vinyet / New menu / Opening…"
-        },
-        core:{
-          h1:"In one sentence, your project is mostly…",
-          help:"Pick the most obvious option.",
-          opts:{
-            place:{t:"🏠 A place", d:"Make people feel it: light, texture, atmosphere."},
-            story:{t:"📖 A story", d:"People, gestures, a narrative thread."},
-            moment:{t:"⏳ A moment", d:"Keep what matters, no overacting."}
-          },
-          intentH1:"When people see these images, you want them to think…",
-          intentHelp:"Pick 1 or 2.",
-          intent:{
-            notAI:{t:"“These are not AI images.”", d:"It feels real: presence, texture, light."},
-            brand:{t:"“This perfectly matches my brand.”", d:"Consistent, recognizable, aligned."},
-            fresh:{t:"“It’s a fresh artistic eye.”", d:"Not generic. A real signature."},
-            trust:{t:"“This makes me trust you.”", d:"Credible, human, true (not ‘too ad’)."}
-          }
-        },
-        use:{
-          timeH1:"These images should mainly serve…",
-          timeHelp:"Helps set tempo and scope.",
-          time:{
-            moment:{t:"📆 A specific moment", d:"Launch, campaign, event."},
-            overtime:{t:"🔁 A reusable base", d:"Visuals that last and can be reused."},
-            grow:{t:"🌱 Continuity", d:"Series + follow-up over time."}
-          },
-          whereH1:"Where will these images live most often?",
-          whereHelp:"Max 2. Where you’ll really use them.",
-          where:{
-            website:{t:"Website", d:"Calm reading, credibility."},
-            social:{t:"Social", d:"Rhythm, repetition, series."},
-            editorial:{t:"Editorial / press", d:"Context, narrative, detail."},
-            print:{t:"Print", d:"Impact, materiality, permanence."}
-          }
-        },
-        vibe:{
-          h1:"Vibe (quick answer).",
-          help:"This doesn’t change my style. It sets the tempo.",
-          s:{
-            calm:{l:"😌 Calm", r:"⚡ Lively", hl:"quiet", hr:"energetic"},
-            present:{l:"👀 Discreet", r:"🤍 Close", hl:"observe", hr:"in it"},
-            rich:{l:"✂️ Minimal", r:"🧱 Textured", hl:"simple", hr:"material"}
-          }
-        },
-        extra:{
-          h1:"One thing to avoid at all costs?",
-          help:"Even one word is enough.",
-          ph:"e.g. too polished / too ‘ad’ / too dark / too stiff…"
-        },
-        report:{
-          kicker:"Report",
-          sub:"Here’s how I read your project (and how I’d translate it into images).",
-          sections:{ reading:"Reading", usage:"Usage", vibe:"Vibe", plan:"Plan", next:"Next step" },
-          closing:"My role: translate your intent into honest images — with my signature (no chameleon mode).",
-          nextLead:"If you want: export as PDF, or send this report to Marina."
-        }
-      },
-
-      es:{
-        toolName:"Marinaphoto 4 you",
-        toolTagline:"Sé lo que una imagen significa para usted.",
-        acts:{ intro:"Intro", who:"Usted & proyecto", core:"Esencia", use:"Uso", vibe:"Vibra", extra:"Detalles", report:"Informe" },
-        ui:{
-          start:"Empezar",
-          continue:"Continuar",
-          back:"Atrás",
-          pickOne:"Elija una 🙂",
-          pickAtLeastOne:"Elija al menos una 🙂",
-          maxTwo:"Máx 2",
-          copied:"Copiado ✨",
-          copy:"Copiar informe",
-          pdf:"Exportar PDF",
-          emailMarina:"Enviar a Marina",
-          restart:"Reiniciar",
-          ifHesitate:"Si duda: elija lo que se sienta más verdadero hoy."
-        },
-        intro:{
-          kicker:"Un brief de foto (no un dossier de marca)",
-          h1:"3 minutos. Sin jerga. Un informe claro.",
-          p:"Usted responde por instinto. Yo lo convierto en un snapshot legible:\nqué contar, dónde vivirá, y cómo hacerlo verdadero (sin cambiar mi estilo)."
-        },
-        who:{
-          nameH1:"¿Cuál es su nombre?",
-          nameHelp:"Nombre o apodo — como prefiera.",
-          namePh:"p.ej. Alex",
-          projH1:"Nombre del proyecto",
-          projHelp:"Aunque sea provisional. Me ayuda a personalizar el informe.",
-          projPh:"p.ej. Clinica Vinyet / Nuevo menú / Opening…"
-        },
-        core:{
-          h1:"En una frase, su proyecto es sobre todo…",
-          help:"Elija la opción más evidente.",
-          opts:{
-            place:{t:"🏠 Un lugar", d:"Sentir: luz, textura, atmósfera."},
-            story:{t:"📖 Una historia", d:"Personas, gestos, un hilo narrativo."},
-            moment:{t:"⏳ Un momento", d:"Lo esencial, sin exagerar."}
-          },
-          intentH1:"Cuando alguien vea estas imágenes, usted quiere que piense…",
-          intentHelp:"Elija 1 o 2.",
-          intent:{
-            notAI:{t:"« No son imágenes IA. »", d:"Se siente lo real: presencia, materia, luz."},
-            brand:{t:"« Refleja perfectamente mi marca. »", d:"Coherente, reconocible, alineado."},
-            fresh:{t:"« Es una mirada artística, nueva. »", d:"No genérico. Una firma real."},
-            trust:{t:"« Me da confianza. »", d:"Creíble, humano, verdadero (no ‘demasiado anuncio’)."}
-          }
-        },
-        use:{
-          timeH1:"Estas imágenes deben servir sobre todo para…",
-          timeHelp:"Ayuda a definir ritmo y alcance.",
-          time:{
-            moment:{t:"📆 Un momento concreto", d:"Lanzamiento, campaña, evento."},
-            overtime:{t:"🔁 Una base reutilizable", d:"Visuales que duran y se reutilizan."},
-            grow:{t:"🌱 Continuidad", d:"Serie + seguimiento con el tiempo."}
-          },
-          whereH1:"¿Dónde vivirán estas imágenes la mayor parte del tiempo?",
-          whereHelp:"Máx 2. Donde realmente las usará.",
-          where:{
-            website:{t:"Web", d:"Lectura calmada, credibilidad."},
-            social:{t:"Redes", d:"Ritmo, repetición, serie."},
-            editorial:{t:"Editorial / prensa", d:"Contexto, relato, detalle."},
-            print:{t:"Print", d:"Impacto, materia, permanencia."}
-          }
-        },
-        vibe:{
-          h1:"Vibra (respuesta rápida).",
-          help:"No cambia mi estilo. Ajusta el tempo.",
-          s:{
-            calm:{l:"😌 Calmo", r:"⚡ Vivo", hl:"sereno", hr:"enérgico"},
-            present:{l:"👀 Discreto", r:"🤍 Cercano", hl:"observar", hr:"dentro"},
-            rich:{l:"✂️ Limpio", r:"🧱 Texturado", hl:"simple", hr:"materia"}
-          }
-        },
-        extra:{
-          h1:"¿Una cosa a evitar sí o sí?",
-          help:"Incluso una palabra basta.",
-          ph:"p.ej. demasiado pulido / ‘anuncio’ / oscuro / rígido…"
-        },
-        report:{
-          kicker:"Informe",
-          sub:"Así entiendo su proyecto (y así lo traduciría en imágenes).",
-          sections:{ reading:"Lectura", usage:"Uso", vibe:"Vibra", plan:"Plan", next:"Siguiente paso" },
-          closing:"Mi trabajo: traducir su intención en imágenes honestas — con mi firma (sin modo camaleón).",
-          nextLead:"Si quiere: exporte en PDF, o envíe este informe a Marina."
-        }
-      }
-    };
-
-    var lang = "fr";
-    var state = {
-      name:"",
-      project:"",
-      core:null,
-      intent:[],
-      time:null,
-      where:[],
-      avoid:"",
-      sliders:{ calm:55, present:45, rich:50 }
-    };
-
-    var app = document.getElementById("app");
-    var brandText = document.getElementById("brandText");
-    var stepPill = document.getElementById("stepPill");
-    var progFill = document.getElementById("progFill");
-    var toast = document.getElementById("toast");
-    var bg = document.getElementById("bg");
-    var btnEN = document.getElementById("btnEN");
-    var btnFR = document.getElementById("btnFR");
-    var btnES = document.getElementById("btnES");
-
-    function tr(){ return I18N[lang]; }
-
-    function esc(s){
-      s = String(s || "");
-      return s.replace(/[&<>"']/g, function(m){
-        return ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]);
-      });
+function toggleWhere(id) {
+  const idx = state.where.indexOf(id);
+  if (idx > -1) {
+    state.where.splice(idx, 1);
+  } else {
+    if (state.where.length < 2) {
+      state.where.push(id);
+    } else {
+      alert(t('where.hint'));
+      return;
     }
-
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add("show");
-      setTimeout(function(){ toast.classList.remove("show"); }, 1200);
-    }
-
-    function setLang(l){
-      if(!I18N[l]) return;
-      lang = l;
-      btnEN.classList.remove("active");
-      btnFR.classList.remove("active");
-      btnES.classList.remove("active");
-      if(l==="en") btnEN.classList.add("active");
-      if(l==="fr") btnFR.classList.add("active");
-      if(l==="es") btnES.classList.add("active");
-      safeRender(false);
-    }
-
-    btnEN.addEventListener("click", function(){ setLang("en"); });
-    btnFR.addEventListener("click", function(){ setLang("fr"); });
-    btnES.addEventListener("click", function(){ setLang("es"); });
-
-    var steps = [
-      { act:"intro",  render: renderIntro },
-      { act:"who",    render: renderName },
-      { act:"who",    render: renderProject },
-      { act:"core",   render: renderCore },
-      { act:"core",   render: renderIntent },
-      { act:"use",    render: renderTime },
-      { act:"use",    render: renderWhere },
-      { act:"vibe",   render: renderVibe },
-      { act:"extra",  render: renderExtra },
-      { act:"report", render: renderReport }
-    ];
-    var step = 0;
-
-    function setHeader(){
-      var a = tr();
-      brandText.innerHTML = esc(a.toolName) + ' <small>— ' + esc(a.toolTagline) + '</small>';
-      stepPill.textContent = (step+1) + "/" + steps.length + " · " + a.acts[steps[step].act];
-      progFill.style.width = Math.round(((step+1)/steps.length)*100) + "%";
-    }
-    function next(){ if(step < steps.length-1){ step++; safeRender(true); } }
-    function prev(){ if(step > 0){ step--; safeRender(true); } }
-
-    function btnRow(primaryLabel, onPrimary, extraButtonsHtml){
-      var a = tr();
-      var html = '<div class="btnrow noPrint">' +
-        '<button class="primary" id="primaryBtn" type="button">' + esc(primaryLabel) + '</button>' +
-        (extraButtonsHtml || "") +
-        (step>0 ? '<button class="ghost" id="backBtn" type="button">' + esc(a.ui.back) + '</button>' : '') +
-        '</div>';
-      return { html: html, bind: function(){
-        var p = document.getElementById("primaryBtn");
-        if(p) p.onclick = onPrimary;
-        var b = document.getElementById("backBtn");
-        if(b) b.onclick = prev;
-      }};
-    }
-
-    function clamp(v){ return Math.max(0, Math.min(100, v)); }
-
-    function sliderSentence(){
-      var c = state.sliders.calm, p = state.sliders.present, r = state.sliders.rich;
-      if(lang==="fr") return "Rythme " + (c>60?"posé":"énergique") + " · distance " + (p>55?"proche":"discrète") + " · matière " + (r>55?"présente":"minimaliste") + ".";
-      if(lang==="es") return "Ritmo " + (c>60?"sereno":"enérgico") + " · distancia " + (p>55?"cercana":"discreta") + " · materia " + (r>55?"presente":"minimal") + ".";
-      return "Tempo " + (c>60?"calm":"energetic") + " · distance " + (p>55?"close":"discreet") + " · material " + (r>55?"present":"minimal") + ".";
-    }
-
-    function usageScores(){
-      var base = { website:26, social:26, editorial:26, print:26 };
-      var i;
-      for(i=0;i<state.where.length;i++){
-        base[state.where[i]] = base[state.where[i]] + 34;
-      }
-      var longevity = 55;
-      if(state.time==="moment") longevity = 38;
-      if(state.time==="overtime") longevity = 74;
-      if(state.time==="grow") longevity = 88;
-
-      base.website = clamp(base.website);
-      base.social = clamp(base.social);
-      base.editorial = clamp(base.editorial);
-      base.print = clamp(base.print);
-      longevity = clamp(longevity);
-
-      return { base:base, longevity:longevity };
-    }
-
-    function mailtoLink(to, subject, body){
-      return "mailto:" + encodeURIComponent(to) +
-        "?subject=" + encodeURIComponent(subject) +
-        "&body=" + encodeURIComponent(body);
-    }
-
-    function radarSVG(values, labels){
-      var w=320, h=250, cx=w/2, cy=h/2+14, R=92;
-      var axes = [
-        { key:"calm", angle:-90 },
-        { key:"present", angle:30 },
-        { key:"rich", angle:150 }
-      ];
-      function pt(key, val){
-        var ang=0, i;
-        for(i=0;i<axes.length;i++){ if(axes[i].key===key) ang=axes[i].angle; }
-        var rad = ang*Math.PI/180;
-        var rr = R*(val/100);
-        return { x: cx + Math.cos(rad)*rr, y: cy + Math.sin(rad)*rr };
-      }
-      function polyAt(v){
-        var q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
-        return '<polygon points="'+q1.x+','+q1.y+' '+q2.x+','+q2.y+' '+q3.x+','+q3.y+'" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>';
-      }
-      var grid = polyAt(30)+polyAt(60)+polyAt(100);
-      var p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
-      var poly = '<polygon points="'+p1.x+','+p1.y+' '+p2.x+','+p2.y+' '+p3.x+','+p3.y+'" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>';
-
-      var labelSvg =
-        '<text x="'+(cx)+'" y="'+(cy-R-8)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="middle">'+esc(labels[0])+'</text>' +
-        '<text x="'+(cx+R+10)+'" y="'+(cy+6)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="start">'+esc(labels[1])+'</text>' +
-        '<text x="'+(cx-R-10)+'" y="'+(cy+6)+'" fill="rgba(255,255,255,.70)" font-size="12" text-anchor="end">'+esc(labels[2])+'</text>';
-
-      return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="vibe radar">'+grid+poly+labelSvg+'</svg>';
-    }
-
-    function bar(label, v){
-      v = clamp(Math.round(v));
-      return '' +
-        '<div class="bar">' +
-          '<div class="barhead"><span>'+esc(label)+'</span><span>'+v+'%</span></div>' +
-          '<div class="track"><div class="fill" style="width:'+v+'%"></div></div>' +
-        '</div>';
-    }
-
-    function tags(){
-      var a = tr();
-      var out = [];
-      var i, j;
-      if(state.core) out.push(a.core.opts[state.core].t);
-      for(i=0;i<state.intent.length;i++) out.push(a.core.intent[state.intent[i]].t);
-      out.push(sliderSentence());
-      var uniq = [];
-      for(j=0;j<out.length;j++){ if(uniq.indexOf(out[j])===-1) uniq.push(out[j]); }
-      return uniq.slice(0,3);
-    }
-
-    function storyLines(){
-      var who = (state.name||"").trim();
-      var proj = (state.project||"").trim();
-      var hello;
-      if(lang==="fr") hello = "Bonjour"+(who?(" "+who):"")+" — voici la lecture de « "+(proj||"votre projet")+" ».";
-      else if(lang==="es") hello = "Hola"+(who?(" "+who):"")+" — aquí va la lectura de « "+(proj||"su proyecto")+" ».";
-      else hello = "Hi"+(who?(" "+who):"")+" — here’s the reading of “"+(proj||"your project")+"”.";
-
-      var core;
-      if(state.core==="place"){
-        core = (lang==="fr"?"Cœur : un lieu à faire ressentir.":lang==="es"?"Corazón: un lugar para sentir.":"Core: a place to feel.");
-      } else if(state.core==="story"){
-        core = (lang==="fr"?"Cœur : une histoire à suivre.":lang==="es"?"Corazón: una historia que seguir.":"Core: a story to follow.");
-      } else {
-        core = (lang==="fr"?"Cœur : un moment à rendre juste.":lang==="es"?"Corazón: un momento que hacer verdadero.":"Core: a moment to make true.");
-      }
-
-      var intentMapFR = { notAI:"On doit sentir du vrai (pas du « généré »).", brand:"Aligné à votre image.", fresh:"Un regard artistique, neuf.", trust:"De la confiance : crédible, humain, juste." };
-      var intentMapEN = { notAI:"It should feel real (not ‘generated’).", brand:"Perfectly aligned with your brand.", fresh:"A fresh artistic eye.", trust:"Trust: credible, human, true." };
-      var intentMapES = { notAI:"Debe sentirse real (no ‘generado’).", brand:"Alineado con su marca.", fresh:"Una mirada artística, nueva.", trust:"Confianza: creíble, humano, verdadero." };
-      var intentMap = (lang==="fr") ? intentMapFR : ((lang==="es") ? intentMapES : intentMapEN);
-
-      var intentLine;
-      if(state.intent.length){
-        var prefix = (lang==="fr"?"Ce qui doit rester : ":"Lo que debe quedar: ":"What should remain: ");
-        var parts = [];
-        var i;
-        for(i=0;i<state.intent.length;i++) parts.push(intentMap[state.intent[i]]);
-        intentLine = prefix + parts.join(" ");
-      } else {
-        intentLine = (lang==="fr"?"Ce qui doit rester : du vrai et du sens.":lang==="es"?"Lo que debe quedar: verdad y sentido.":"What should remain: truth and meaning.");
-      }
-
-      var timeLine;
-      if(state.time==="moment"){
-        timeLine = (lang==="fr"?"Usage : un moment précis (impact + efficacité).":lang==="es"?"Uso: un momento concreto (impacto + eficacia).":"Use: a specific moment (impact + efficiency).");
-      } else if(state.time==="overtime"){
-        timeLine = (lang==="fr"?"Usage : une base réutilisable (cohérence + long terme).":lang==="es"?"Uso: una base reutilizable (coherencia + largo plazo).":"Use: a reusable base (coherence + long-term).");
-      } else {
-        timeLine = (lang==="fr"?"Usage : une continuité (série + évolution).":lang==="es"?"Uso: continuidad (serie + evolución).":"Use: continuity (series + evolution).");
-      }
-
-      return [hello, core, intentLine, timeLine];
-    }
-
-    function sliderBlock(key, left, right, hl, hr, value){
-      return '' +
-        '<div class="slider">' +
-          '<div class="slab"><span>'+esc(left)+'</span><span>'+esc(right)+'</span></div>' +
-          '<input type="range" min="0" max="100" value="'+value+'" data-key="'+key+'">' +
-          '<div class="sliderHelp"><span>'+esc(hl)+'</span><span>'+esc(hr)+'</span></div>' +
-        '</div>';
-    }
-
-    function copyText(text){
-      try{
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(text).then(function(){ showToast(tr().ui.copied); })
-            .catch(function(){ legacyCopy(text); });
-        } else {
-          legacyCopy(text);
-        }
-      }catch(e){
-        legacyCopy(text);
-      }
-
-      function legacyCopy(t){
-        var ta = document.createElement("textarea");
-        ta.value = t;
-        ta.setAttribute("readonly","");
-        ta.style.position="fixed";
-        ta.style.left="-9999px";
-        ta.style.top="0";
-        document.body.appendChild(ta);
-        ta.select();
-        try{ document.execCommand("copy"); }catch(_e){}
-        document.body.removeChild(ta);
-        showToast(tr().ui.copied);
-      }
-    }
-
-    /* RENDERERS */
-    function renderIntro(){
-      var a = tr();
-      var row = btnRow(a.ui.start, function(){ next(); });
-      app.innerHTML =
-        '<div class="kicker">'+esc(a.intro.kicker)+'</div>' +
-        '<h1>'+esc(a.intro.h1)+'</h1>' +
-        '<p class="lead">'+esc(a.intro.p).replace(/\n/g,"<br/>")+'</p>' +
-        '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>' +
-        row.html;
-      row.bind();
-    }
-
-    function renderName(){
-      var a = tr();
-      var row = btnRow(a.ui.continue, function(){
-        state.name = (document.getElementById("nameInput").value||"").trim();
-        next();
-      });
-      app.innerHTML =
-        '<div class="kicker">'+esc(a.acts.who)+'</div>' +
-        '<h1>'+esc(a.who.nameH1)+'</h1>' +
-        '<p class="lead">'+esc(a.who.nameHelp)+'</p>' +
-        '<input id="nameInput" type="text" value="'+esc(state.name)+'" placeholder="'+esc(a.who.namePh)+'" />' +
-        row.html;
-      row.bind();
-    }
-
-    function renderProject(){
-      var a = tr();
-      var row = btnRow(a.ui.continue, function(){
-        state.project = (document.getElementById("projInput").value||"").trim();
-        next();
-      });
-      app.innerHTML =
-        '<div class="kicker">'+esc(a.acts.who)+'</div>' +
-        '<h1>'+esc(a.who.projH1)+'</h1>' +
-        '<p class="lead">'+esc(a.who.projHelp)+'</p>' +
-        '<input id="projInput" type="text" value="'+esc(state.project)+'" placeholder="'+esc(a.who.projPh)+'" />' +
-        row.html;
-      row.bind();
-    }
-
-    function renderCore(){
-      var a = tr();
-      var c = a.core.opts;
-      var row = btnRow(a.ui.continue, function(){
-        if(!state.core){ showToast(a.ui.pickOne); return; }
-        next();
-      });
-
-      var items = [
-        ["place", c.place.t, c.place.d],
-        ["story", c.story.t, c.story.d],
-        ["moment", c.moment.t, c.moment.d]
-      ];
-
-      var html = '';
-      html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
-      html += '<h1>'+esc(a.core.h1)+'</h1>';
-      html += '<p class="lead">'+esc(a.core.help)+'</p>';
-      html += '<div class="choices">';
-      var i;
-      for(i=0;i<items.length;i++){
-        var id=items[i][0], t=items[i][1], d=items[i][2];
-        html += '<div class="choice '+(state.core===id?'sel':'')+'" data-id="'+id+'">' +
-          '<div class="optTitle">'+esc(t)+'</div>' +
-          '<div class="optDesc">'+esc(d)+'</div>' +
-        '</div>';
-      }
-      html += '</div>';
-      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
-      html += row.html;
-
-      app.innerHTML = html;
-
-      var els = app.querySelectorAll(".choice");
-      for(i=0;i<els.length;i++){
-        els[i].onclick = function(){
-          state.core = this.getAttribute("data-id");
-          safeRender(false);
-        };
-      }
-      row.bind();
-    }
-
-    function renderIntent(){
-      var a = tr();
-      var o = a.core.intent;
-      var row = btnRow(a.ui.continue, function(){
-        if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
-        next();
-      });
-
-      var items = [
-        ["notAI", o.notAI.t, o.notAI.d],
-        ["brand", o.brand.t, o.brand.d],
-        ["fresh", o.fresh.t, o.fresh.d],
-        ["trust", o.trust.t, o.trust.d]
-      ];
-
-      var html = '';
-      html += '<div class="kicker">'+esc(a.acts.core)+'</div>';
-      html += '<h1>'+esc(a.core.intentH1)+'</h1>';
-      html += '<p class="lead">'+esc(a.core.intentHelp)+'</p>';
-      html += '<div class="checks">';
-      var i;
-      for(i=0;i<items.length;i++){
-        var id=items[i][0], t=items[i][1], d=items[i][2];
-        var sel = state.intent.indexOf(id)!==-1;
-        html += '<div class="check '+(sel?'sel':'')+'" data-id="'+id+'">' +
-          '<div class="optTitle">'+esc(t)+'</div>' +
-          '<div class="optDesc">'+esc(d)+'</div>' +
-        '</div>';
-      }
-      html += '</div>';
-      html += '<div class="micro">'+esc(a.ui.maxTwo)+'</div>';
-      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
-      html += row.html;
-
-      app.innerHTML = html;
-
-      var els = app.querySelectorAll(".check");
-      for(i=0;i<els.length;i++){
-        els[i].onclick = function(){
-          var id = this.getAttribute("data-id");
-          var idx = state.intent.indexOf(id);
-          if(idx!==-1){
-            state.intent.splice(idx,1);
-          } else {
-            if(state.intent.length>=2){ showToast(a.ui.maxTwo); return; }
-            state.intent.push(id);
-          }
-          safeRender(false);
-        };
-      }
-      row.bind();
-    }
-
-    function renderTime(){
-      var a = tr();
-      var t = a.use.time;
-      var row = btnRow(a.ui.continue, function(){
-        if(!state.time){ showToast(a.ui.pickOne); return; }
-        next();
-      });
-
-      var items = [
-        ["moment", t.moment.t, t.moment.d],
-        ["overtime", t.overtime.t, t.overtime.d],
-        ["grow", t.grow.t, t.grow.d]
-      ];
-
-      var html = '';
-      html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
-      html += '<h1>'+esc(a.use.timeH1)+'</h1>';
-      html += '<p class="lead">'+esc(a.use.timeHelp)+'</p>';
-      html += '<div class="choices">';
-      var i;
-      for(i=0;i<items.length;i++){
-        var id=items[i][0], ti=items[i][1], de=items[i][2];
-        html += '<div class="choice '+(state.time===id?'sel':'')+'" data-id="'+id+'">' +
-          '<div class="optTitle">'+esc(ti)+'</div>' +
-          '<div class="optDesc">'+esc(de)+'</div>' +
-        '</div>';
-      }
-      html += '</div>';
-      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
-      html += row.html;
-
-      app.innerHTML = html;
-
-      var els = app.querySelectorAll(".choice");
-      for(i=0;i<els.length;i++){
-        els[i].onclick = function(){
-          state.time = this.getAttribute("data-id");
-          safeRender(false);
-        };
-      }
-      row.bind();
-    }
-
-    function renderWhere(){
-      var a = tr();
-      var w = a.use.where;
-      var row = btnRow(a.ui.continue, function(){
-        if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
-        next();
-      });
-
-      var items = [
-        ["website", w.website.t, w.website.d],
-        ["social", w.social.t, w.social.d],
-        ["editorial", w.editorial.t, w.editorial.d],
-        ["print", w.print.t, w.print.d]
-      ];
-
-      var html = '';
-      html += '<div class="kicker">'+esc(a.acts.use)+'</div>';
-      html += '<h1>'+esc(a.use.whereH1)+'</h1>';
-      html += '<p class="lead">'+esc(a.use.whereHelp)+'</p>';
-      html += '<div class="checks">';
-      var i;
-      for(i=0;i<items.length;i++){
-        var id=items[i][0], ti=items[i][1], de=items[i][2];
-        var sel = state.where.indexOf(id)!==-1;
-        html += '<div class="check '+(sel?'sel':'')+'" data-id="'+id+'">' +
-          '<div class="optTitle">'+esc(ti)+'</div>' +
-          '<div class="optDesc">'+esc(de)+'</div>' +
-        '</div>';
-      }
-      html += '</div>';
-      html += '<div class="micro">'+esc(a.ui.maxTwo)+'</div>';
-      html += '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>';
-      html += row.html;
-
-      app.innerHTML = html;
-
-      var els = app.querySelectorAll(".check");
-      for(i=0;i<els.length;i++){
-        els[i].onclick = function(){
-          var id = this.getAttribute("data-id");
-          var idx = state.where.indexOf(id);
-          if(idx!==-1){
-            state.where.splice(idx,1);
-          } else {
-            if(state.where.length>=2){ showToast(a.ui.maxTwo); return; }
-            state.where.push(id);
-          }
-          safeRender(false);
-        };
-      }
-      row.bind();
-    }
-
-    function renderVibe(){
-      var a = tr();
-      var s = a.vibe.s;
-      var row = btnRow(a.ui.continue, function(){ next(); });
-
-      app.innerHTML =
-        '<div class="kicker">'+esc(a.acts.vibe)+'</div>' +
-        '<h1>'+esc(a.vibe.h1)+'</h1>' +
-        '<p class="lead">'+esc(a.vibe.help)+'</p>' +
-        sliderBlock("calm", s.calm.l, s.calm.r, s.calm.hl, s.calm.hr, state.sliders.calm) +
-        sliderBlock("present", s.present.l, s.present.r, s.present.hl, s.present.hr, state.sliders.present) +
-        sliderBlock("rich", s.rich.l, s.rich.r, s.rich.hl, s.rich.hr, state.sliders.rich) +
-        '<div class="hint" id="liveSentence">'+esc(sliderSentence())+'</div>' +
-        row.html;
-
-      var inputs = app.querySelectorAll('input[type="range"]');
-      var i;
-      for(i=0;i<inputs.length;i++){
-        inputs[i].addEventListener("input", function(){
-          var k = this.getAttribute("data-key");
-          state.sliders[k] = Number(this.value);
-          var live = document.getElementById("liveSentence");
-          if(live) live.textContent = sliderSentence();
-          var calm01 = state.sliders.calm/100;
-          bg.style.filter = "saturate("+(0.95 + calm01*0.25)+")";
-        });
-      }
-      row.bind();
-    }
-
-    function renderExtra(){
-      var a = tr();
-      var row = btnRow(a.ui.continue, function(){
-        state.avoid = (document.getElementById("avoidInput").value||"").trim();
-        next();
-      });
-
-      app.innerHTML =
-        '<div class="kicker">'+esc(a.acts.extra)+'</div>' +
-        '<h1>'+esc(a.extra.h1)+'</h1>' +
-        '<p class="lead">'+esc(a.extra.help)+'</p>' +
-        '<textarea id="avoidInput" placeholder="'+esc(a.extra.ph)+'">'+esc(state.avoid)+'</textarea>' +
-        '<div class="hint">'+esc(a.ui.ifHesitate)+'</div>' +
-        row.html;
-
-      row.bind();
-    }
-
-    function renderReport(){
-      var a = tr();
-
-      var proj = (state.project||"").trim();
-      if(!proj){
-        if(lang==="fr") proj="Votre projet";
-        else if(lang==="es") proj="Su proyecto";
-        else proj="Your project";
-      }
-      var who = (state.name||"").trim();
-
-      var score = usageScores();
-      var tgs = tags();
-      var story = storyLines();
-
-      var whereLabels = {
-        website: a.use.where.website.t,
-        social: a.use.where.social.t,
-        editorial: a.use.where.editorial.t,
-        print: a.use.where.print.t
-      };
-
-      var radarLabels;
-      if(lang==="fr") radarLabels = ["Rythme","Proximité","Matière"];
-      else if(lang==="es") radarLabels = ["Ritmo","Cercanía","Materia"];
-      else radarLabels = ["Tempo","Closeness","Material"];
-
-      var subject = "Project Snapshot — " + proj;
-
-      var bodyLines = [];
-      bodyLines.push(a.toolName + " — " + proj);
-      bodyLines.push(a.toolTagline);
-      bodyLines.push("");
-      if(who){
-        if(lang==="fr") bodyLines.push("Prénom: " + who);
-        else if(lang==="es") bodyLines.push("Nombre: " + who);
-        else bodyLines.push("Name: " + who);
-      }
-      bodyLines.push("");
-      var i;
-      for(i=0;i<story.length;i++) bodyLines.push("• " + story[i]);
-      bodyLines.push("");
-      bodyLines.push((lang==="fr")?"Usage:":(lang==="es")?"Uso:":"Use:");
-      bodyLines.push("- " + whereLabels.website + ": " + Math.round(score.base.website) + "%");
-      bodyLines.push("- " + whereLabels.social + ": " + Math.round(score.base.social) + "%");
-      bodyLines.push("- " + whereLabels.editorial + ": " + Math.round(score.base.editorial) + "%");
-      bodyLines.push("- " + whereLabels.print + ": " + Math.round(score.base.print) + "%");
-      bodyLines.push("- " + ((lang==="fr")?"Durée de vie":(lang==="es")?"Vida útil":"Longevity") + ": " + Math.round(score.longevity) + "%");
-      if(state.avoid) bodyLines.push(((lang==="fr")?"À éviter: ":(lang==="es")?"Evitar: ":"Avoid: ") + state.avoid);
-      bodyLines.push("");
-      bodyLines.push("— marinaphoto.es");
-
-      var mailBody = bodyLines.join("\n");
-      var mailto = mailtoLink(MARINA_MAIL, subject, mailBody);
-
-      var extraBtns =
-        '<button class="ghost" id="copyBtn" type="button">'+esc(a.ui.copy)+'</button>' +
-        '<button class="ghost" id="pdfBtn" type="button">'+esc(a.ui.pdf)+'</button>' +
-        '<button class="ghost" id="mailBtn" type="button">'+esc(a.ui.emailMarina)+'</button>' +
-        '<button class="ghost" id="restartBtn" type="button">'+esc(a.ui.restart)+'</button>';
-
-      var row = btnRow(
-        (lang==="fr")?"Parler à Marina":(lang==="es")?"Hablar con Marina":"Talk to Marina",
-        function(){ window.location.href = mailto; },
-        extraBtns
-      );
-
-      app.innerHTML =
-        '<div class="kicker">'+esc(a.report.kicker)+'</div>' +
-        '<h1>'+esc(proj)+'</h1>' +
-        '<p class="lead">'+esc(a.report.sub)+(who?(" · "+esc(who)):"")+'</p>' +
-        '<div class="tags">'+tgs.map(function(x){ return '<div class="tag">'+esc(x)+'</div>'; }).join("")+'</div>' +
-
-        '<div class="divider"></div>' +
-
-        '<div class="box">' +
-          '<div class="kicker">'+esc(a.report.sections.reading)+'</div>' +
-          '<div style="margin-top:10px">' +
-            story.map(function(x){ return '<p class="lead" style="margin:0 0 8px">• '+esc(x)+'</p>'; }).join("") +
-          '</div>' +
-          '<p class="hint">'+esc(a.report.closing)+'</p>' +
-        '</div>' +
-
-        '<div class="divider"></div>' +
-
-        '<div class="grid2">' +
-          '<div class="box">' +
-            '<div class="kicker">'+esc(a.report.sections.usage)+'</div>' +
-            bar(whereLabels.website, score.base.website) +
-            bar(whereLabels.social, score.base.social) +
-            bar(whereLabels.editorial, score.base.editorial) +
-            bar(whereLabels.print, score.base.print) +
-            bar((lang==="fr")?"Durée de vie":(lang==="es")?"Vida útil":"Longevity", score.longevity) +
-            (state.avoid ? ('<div class="micro" style="margin-top:10px">'+esc((lang==="fr")?"À éviter: ":(lang==="es")?"Evitar: ":"Avoid: ")+state.avoid)+'</div>') : '') +
-          '</div>' +
-
-          '<div class="box">' +
-            '<div class="kicker">'+esc(a.report.sections.vibe)+'</div>' +
-            '<div style="margin-top:8px">'+radarSVG(state.sliders, radarLabels)+'</div>' +
-            '<div class="micro">'+esc(sliderSentence())+'</div>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="divider"></div>' +
-
-        '<div class="grid2">' +
-          '<div class="box">' +
-            '<div class="kicker">'+esc(a.report.sections.plan)+'</div>' +
-            '<h2>'+esc((lang==="fr")?"Plan (concret)":(lang==="es")?"Plan (concreto)":"Plan (concrete)")+'</h2>' +
-            '<p class="lead">'+esc((lang==="fr")
-              ? "Une série cohérente, pensée pour vos supports. Pas d’effet catalogue : on raconte, on respire, on fait vrai."
-              : (lang==="es")
-                ? "Una serie coherente, pensada para sus soportes. Sin efecto catálogo: contamos, respiramos, se siente real."
-                : "A coherent series designed for your channels. No catalog feel: we tell, we breathe, it feels real."
-            )+'</p>' +
-            '<div class="hint">'+esc((lang==="fr")
-              ? "Je prépare : lumière + séquence + liste de plans. Vous validez. Ensuite : exécution simple."
-              : (lang==="es")
-                ? "Yo preparo: luz + secuencia + lista de planos. Usted valida. Luego: ejecución simple."
-                : "I prepare: light + sequence + shot list. You approve. Then: clean execution."
-            )+'</div>' +
-          '</div>' +
-
-          '<div class="box">' +
-            '<div class="kicker">'+esc(a.report.sections.next)+'</div>' +
-            '<p class="lead">'+esc(a.report.nextLead)+'</p>' +
-            '<p class="micro">'+esc((lang==="fr")?"Email Marina : ":(lang==="es")?"Email Marina: ":"Marina email: ")+MARINA_MAIL+'</p>' +
-          '</div>' +
-        '</div>' +
-
-        row.html;
-
-      row.bind();
-
-      document.getElementById("copyBtn").onclick = function(){ copyText(mailBody); };
-      document.getElementById("pdfBtn").onclick = function(){ window.print(); };
-      document.getElementById("mailBtn").onclick = function(){ window.location.href = mailto; };
-      document.getElementById("restartBtn").onclick = function(){
-        state = { name:"", project:"", core:null, intent:[], time:null, where:[], avoid:"", sliders:{ calm:55, present:45, rich:50 } };
-        step = 0;
-        safeRender(true);
-      };
-    }
-
-    function safeRender(scrollTop){
-      try{
-        setHeader();
-        app.classList.remove("fade");
-        app.getBoundingClientRect();
-        app.classList.add("fade");
-        steps[step].render();
-        if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
-      }catch(e){
-        // If we land here, JS ran (so not parse error). Display message.
-        app.innerHTML =
-          '<div class="kicker">JS ERROR</div>' +
-          '<h1>Oups 😅</h1>' +
-          '<p class="lead">Copiez/collez ce message :</p>' +
-          '<pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">'+
-          esc(String(e)) + '\n\n' + esc(e && e.stack ? e.stack : "(no stack)") +
-          '</pre>';
-        try{ console.error(e); }catch(_e){}
-      }
-    }
-
-    // init
-    setLang("fr");
-    safeRender(true);
   }
-})();
+  render();
+}
+
+function render() {
+  updateProgress();
+  const content = document.getElementById('content');
+  content.classList.remove('fade-in');
+  
+  setTimeout(() => {
+    let html = '';
+    
+    switch(currentStep) {
+      case 0: // Intro
+        html = `
+          <div class="kicker">${t('intro.kicker')}</div>
+          <h1>${t('intro.title')}</h1>
+          <p class="lead">${t('intro.text')}</p>
+          <div class="buttons">
+            <button class="primary" onclick="nextStep()">${t('intro.button')}</button>
+          </div>
+        `;
+        break;
+        
+      case 1: // Name
+        html = `
+          <div class="kicker">${t('name.kicker')}</div>
+          <h1>${t('name.title')}</h1>
+          <p class="lead">${t('name.text')}</p>
+          <input type="text" id="name-input" value="${state.name}" placeholder="${t('name.placeholder')}">
+          <div class="buttons">
+            <button class="primary" onclick="state.name = document.getElementById('name-input').value; nextStep();">${t('name.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 2: // Project
+        html = `
+          <div class="kicker">${t('project.kicker')}</div>
+          <h1>${t('project.title')}</h1>
+          <p class="lead">${t('project.text')}</p>
+          <input type="text" id="project-input" value="${state.project}" placeholder="${t('project.placeholder')}">
+          <div class="buttons">
+            <button class="primary" onclick="state.project = document.getElementById('project-input').value; nextStep();">${t('project.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 3: // Core
+        html = `
+          <div class="kicker">${t('core.kicker')}</div>
+          <h1>${t('core.title')}</h1>
+          <p class="lead">${t('core.text')}</p>
+          <div class="options">
+            ${t('core.options').map(opt => `
+              <div class="option ${state.core === opt.id ? 'selected' : ''}" onclick="state.core = '${opt.id}'; render();">
+                <div class="option-title">${opt.title}</div>
+                <div class="option-desc">${opt.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="buttons">
+            <button class="primary" onclick="if(!state.core) { alert(t('pickOne')); return; } nextStep();">${t('core.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 4: // Intent
+        html = `
+          <div class="kicker">${t('intent.kicker')}</div>
+          <h1>${t('intent.title')}</h1>
+          <p class="lead">${t('intent.text')}</p>
+          <div class="options">
+            ${t('intent.options').map(opt => `
+              <div class="option ${state.intent.includes(opt.id) ? 'selected' : ''}" onclick="toggleOption('${opt.id}', true)">
+                <div class="option-title">${opt.title}</div>
+                <div class="option-desc">${opt.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+          <p class="hint">${t('intent.hint')}</p>
+          <div class="buttons">
+            <button class="primary" onclick="if(state.intent.length === 0) { alert(t('pickOne')); return; } nextStep();">${t('intent.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 5: // Time
+        html = `
+          <div class="kicker">${t('time.kicker')}</div>
+          <h1>${t('time.title')}</h1>
+          <p class="lead">${t('time.text')}</p>
+          <div class="options">
+            ${t('time.options').map(opt => `
+              <div class="option ${state.time === opt.id ? 'selected' : ''}" onclick="state.time = '${opt.id}'; render();">
+                <div class="option-title">${opt.title}</div>
+                <div class="option-desc">${opt.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="buttons">
+            <button class="primary" onclick="if(!state.time) { alert(t('pickOne')); return; } nextStep();">${t('time.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 6: // Where
+        html = `
+          <div class="kicker">${t('where.kicker')}</div>
+          <h1>${t('where.title')}</h1>
+          <p class="lead">${t('where.text')}</p>
+          <div class="options">
+            ${t('where.options').map(opt => `
+              <div class="option ${state.where.includes(opt.id) ? 'selected' : ''}" onclick="toggleWhere('${opt.id}')">
+                <div class="option-title">${opt.title}</div>
+                <div class="option-desc">${opt.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+          <p class="hint">${t('where.hint')}</p>
+          <div class="buttons">
+            <button class="primary" onclick="if(state.where.length === 0) { alert(t('pickOne')); return; } nextStep();">${t('where.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 7: // Vibe
+        html = `
+          <div class="kicker">${t('vibe.kicker')}</div>
+          <h1>${t('vibe.title')}</h1>
+          <p class="lead">${t('vibe.text')}</p>
+          ${t('vibe.sliders').map(slider => `
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>${slider.left}</span>
+                <span>${slider.right}</span>
+              </div>
+              <input type="range" min="0" max="100" value="${state.sliders[slider.id]}" 
+                oninput="state.sliders.${slider.id} = this.value">
+              <div class="slider-hints">
+                <span>${slider.leftDesc}</span>
+                <span>${slider.rightDesc}</span>
+              </div>
+            </div>
+          `).join('')}
+          <div class="buttons">
+            <button class="primary" onclick="nextStep()">${t('vibe.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 8: // Avoid
+        html = `
+          <div class="kicker">${t('avoid.kicker')}</div>
+          <h1>${t('avoid.title')}</h1>
+          <p class="lead">${t('avoid.text')}</p>
+          <textarea id="avoid-input" placeholder="${t('avoid.placeholder')}">${state.avoid}</textarea>
+          <div class="buttons">
+            <button class="primary" onclick="state.avoid = document.getElementById('avoid-input').value; nextStep();">${t('avoid.button')}</button>
+            <button class="secondary" onclick="prevStep()">${t('back')}</button>
+          </div>
+        `;
+        break;
+        
+      case 9: // Report
+        // Générer un rapport intelligent sans API
+        const generateSmartReport = () => {
+          // Interpréter les données pour créer un brief personnalisé
+          const projectName = state.project || (currentLang === 'fr' ? 'Votre projet' : currentLang === 'es' ? 'Su proyecto' : 'Your project');
+          const clientName = state.name || (currentLang === 'fr' ? 'Client' : currentLang === 'es' ? 'Cliente' : 'Client');
+          
+          // Interpréter le type de projet
+          let projectTypeText = '';
+          if (state.core === 'place') {
+            projectTypeText = currentLang === 'fr' 
+              ? 'Ce projet concerne la photographie d\'un lieu. L\'objectif est de faire ressentir l\'espace : sa lumière naturelle, ses matières, son atmosphère unique. Je vais capturer l\'essence du lieu pour que les spectateurs s\'y projettent.'
+              : currentLang === 'es'
+              ? 'Este proyecto trata sobre la fotografía de un lugar. El objetivo es hacer sentir el espacio: su luz natural, sus materias, su atmósfera única. Voy a capturar la esencia del lugar para que los espectadores se proyecten en él.'
+              : 'This project is about photographing a place. The goal is to make people feel the space: its natural light, materials, unique atmosphere. I\'ll capture the essence of the place so viewers can imagine themselves there.';
+          } else if (state.core === 'story') {
+            projectTypeText = currentLang === 'fr'
+              ? 'Ce projet raconte une histoire à travers les personnes et leurs gestes. Je vais créer une narration visuelle qui suit un fil conducteur, en capturant les interactions authentiques et les moments significatifs.'
+              : currentLang === 'es'
+              ? 'Este proyecto cuenta una historia a través de las personas y sus gestos. Voy a crear una narración visual que sigue un hilo conductor, capturando las interacciones auténticas y los momentos significativos.'
+              : 'This project tells a story through people and their gestures. I\'ll create a visual narrative with a through-line, capturing authentic interactions and meaningful moments.';
+          } else if (state.core === 'moment') {
+            projectTypeText = currentLang === 'fr'
+              ? 'Ce projet capture un moment précis de manière authentique. Je vais aller à l\'essentiel, sans mise en scène excessive, pour garder la vérité et la sincérité de l\'instant.'
+              : currentLang === 'es'
+              ? 'Este proyecto captura un momento preciso de manera auténtica. Voy a ir a lo esencial, sin escenificación excesiva, para mantener la verdad y la sinceridad del instante.'
+              : 'This project captures a specific moment authentically. I\'ll get to the essentials, without excessive staging, to keep the truth and sincerity of the instant.';
+          }
+          
+          // Interpréter les intentions
+          let intentText = '';
+          if (state.intent.length > 0) {
+            const intentMapFr = {
+              notAI: 'montrer la réalité tangible - présence physique, matières authentiques, lumière naturelle',
+              brand: 'créer une cohérence visuelle parfaitement alignée avec votre identité de marque',
+              fresh: 'apporter un regard artistique personnel, une signature reconnaissable qui sort du conventionnel',
+              trust: 'inspirer la confiance par des images crédibles, humaines et justes, sans artifice publicitaire'
+            };
+            const intentMapEn = {
+              notAI: 'show tangible reality - physical presence, authentic materials, natural light',
+              brand: 'create visual coherence perfectly aligned with your brand identity',
+              fresh: 'bring a personal artistic eye, a recognizable signature that breaks from convention',
+              trust: 'inspire trust through credible, human, honest images, without advertising artifice'
+            };
+            const intentMapEs = {
+              notAI: 'mostrar la realidad tangible - presencia física, materias auténticas, luz natural',
+              brand: 'crear una coherencia visual perfectamente alineada con su identidad de marca',
+              fresh: 'aportar una mirada artística personal, una firma reconocible que sale de lo convencional',
+              trust: 'inspirar confianza a través de imágenes creíbles, humanas y justas, sin artificio publicitario'
+            };
+            const intentMap = currentLang === 'fr' ? intentMapFr : currentLang === 'es' ? intentMapEs : intentMapEn;
+            const priorityLabel = currentLang === 'fr' ? 'Les priorités : ' : currentLang === 'es' ? 'Las prioridades: ' : 'Priorities: ';
+            intentText = priorityLabel + state.intent.map(i => intentMap[i]).join(currentLang === 'es' ? ' ; ' : ' ; ') + '.';
+          }
+          
+          // Interpréter l'approche photographique basée sur les sliders
+          const approachTitle = currentLang === 'fr' ? 'Mon approche photographique' : currentLang === 'es' ? 'Mi enfoque fotográfico' : 'My photographic approach';
+          let approachText = `<h3>📸 ${approachTitle}</h3>`;
+          
+          // Énergie
+          if (state.sliders.calm < 35) {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Énergie calme :</strong> Images contemplatives et posées. Je privilégie les moments de pause, la lumière douce, les compositions équilibrées. Temps de pause pour capturer la sérénité.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Energía tranquila:</strong> Imágenes contemplativas y serenas. Privilegio los momentos de pausa, la luz suave, las composiciones equilibradas. Tiempo de pausa para capturar la serenidad.</p>';
+            } else {
+              approachText += '<p><strong>Calm energy:</strong> Contemplative, still images. I favor moments of pause, soft light, balanced compositions. Time to capture serenity.</p>';
+            }
+          } else if (state.sliders.calm > 65) {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Énergie vivante :</strong> Images dynamiques avec du mouvement. Je capture l\'action, l\'énergie du moment, les transitions. Shooting plus spontané et réactif.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Energía viva:</strong> Imágenes dinámicas con movimiento. Capturo la acción, la energía del momento, las transiciones. Sesión más espontánea y reactiva.</p>';
+            } else {
+              approachText += '<p><strong>Lively energy:</strong> Dynamic images with movement. I capture action, the energy of the moment, transitions. More spontaneous and reactive shooting.</p>';
+            }
+          } else {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Énergie équilibrée :</strong> Mix de moments calmes et vivants. J\'alterne entre contemplation et dynamisme selon les scènes pour créer un rythme visuel intéressant.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Energía equilibrada:</strong> Mezcla de momentos tranquilos y vivos. Alterno entre contemplación y dinamismo según las escenas para crear un ritmo visual interesante.</p>';
+            } else {
+              approachText += '<p><strong>Balanced energy:</strong> Mix of calm and lively moments. I alternate between contemplation and dynamism depending on scenes to create interesting visual rhythm.</p>';
+            }
+          }
+          
+          // Proximité
+          if (state.sliders.present < 35) {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Distance observatrice :</strong> Je prends du recul pour montrer le contexte large. Photos qui situent, qui donnent une vue d\'ensemble, qui racontent l\'environnement global.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Distancia observadora:</strong> Tomo distancia para mostrar el contexto amplio. Fotos que sitúan, que dan una visión general, que cuentan el ambiente global.</p>';
+            } else {
+              approachText += '<p><strong>Observer distance:</strong> I step back to show broad context. Photos that situate, give an overview, tell the overall environment.</p>';
+            }
+          } else if (state.sliders.present > 65) {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Proximité intime :</strong> Je me rapproche pour capturer les détails, les textures, les expressions. Photos qui créent de la connexion émotionnelle et révèlent les petites choses.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Proximidad íntima:</strong> Me acerco para capturar los detalles, las texturas, las expresiones. Fotos que crean conexión emocional y revelan las pequeñas cosas.</p>';
+            } else {
+              approachText += '<p><strong>Intimate proximity:</strong> I get close to capture details, textures, expressions. Photos that create emotional connection and reveal the small things.</p>';
+            }
+          } else {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Distance modulée :</strong> Je varie entre plans larges et gros plans pour créer une respiration visuelle. Contexte ET détails pour une narration complète.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Distancia modulada:</strong> Varía entre planos amplios y primeros planos para crear una respiración visual. Contexto Y detalles para una narración completa.</p>';
+            } else {
+              approachText += '<p><strong>Modulated distance:</strong> I vary between wide shots and close-ups to create visual breathing. Context AND details for complete storytelling.</p>';
+            }
+          }
+          
+          // Richesse
+          if (state.sliders.rich < 35) {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Esthétique épurée :</strong> Compositions minimalistes, espaces négatifs, simplicité. Je privilégie ce qui est essentiel, sans distraction visuelle.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Estética depurada:</strong> Composiciones minimalistas, espacios negativos, simplicidad. Privilegio lo esencial, sin distracción visual.</p>';
+            } else {
+              approachText += '<p><strong>Clean aesthetic:</strong> Minimalist compositions, negative space, simplicity. I favor what\'s essential, without visual distraction.</p>';
+            }
+          } else if (state.sliders.rich > 65) {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Esthétique riche :</strong> Je mets en valeur les textures, les matières, les détails architecturaux ou naturels. Photos qui invitent à explorer visuellement.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Estética rica:</strong> Pongo en valor las texturas, las materias, los detalles arquitectónicos o naturales. Fotos que invitan a explorar visualmente.</p>';
+            } else {
+              approachText += '<p><strong>Rich aesthetic:</strong> I highlight textures, materials, architectural or natural details. Photos that invite visual exploration.</p>';
+            }
+          } else {
+            if (currentLang === 'fr') {
+              approachText += '<p><strong>Esthétique équilibrée :</strong> Entre simplicité et richesse, je trouve le juste milieu. Assez de détails pour être intéressant, assez d\'espace pour respirer.</p>';
+            } else if (currentLang === 'es') {
+              approachText += '<p><strong>Estética equilibrada:</strong> Entre simplicidad y riqueza, encuentro el punto medio. Suficientes detalles para ser interesante, suficiente espacio para respirar.</p>';
+            } else {
+              approachText += '<p><strong>Balanced aesthetic:</strong> Between simplicity and richness, I find the sweet spot. Enough detail to be interesting, enough space to breathe.</p>';
+            }
+          }
+          
+          // Interpréter l'usage
+          const deliverablesTitle = currentLang === 'fr' ? 'Livrables et diffusion' : currentLang === 'es' ? 'Entregables y difusión' : 'Deliverables and distribution';
+          let usageText = `<h3>📦 ${deliverablesTitle}</h3>`;
+          
+          if (state.time === 'moment') {
+            if (currentLang === 'fr') {
+              usageText += '<p><strong>Usage ponctuel :</strong> Série concentrée pour un moment précis (lancement, campagne, événement). Impact immédiat. Format optimisé pour une diffusion ciblée et rapide.</p>';
+            } else if (currentLang === 'es') {
+              usageText += '<p><strong>Uso puntual:</strong> Serie concentrada para un momento preciso (lanzamiento, campaña, evento). Impacto inmediato. Formato optimizado para una difusión dirigida y rápida.</p>';
+            } else {
+              usageText += '<p><strong>One-time use:</strong> Focused series for a specific moment (launch, campaign, event). Immediate impact. Format optimized for targeted, rapid distribution.</p>';
+            }
+          } else if (state.time === 'overtime') {
+            if (currentLang === 'fr') {
+              usageText += '<p><strong>Base réutilisable :</strong> Banque d\'images polyvalente qui durera dans le temps. Formats variés pour permettre différentes déclinaisons. Cohérence visuelle pour usage multiple.</p>';
+            } else if (currentLang === 'es') {
+              usageText += '<p><strong>Base reutilizable:</strong> Banco de imágenes versátil que durará en el tiempo. Formatos variados para permitir diferentes versiones. Coherencia visual para uso múltiple.</p>';
+            } else {
+              usageText += '<p><strong>Reusable base:</strong> Versatile image bank that will last over time. Varied formats to allow different adaptations. Visual coherence for multiple uses.</p>';
+            }
+          } else if (state.time === 'grow') {
+            if (currentLang === 'fr') {
+              usageText += '<p><strong>Série évolutive :</strong> Premier shooting qui pose les bases d\'un suivi régulier. On construit une narration qui se développe avec le temps. Cohérence entre les sessions.</p>';
+            } else if (currentLang === 'es') {
+              usageText += '<p><strong>Serie evolutiva:</strong> Primera sesión que establece las bases de un seguimiento regular. Construimos una narración que se desarrolla con el tiempo. Coherencia entre las sesiones.</p>';
+            } else {
+              usageText += '<p><strong>Evolving series:</strong> First shoot that lays the groundwork for regular follow-up. We build a narrative that develops over time. Coherence between sessions.</p>';
+            }
+          }
+          
+          // Canaux de diffusion
+          if (state.where.length > 0) {
+            const channelMapFr = {
+              website: 'Site web (formats haute résolution, lecture posée)',
+              social: 'Réseaux sociaux (formats carrés/verticaux, série cohérente)',
+              editorial: 'Presse/editorial (contexte narratif, légendes détaillées)',
+              print: 'Print (haute définition, couleurs calibrées)'
+            };
+            const channelMapEn = {
+              website: 'Website (high resolution formats, calm reading)',
+              social: 'Social media (square/vertical formats, coherent series)',
+              editorial: 'Editorial/press (narrative context, detailed captions)',
+              print: 'Print (high definition, calibrated colors)'
+            };
+            const channelMapEs = {
+              website: 'Sitio web (formatos alta resolución, lectura pausada)',
+              social: 'Redes sociales (formatos cuadrados/verticales, serie coherente)',
+              editorial: 'Editorial/prensa (contexto narrativo, pies detallados)',
+              print: 'Impresión (alta definición, colores calibrados)'
+            };
+            const channelMap = currentLang === 'fr' ? channelMapFr : currentLang === 'es' ? channelMapEs : channelMapEn;
+            const channelLabel = currentLang === 'fr' ? 'Canaux principaux :' : currentLang === 'es' ? 'Canales principales:' : 'Main channels:';
+            usageText += `<p><strong>${channelLabel}</strong> ${state.where.map(w => channelMap[w]).join(' + ')}.</p>`;
+          }
+          
+          // Quantité suggérée
+          let quantity = '';
+          if (state.time === 'moment') {
+            quantity = state.where.includes('social') ? '30-50' : '15-25';
+          } else if (state.time === 'overtime') {
+            quantity = '50-80';
+          } else {
+            quantity = currentLang === 'fr' ? '20-40 par session' : currentLang === 'es' ? '20-40 por sesión' : '20-40 per session';
+          }
+          const volumeLabel = currentLang === 'fr' ? 'Volume suggéré :' : currentLang === 'es' ? 'Volumen sugerido:' : 'Suggested volume:';
+          const imagesLabel = currentLang === 'fr' ? 'images finales sélectionnées et retouchées' : currentLang === 'es' ? 'imágenes finales seleccionadas y retocadas' : 'final selected and retouched images';
+          usageText += `<p><strong>${volumeLabel}</strong> ${quantity} ${imagesLabel}.</p>`;
+          
+          // Ce qu'il faut éviter
+          let avoidText = '';
+          if (state.avoid) {
+            const avoidLabel = currentLang === 'fr' ? 'À éviter absolument :' : currentLang === 'es' ? 'A evitar absolutamente:' : 'Absolutely avoid:';
+            avoidText = `<p><strong>⚠️ ${avoidLabel}</strong> ${state.avoid}</p>`;
+          }
+          
+          // Prochaines étapes
+          const nextStepsTitle = currentLang === 'fr' ? 'Prochaines étapes' : currentLang === 'es' ? 'Próximos pasos' : 'Next steps';
+          let nextStepsText = `<h3>✨ ${nextStepsTitle}</h3>`;
+          
+          if (currentLang === 'fr') {
+            nextStepsText += `
+              <p><strong>1. Discussion :</strong> On échange sur les détails pratiques (dates, lieux, contraintes, budget).</p>
+              <p><strong>2. Préparation :</strong> Je prépare un moodboard visuel et une shot list pour qu'on soit alignés sur le rendu.</p>
+              <p><strong>3. Shooting :</strong> Session photo avec les directions définies ensemble.</p>
+              <p><strong>4. Livraison :</strong> Sélection, retouches, et livraison des fichiers dans les formats adaptés à vos canaux.</p>
+            `;
+          } else if (currentLang === 'es') {
+            nextStepsText += `
+              <p><strong>1. Discusión:</strong> Intercambiamos sobre los detalles prácticos (fechas, lugares, restricciones, presupuesto).</p>
+              <p><strong>2. Preparación:</strong> Preparo un moodboard visual y una lista de tomas para estar alineados sobre el resultado.</p>
+              <p><strong>3. Sesión:</strong> Sesión fotográfica con las direcciones definidas juntos.</p>
+              <p><strong>4. Entrega:</strong> Selección, retoques, y entrega de los archivos en los formatos adaptados a sus canales.</p>
+            `;
+          } else {
+            nextStepsText += `
+              <p><strong>1. Discussion:</strong> We discuss practical details (dates, locations, constraints, budget).</p>
+              <p><strong>2. Preparation:</strong> I prepare a visual moodboard and shot list so we're aligned on the outcome.</p>
+              <p><strong>3. Shoot:</strong> Photo session with directions defined together.</p>
+              <p><strong>4. Delivery:</strong> Selection, retouching, and file delivery in formats adapted to your channels.</p>
+            `;
+          }
+          
+          // Texte final personnalisé
+          let closingText = '';
+          if (currentLang === 'fr') {
+            closingText = '<strong>Mon rôle :</strong> Traduire votre vision en images justes — avec ma signature, pas en mode caméléon. Ce brief nous donne une base solide pour créer quelque chose qui vous ressemble vraiment.';
+          } else if (currentLang === 'es') {
+            closingText = '<strong>Mi rol:</strong> Traducir su visión en imágenes honestas — con mi firma, no en modo camaleón. Este brief nos da una base sólida para crear algo que realmente se le parezca.';
+          } else {
+            closingText = '<strong>My role:</strong> Translate your vision into honest images — with my signature, not in chameleon mode. This brief gives us a solid foundation to create something that truly reflects you.';
+          }
+          
+          const projectTitle = currentLang === 'fr' ? 'Lecture du projet' : currentLang === 'es' ? 'Lectura del proyecto' : 'Project reading';
+          
+          return `
+            <div class="report-section">
+              <h2>🎯 ${projectTitle}</h2>
+              <p><strong>"${projectName}"</strong>${state.name ? ' — ' + state.name : ''}</p>
+              <p>${projectTypeText}</p>
+              ${intentText ? '<p>' + intentText + '</p>' : ''}
+            </div>
+            
+            <div class="report-section">
+              ${approachText}
+              ${avoidText}
+            </div>
+            
+            <div class="report-section">
+              ${usageText}
+            </div>
+            
+            <div class="report-section">
+              ${nextStepsText}
+            </div>
+            
+            <div class="report-section" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.25);">
+              <p style="font-size: 15px; color: rgba(255,255,255,0.75); margin: 0;">
+                ${closingText}
+              </p>
+            </div>
+          `;
+        };
+        
+        const greetingText = currentLang === 'fr' 
+          ? (state.name ? 'Bonjour ' + state.name + ' — ' : '') + 'Voici votre brief photographique personnalisé.'
+          : currentLang === 'es'
+          ? (state.name ? 'Hola ' + state.name + ' — ' : '') + 'Aquí está su brief fotográfico personalizado.'
+          : (state.name ? 'Hello ' + state.name + ' — ' : '') + 'Here is your personalized photo brief.';
+        
+        const emailSubject = currentLang === 'fr' ? 'Brief projet' : currentLang === 'es' ? 'Brief proyecto' : 'Project brief';
+        const emailBody = currentLang === 'fr'
+          ? 'Bonjour Marina,\\n\\nJe viens de compléter le brief pour mon projet : ' + (state.project || 'mon projet photo') + '\\n\\nPouvons-nous en discuter ?\\n\\nCordialement,\\n' + (state.name || '')
+          : currentLang === 'es'
+          ? 'Hola Marina,\\n\\nAcabo de completar el brief para mi proyecto: ' + (state.project || 'mi proyecto fotográfico') + '\\n\\n¿Podemos discutirlo?\\n\\nSaludos,\\n' + (state.name || '')
+          : 'Hello Marina,\\n\\nI just completed the brief for my project: ' + (state.project || 'my photo project') + '\\n\\nCan we discuss it?\\n\\nBest regards,\\n' + (state.name || '');
+        
+        html = `
+          <div class="kicker">${t('report.kicker')}</div>
+          <h1>${state.project || t('report.title')}</h1>
+          <p class="lead">${greetingText}</p>
+          
+          <div id="ai-report">
+            ${generateSmartReport()}
+          </div>
+          
+          <div class="buttons" style="margin-top: 30px;">
+            <button class="primary" onclick="window.location.href='mailto:hello@marinaphoto.es?subject=${encodeURIComponent(emailSubject + ' ' + (state.project || 'photo'))}&body=${encodeURIComponent(emailBody)}'">
+              ${t('report.buttons.email')}
+            </button>
+            <button class="secondary" onclick="window.print()">📄 ${currentLang === 'fr' ? 'Imprimer' : currentLang === 'es' ? 'Imprimir' : 'Print'}</button>
+            <button class="secondary" onclick="currentStep = 0; state = {name: '', project: '', core: null, intent: [], time: null, where: [], avoid: '', sliders: { calm: 50, present: 50, rich: 50 }}; render();">
+              ${t('report.buttons.restart')}
+            </button>
+          </div>
+        `;
+        break;
+    }
+    
+    content.innerHTML = html;
+    content.classList.add('fade-in');
+  }, 50);
+}
+
+// Initialize
+console.log('App initializing...');
+render();
+console.log('App initialized!');
 </script>
 
 </body>
