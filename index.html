@@ -1,227 +1,1219 @@
 <!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>MARINA — Vision Board 2026</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg: #090a0c; --card: #121418; --line: rgba(255, 255, 255, 0.08);
-            --txt: #ffffff; --muted: #888; --accent: #ffffff; --radius: 30px;
-        }
-        * { box-sizing: border-box; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        body {
-            margin: 0; font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            background: var(--bg); color: var(--txt); min-height: 100vh;
-            display: flex; justify-content: center; align-items: center; overflow-x: hidden;
-        }
-        .shell { width: min(900px, 95%); padding: 20px; }
-        .card {
-            background: var(--card); border-radius: var(--radius); padding: 60px;
-            border: 1px solid var(--line); box-shadow: 0 40px 100px rgba(0,0,0,0.6);
-            position: relative; overflow: hidden;
-        }
-        .topbar { position: absolute; top: 30px; right: 40px; display: flex; gap: 20px; z-index: 10; }
-        .lang-btn { background: none; border: none; color: var(--muted); cursor: pointer; text-transform: uppercase; font-size: 11px; font-weight: 800; letter-spacing: 1px; }
-        .lang-btn.active { color: #fff; border-bottom: 2px solid #fff; }
-        
-        h1 { font-size: clamp(24px, 5vw, 40px); margin-bottom: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -1px; }
-        .lead { color: var(--muted); font-size: 18px; margin-bottom: 40px; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marina — Project Snapshot</title>
 
-        input[type="text"], input[type="email"] {
-            width: 100%; padding: 25px; background: rgba(255,255,255,0.03);
-            border: 1px solid var(--line); border-radius: 15px; color: #fff; font-size: 20px; outline: none; margin-bottom: 20px;
-        }
-        input[type="text"]:focus { border-color: #fff; background: rgba(255,255,255,0.06); }
+  <style>
+    :root{
+      --bg:#0c0e11;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.09);
+      --line:rgba(255,255,255,.14);
+      --txt:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --accent:rgba(255,255,255,.92);
+      --shadow:0 18px 50px rgba(0,0,0,.55);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--txt);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    .bg{
+      position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(900px 420px at 18% 20%, rgba(255,255,255,.11), transparent 60%),
+        radial-gradient(900px 520px at 82% 30%, rgba(255,255,255,.08), transparent 62%),
+        radial-gradient(900px 520px at 55% 92%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(180deg, #0b0d10 0%, #090a0d 100%);
+    }
+    .grain{
+      position:fixed; inset:-40px; z-index:-1; opacity:.10; pointer-events:none;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".55"/></svg>');
+      mix-blend-mode:overlay;
+    }
+    .wrap{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:26px 14px;
+    }
+    .shell{ width:min(1040px,100%); }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 6px;
+      font-size:13px;
+      color:var(--muted);
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      max-width:100%;
+    }
+    .lang{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      padding:4px;
+      border-radius:999px;
+    }
+    .lang button{
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      font-weight:800;
+      cursor:pointer;
+      padding:6px 10px;
+      border-radius:999px;
+      letter-spacing:.02em;
+    }
+    .lang button.active{
+      color:#0c0e11;
+      background:var(--accent);
+    }
 
-        .choice-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        @media (max-width: 600px) { .choice-list { grid-template-columns: 1fr; } }
-        
-        .choice-item {
-            padding: 25px; border: 1px solid var(--line); border-radius: 20px;
-            background: rgba(255,255,255,0.02); color: #fff; text-align: left; cursor: pointer; font-size: 16px; font-weight: 500;
-        }
-        .choice-item:hover { background: rgba(255,255,255,0.08); transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
-        .choice-item.selected { border-color: #fff; background: rgba(255,255,255,0.12); }
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.03));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .content{padding:28px}
+    @media (max-width:720px){ .content{padding:20px} }
 
-        .slider-group { margin: 40px 0; }
-        .slider-header { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
-        input[type="range"] { width: 100%; height: 4px; background: var(--line); border-radius: 2px; -webkit-appearance: none; outline: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #fff; border-radius: 50%; cursor: pointer; border: 4px solid var(--card); }
+    .fade{animation:fade .32s ease both}
+    @keyframes fade{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:translateY(0)}}
 
-        .btn-main { background: #fff; color: #000; border: none; padding: 20px 40px; border-radius: 50px; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; }
-        .btn-circle { width: 60px; height: 60px; border-radius: 50%; border: none; background: #fff; color: #000; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        
-        #chart-container { background: rgba(255,255,255,0.02); border-radius: 20px; padding: 30px; margin: 30px 0; display: flex; justify-content: center; }
-        
-        .fade { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+    h1{font-size:34px; margin:0 0 10px; letter-spacing:-.02em}
+    h2{font-size:18px; margin:0 0 10px; color:var(--muted); font-weight:600}
+    p{margin:0 0 12px; line-height:1.55}
+    .lead{color:var(--muted)}
+    .kicker{font-size:12px; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.58)}
+    .bigtitle{font-size:34px; margin:8px 0 6px; letter-spacing:-.02em}
+    .subtitle{color:var(--muted); margin:0}
+
+    .fieldlabel{display:block; margin-top:14px; font-size:12px; color:var(--muted)}
+    input[type="text"]{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--txt);
+      outline:none;
+      margin-top:8px;
+    }
+
+    .choices,.checks{display:grid; gap:10px; margin-top:14px}
+    .choice,.check{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+    }
+    .choice:hover,.check:hover{background:rgba(255,255,255,.06)}
+    .choice.sel,.check.sel{
+      background:rgba(255,255,255,.09);
+      border-color:rgba(255,255,255,.25);
+    }
+    .optTitle{font-weight:800}
+    .optDesc{margin-top:6px; font-size:12px; color:var(--muted); line-height:1.35}
+    .meta{margin-top:10px; font-size:13px; color:var(--muted)}
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px}
+    button{
+      border-radius:999px;
+      border:1px solid var(--line);
+      padding:11px 16px;
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      cursor:pointer;
+      font-weight:800;
+    }
+    button.primary{
+      background:var(--accent);
+      color:#0c0e11;
+      border-color:rgba(255,255,255,.18);
+    }
+    button.ghost{background:transparent}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:900px){ .grid2{grid-template-columns:1fr} }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+    }
+    .divider{height:1px; background:var(--line); margin:18px 0}
+
+    .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+    .tag{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.05);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:13px;
+      color:rgba(255,255,255,.86);
+    }
+
+    .bar{margin-top:12px}
+    .barhead{display:flex; justify-content:space-between; font-size:13px; color:var(--muted)}
+    .track{height:10px; border-radius:999px; background:rgba(255,255,255,.10); margin-top:8px; overflow:hidden}
+    .fill{height:100%; border-radius:999px; background:rgba(255,255,255,.86); width:40%}
+
+    .slider{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.04);
+      margin-top:12px;
+    }
+    .slab{display:flex; justify-content:space-between; color:var(--muted); font-size:13px}
+    input[type="range"]{width:100%; margin-top:10px}
+    .smallhelp{font-size:12px; color:var(--muted); margin-top:8px; line-height:1.35}
+
+    .toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.18);
+      color:rgba(255,255,255,.9);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      max-width:min(92vw,700px);
+      text-align:center;
+    }
+    .toast.show{opacity:1}
+
+    /* subtle: ensure text always visible */
+    #app { min-height: 320px; }
+  </style>
 </head>
-<body>
 
+<body>
+  <div class="bg"></div>
+  <div class="grain"></div>
+
+  <div class="wrap">
     <div class="shell">
-        <div class="card fade" id="main-card">
-            <div class="topbar">
-                <button class="lang-btn" id="btn-en" onclick="changeLang('en')">EN</button>
-                <button class="lang-btn" id="btn-fr" onclick="changeLang('fr')">FR</button>
-                <button class="lang-btn" id="btn-es" onclick="changeLang('es')">ES</button>
-            </div>
-            <div id="content"></div>
+      <div class="topbar">
+        <div class="pill" id="actPill">—</div>
+        <div class="pill">
+          <span id="stepPill">—</span>
+          <span class="lang" style="margin-left:10px" aria-label="Language">
+            <button id="btnEN" type="button">EN</button>
+            <button id="btnFR" type="button">FR</button>
+            <button id="btnES" type="button">ES</button>
+          </span>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="content fade" id="app">
+          <div class="kicker">Project Snapshot</div>
+          <div class="bigtitle">Loading…</div>
+          <p class="lead">If you see this for more than a second, refresh the page.</p>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-    const i18n = {
-        fr: {
-            s1_h: "Commençons par l'humain. Quel est ton prénom ?",
-            s2_h: "Donne un titre à cette vision.",
-            s3_h: "Quelle est la racine de ce projet ?",
-            s3_opts: ["L'âme d'un lieu", "Une narration humaine", "La pureté d'un instant"],
-            s4_h: "Quelle émotion doit dominer ?",
-            s4_opts: ["L'évidence du naturel", "La force d'un impact", "La vérité brute", "Le luxe du silence"],
-            s5_h: "Ton instinct photographique :",
-            sliders: { calm: ["Contemplatif", "Énergique"], present: ["Observateur", "Acteur"], rich: ["Minimaliste", "Abondant"] },
-            rep_h: "L'Analyse de Marina",
-            cta: "Envoyer ma vision à Marina",
-            analysis: "Ton projet se situe dans la recherche de "
+(() => {
+  /* -----------------------------
+     i18n (fully localized)
+  ------------------------------ */
+  const I18N = {
+    fr:{
+      acts:{ intro:"Intro", who:"Humain", core:"Essence", live:"Vie", feel:"Atmosphère", report:"Rapport" },
+      ui:{
+        start:"Commencer", continue:"Continuer", back:"Retour",
+        maxTwo:"Maximum 2 choix", pickOne:"Choisis une option", pickAtLeastOne:"Choisis au moins une option",
+        optional:"(optionnel)", copied:"Copié ✨",
+        talk:"Parlons de ce projet", copy:"Copier le snapshot", email:"Ouvrir un email",
+        longTerm:"Valeur dans le temps"
+      },
+      intro:{
+        h1:"Je sais ce que représente une image pour vous.",
+        p:"Même quand ce n’est pas encore très clair.\nCe court moment sert à comprendre ce que ces images doivent porter — pour pouvoir les photographier honnêtement."
+      },
+      who:{
+        nameH1:"Comment dois-je m’adresser à vous ?",
+        nameHelp:"Pour garder les choses humaines.",
+        namePh:"Votre prénom",
+        projH1:"Comment appelleriez-vous ce projet ?",
+        projHelp:"Ce n’est pas définitif. Juste un point d’ancrage.",
+        projPh:"Ex : Clinica Vinyet, Hotel opening…"
+      },
+      core:{
+        h1:"Au fond, ce projet ressemble plutôt à…",
+        help:"Une image ne porte pas la même chose selon l’intention.",
+        opts:{
+          place:{t:"Un lieu à ressentir", d:"Présence, lumière, matière, atmosphère."},
+          story:{t:"Une histoire à raconter", d:"Gestes, humains, continuité, narration."},
+          moment:{t:"Un moment à garder en mémoire", d:"Émotion, simplicité, justesse."}
         },
-        en: {
-            s1_h: "Let's start with the human. What's your name?",
-            s2_h: "Give this vision a title.",
-            s3_h: "What is the root of this project?",
-            s3_opts: ["The soul of a place", "A human narrative", "The purity of a moment"],
-            s4_h: "Which emotion should dominate?",
-            s4_opts: ["Natural evidence", "Impactful force", "Raw truth", "The luxury of silence"],
-            s5_h: "Your photographic instinct:",
-            sliders: { calm: ["Contemplative", "Energetic"], present: ["Observer", "Actor"], rich: ["Minimalist", "Abundant"] },
-            rep_h: "Marina's Analysis",
-            cta: "Send my vision to Marina",
-            analysis: "Your project lies in the pursuit of "
-        },
-        es: {
-            s1_h: "Empecemos por lo humano. ¿Cómo te llamas?",
-            s2_h: "Dale un título a esta visión.",
-            s3_h: "¿Cuál es la raíz de este proyecto?",
-            s3_opts: ["El alma de un lugar", "Una narrativa humana", "La pureza de un instante"],
-            s4_h: "¿Qué emoción debe dominar?",
-            s4_opts: ["Evidencia natural", "Fuerza de impacto", "Verdad cruda", "El lujo del silencio"],
-            s5_h: "Tu instinto fotográfico:",
-            sliders: { calm: ["Contemplativo", "Enérgico"], present: ["Observador", "Actor"], rich: ["Minimalista", "Abundante"] },
-            rep_h: "El Análisis de Marina",
-            cta: "Enviar mi visión a Marina",
-            analysis: "Tu proyecto se encuentra en la búsqueda de "
+        intentH1:"Quand quelqu’un découvre ces images, qu’est-ce qui devrait rester ?",
+        intentHelp:"Choisis instinctivement (max 2).",
+        intent:{
+          natural:{t:"Une sensation naturelle", d:"Ça ne force pas. Ça respire."},
+          atmosphere:{t:"Une atmosphère forte", d:"On “sent” l’endroit / le moment."},
+          truth:{t:"Un sentiment de vérité", d:"Quelque chose de réel, pas fabriqué."},
+          elegance:{t:"Une élégance discrète", d:"Sobre, précis, intemporel."}
         }
+      },
+      live:{
+        timeH1:"Combien de temps sentez-vous que ces images doivent vous accompagner ?",
+        timeHelp:"Pas une stratégie. Juste une présence dans le temps.",
+        time:{
+          moment:{t:"Pour un moment précis", d:"Un besoin clair, une fenêtre courte."},
+          overtime:{t:"Dans le temps", d:"Une base réutilisable, cohérente."},
+          grow:{t:"En évoluant avec le projet", d:"Un langage visuel qui s’installe."}
+        },
+        whereH1:"Où imaginez-vous voir ces images le plus souvent ?",
+        whereHelp:"Choisis ce qui est central (max 2).",
+        where:{
+          website:{t:"Sur un site web", d:"Lecture plus lente, présence durable."},
+          social:{t:"Sur les réseaux sociaux", d:"Rythme, répétition, série."},
+          editorial:{t:"En éditorial / presse", d:"Narratif, contexte, détails."},
+          print:{t:"En imprimé / lieux physiques", d:"Impact, matière, permanence."}
+        }
+      },
+      feel:{
+        h1:"Instinctivement, où placeriez-vous ce projet ?",
+        help:"Ces curseurs ne changent pas mon style — ils ajustent le tempo et la distance du regard.",
+        s:{
+          calm:{l:"Calme", r:"Vivant", hl:"silence, respiration, lenteur", hr:"énergie, mouvement, pulsation"},
+          present:{l:"Discret", r:"Présent", hl:"observer sans intervenir", hr:"plus proche, plus incarné"},
+          rich:{l:"Simple", r:"Riche", hl:"épuré, peu d’éléments", hr:"détails, densité, matière"}
+        }
+      },
+      report:{
+        kicker:"Project Snapshot",
+        sub:"Une première lecture photographique",
+        sec1:"Ce que ce projet semble demander",
+        sec2:"Comment ces images pourraient vivre",
+        sec3:"Boussole d’atmosphère",
+        sec4:"Ce sur quoi je serai attentive",
+        sec5:"Approche de collaboration",
+        bullets:{
+          series:"Des images pensées en série (pas isolées)",
+          rhythm:"Attention au rythme, à la cohérence, à la lumière",
+          real:"Contexte réel, gestes, présence",
+          reuse:"Conçu pour être réutilisé sans se dénaturer"
+        },
+        collab:{
+          moment:"Un shooting ciblé et précis, avec un livrable clair.",
+          overtime:"Un set d’images réutilisables (base visuelle cohérente).",
+          grow:"Une collaboration dans le temps (un langage visuel qui s’installe)."
+        }
+      }
+    },
+
+    en:{
+      acts:{ intro:"Intro", who:"Human", core:"Essence", live:"Life", feel:"Atmosphere", report:"Report" },
+      ui:{
+        start:"Start", continue:"Continue", back:"Back",
+        maxTwo:"Max two selections", pickOne:"Pick one option", pickAtLeastOne:"Pick at least one option",
+        optional:"(optional)", copied:"Copied ✨",
+        talk:"Let’s talk about this project", copy:"Copy snapshot", email:"Open email",
+        longTerm:"Long-term value"
+      },
+      intro:{
+        h1:"I know what an image means to you.",
+        p:"Even when it’s not entirely clear yet.\nThis short moment helps me understand what these images need to carry — so I can photograph them honestly."
+      },
+      who:{
+        nameH1:"How should I refer to you?",
+        nameHelp:"To keep things human.",
+        namePh:"First name",
+        projH1:"How would you call this project?",
+        projHelp:"It doesn’t have to be final. Just something to hold onto.",
+        projPh:"e.g. Clinica Vinyet, Hotel opening…"
+      },
+      core:{
+        h1:"At its core, this project feels more like…",
+        help:"Images don’t carry the same meaning depending on the intention.",
+        opts:{
+          place:{t:"A place that needs to be felt", d:"Presence, light, texture, atmosphere."},
+          story:{t:"A story meant to be told", d:"People, gestures, continuity, narrative."},
+          moment:{t:"A moment you want to remember", d:"Emotion, simplicity, truth."}
+        },
+        intentH1:"When someone encounters these images, what should stay with them?",
+        intentHelp:"Pick instinctively (max two).",
+        intent:{
+          natural:{t:"A natural feeling", d:"Nothing forced. It breathes."},
+          atmosphere:{t:"A strong atmosphere", d:"You can almost “feel” it."},
+          truth:{t:"A sense of truth", d:"Something real, not manufactured."},
+          elegance:{t:"A quiet elegance", d:"Understated, precise, timeless."}
+        }
+      },
+      live:{
+        timeH1:"How long do you feel these images need to be there for you?",
+        timeHelp:"Not strategy — just presence over time.",
+        time:{
+          moment:{t:"For a specific moment", d:"A clear need, short window."},
+          overtime:{t:"Over time", d:"A reusable, consistent base."},
+          grow:{t:"Growing with the project", d:"A visual language that settles in."}
+        },
+        whereH1:"Where do you imagine seeing these images most often?",
+        whereHelp:"Choose what’s central (max two).",
+        where:{
+          website:{t:"On a website", d:"Slower reading, lasting presence."},
+          social:{t:"On social media", d:"Rhythm, repetition, series."},
+          editorial:{t:"In editorial / press", d:"Narrative, context, details."},
+          print:{t:"In print / physical spaces", d:"Impact, materiality, permanence."}
+        }
+      },
+      feel:{
+        h1:"Instinctively, where would you place this project?",
+        help:"These sliders don’t change my style — they refine tempo and distance.",
+        s:{
+          calm:{l:"Calm", r:"Lively", hl:"quiet, breathing space", hr:"energy, motion, pulse"},
+          present:{l:"Discreet", r:"Present", hl:"observe without intervening", hr:"closer, more embodied"},
+          rich:{l:"Simple", r:"Rich", hl:"airy, few elements", hr:"details, density, texture"}
+        }
+      },
+      report:{
+        kicker:"Project Snapshot",
+        sub:"A first photographic reading",
+        sec1:"What this project seems to ask for",
+        sec2:"How these images could live",
+        sec3:"Atmosphere compass",
+        sec4:"What I will focus on",
+        sec5:"Collaboration approach",
+        bullets:{
+          series:"Images designed as a series (not isolated shots)",
+          rhythm:"Attention to rhythm, consistency and light",
+          real:"Real context, gestures, presence",
+          reuse:"Made to be reused without losing meaning"
+        },
+        collab:{
+          moment:"One focused shoot, with a clear delivery.",
+          overtime:"A reusable image set (a consistent visual base).",
+          grow:"An ongoing collaboration (a visual language that evolves)."
+        }
+      }
+    },
+
+    es:{
+      acts:{ intro:"Intro", who:"Humano", core:"Esencia", live:"Vida", feel:"Atmósfera", report:"Informe" },
+      ui:{
+        start:"Empezar", continue:"Continuar", back:"Atrás",
+        maxTwo:"Máximo 2 opciones", pickOne:"Elige una opción", pickAtLeastOne:"Elige al menos una opción",
+        optional:"(opcional)", copied:"Copiado ✨",
+        talk:"Hablemos de este proyecto", copy:"Copiar snapshot", email:"Abrir email",
+        longTerm:"Valor en el tiempo"
+      },
+      intro:{
+        h1:"Sé lo que significa una imagen para ti.",
+        p:"Incluso cuando aún no está del todo claro.\nEste momento sirve para entender qué deben sostener estas imágenes — para poder fotografiarlas con honestidad."
+      },
+      who:{
+        nameH1:"¿Cómo debería dirigirme a ti?",
+        nameHelp:"Para mantenerlo humano.",
+        namePh:"Nombre",
+        projH1:"¿Cómo llamarías a este proyecto?",
+        projHelp:"No tiene que ser definitivo. Solo un punto de apoyo.",
+        projPh:"p.ej. Clinica Vinyet, Hotel opening…"
+      },
+      core:{
+        h1:"En esencia, este proyecto se siente más como…",
+        help:"Las imágenes no cargan el mismo significado según la intención.",
+        opts:{
+          place:{t:"Un lugar que hay que sentir", d:"Presencia, luz, textura, atmósfera."},
+          story:{t:"Una historia que contar", d:"Personas, gestos, continuidad, relato."},
+          moment:{t:"Un momento que recordar", d:"Emoción, sencillez, verdad."}
+        },
+        intentH1:"Cuando alguien se encuentra con estas imágenes, ¿qué debería permanecer?",
+        intentHelp:"Elige por intuición (máx. 2).",
+        intent:{
+          natural:{t:"Una sensación natural", d:"Sin forzar. Respira."},
+          atmosphere:{t:"Una atmósfera fuerte", d:"Casi se puede “sentir”."},
+          truth:{t:"Una sensación de verdad", d:"Algo real, no fabricado."},
+          elegance:{t:"Una elegancia silenciosa", d:"Sutil, precisa, atemporal."}
+        }
+      },
+      live:{
+        timeH1:"¿Durante cuánto tiempo sientes que estas imágenes deben acompañarte?",
+        timeHelp:"No es estrategia — es presencia en el tiempo.",
+        time:{
+          moment:{t:"Para un momento concreto", d:"Necesidad clara, ventana corta."},
+          overtime:{t:"A lo largo del tiempo", d:"Base reutilizable y coherente."},
+          grow:{t:"Creciendo con el proyecto", d:"Un lenguaje visual que se asienta."}
+        },
+        whereH1:"¿Dónde imaginas ver estas imágenes con más frecuencia?",
+        whereHelp:"Elige lo central (máx. 2).",
+        where:{
+          website:{t:"En una web", d:"Lectura más lenta, presencia duradera."},
+          social:{t:"En redes sociales", d:"Ritmo, repetición, serie."},
+          editorial:{t:"En editorial / prensa", d:"Relato, contexto, detalles."},
+          print:{t:"En impreso / espacios físicos", d:"Impacto, materia, permanencia."}
+        }
+      },
+      feel:{
+        h1:"Instintivamente, ¿dónde situarías este proyecto?",
+        help:"Estos controles no cambian mi estilo — ajustan tempo y distancia.",
+        s:{
+          calm:{l:"Calmo", r:"Vivo", hl:"silencio, respiración", hr:"energía, movimiento"},
+          present:{l:"Discreto", r:"Presente", hl:"observar sin intervenir", hr:"más cerca, más encarnado"},
+          rich:{l:"Simple", r:"Rico", hl:"aireado, pocos elementos", hr:"detalle, densidad, textura"}
+        }
+      },
+      report:{
+        kicker:"Project Snapshot",
+        sub:"Una primera lectura fotográfica",
+        sec1:"Lo que este proyecto parece pedir",
+        sec2:"Cómo podrían vivir estas imágenes",
+        sec3:"Brújula de atmósfera",
+        sec4:"En qué me voy a fijar",
+        sec5:"Enfoque de colaboración",
+        bullets:{
+          series:"Imágenes pensadas como serie (no aisladas)",
+          rhythm:"Atención al ritmo, coherencia y luz",
+          real:"Contexto real, gestos, presencia",
+          reuse:"Hecho para reutilizar sin perder sentido"
+        },
+        collab:{
+          moment:"Una sesión enfocada, con entrega clara.",
+          overtime:"Un set reutilizable (base visual coherente).",
+          grow:"Una colaboración en el tiempo (lenguaje visual que evoluciona)."
+        }
+      }
+    }
+  };
+
+  /* -----------------------------
+     state / steps (robust)
+  ------------------------------ */
+  let lang = "fr";
+  const state = {
+    name: "",
+    project: "",
+    core: null,           // place/story/moment
+    intent: [],           // natural/atmosphere/truth/elegance (max2)
+    time: null,           // moment/overtime/grow
+    where: [],            // website/social/editorial/print (max2)
+    sliders: { calm: 45, present: 45, rich: 45 }
+  };
+
+  const steps = [
+    { act:"intro", render: renderIntro },
+    { act:"who", render: renderName },
+    { act:"who", render: renderProject },
+    { act:"core", render: renderCore },
+    { act:"core", render: renderIntent },
+    { act:"live", render: renderTime },
+    { act:"live", render: renderWhere },
+    { act:"feel", render: renderFeel },
+    { act:"report", render: renderReport }
+  ];
+  let step = 0;
+
+  const app = document.getElementById("app");
+  const actPill = document.getElementById("actPill");
+  const stepPill = document.getElementById("stepPill");
+  const toast = document.getElementById("toast");
+
+  const btnEN = document.getElementById("btnEN");
+  const btnFR = document.getElementById("btnFR");
+  const btnES = document.getElementById("btnES");
+
+  function tr(){ return I18N[lang]; }
+  function esc(s){ return (s||"").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1200);
+  }
+
+  function setLang(l){
+    if(!I18N[l]) return;
+    lang = l;
+
+    [btnEN,btnFR,btnES].forEach(b=>b.classList.remove("active"));
+    (l==="en"?btnEN : l==="fr"?btnFR : btnES).classList.add("active");
+
+    // keep current step, just re-render
+    safeRender();
+  }
+
+  btnEN.addEventListener("click", ()=>setLang("en"));
+  btnFR.addEventListener("click", ()=>setLang("fr"));
+  btnES.addEventListener("click", ()=>setLang("es"));
+
+  function next(){
+    if(step < steps.length-1){ step++; safeRender(true); }
+  }
+  function prev(){
+    if(step > 0){ step--; safeRender(true); }
+  }
+
+  function setHeader(){
+    const a = tr();
+    const actKey = steps[step].act;
+    actPill.textContent = `${a.acts[actKey]} · ${step+1}/${steps.length}`;
+    stepPill.textContent = `${step+1}/${steps.length}`;
+  }
+
+  function btns(primaryLabel, onPrimary, secondaryLabel=null, onSecondary=null){
+    const a = tr();
+    return `
+      <div class="btnrow">
+        <button class="primary" id="primaryBtn" type="button">${esc(primaryLabel)}</button>
+        ${secondaryLabel ? `<button class="ghost" id="secondaryBtn" type="button">${esc(secondaryLabel)}</button>` : ``}
+        ${step>0 ? `<button class="ghost" id="backBtn" type="button">${esc(a.ui.back)}</button>` : ``}
+      </div>
+    `;
+  }
+
+  function bindBtns(onPrimary, onSecondary){
+    const p = document.getElementById("primaryBtn");
+    if(p) p.onclick = onPrimary;
+
+    const s = document.getElementById("secondaryBtn");
+    if(s && onSecondary) s.onclick = onSecondary;
+
+    const b = document.getElementById("backBtn");
+    if(b) b.onclick = prev;
+  }
+
+  /* -----------------------------
+     compute (usage, story, radar)
+  ------------------------------ */
+  function computeUsage(){
+    // base scores
+    const base = { website:30, social:30, editorial:30, print:30 };
+    state.where.forEach(k => base[k] += 35);
+
+    let longTerm = 50;
+    if(state.time === "moment") longTerm = 30;
+    if(state.time === "overtime"){ longTerm = 72; Object.keys(base).forEach(k => base[k] += 6); }
+    if(state.time === "grow"){ longTerm = 85; Object.keys(base).forEach(k => base[k] += 10); }
+
+    for(const k of Object.keys(base)) base[k] = Math.max(10, Math.min(100, base[k]));
+    return { base, longTerm };
+  }
+
+  function sliderSentence(){
+    const calm = state.sliders.calm;
+    const present = state.sliders.present;
+    const rich = state.sliders.rich;
+    if(lang==="fr"){
+      return `Un projet plutôt ${calm>55?"calme":"vivant"}, avec un regard ${present>55?"plus proche":"plus discret"}, et une composition ${rich>55?"plus riche":"plus simple"}.`;
+    }
+    if(lang==="es"){
+      return `Un proyecto más bien ${calm>55?"calmo":"vivo"}, con una mirada ${present>55?"más cercana":"más discreta"}, y una composición ${rich>55?"más rica":"más simple"}.`;
+    }
+    return `A project that feels more ${calm>55?"calm":"lively"}, with a ${present>55?"closer":"more discreet"} gaze, and a ${rich>55?"richer":"simpler"} composition.`;
+  }
+
+  function storyLines(){
+    const a = tr();
+    const who = (state.name||"").trim();
+    const proj = (state.project||"").trim();
+    const projLabel = proj ? `“${proj}”` : (lang==="fr"?"ce projet":lang==="es"?"este proyecto":"this project");
+    const whoLabel = who ? who : (lang==="fr"?"vous":lang==="es"?"tú":"you");
+
+    const core = state.core;
+    const coreLine = (() => {
+      if(lang==="fr"){
+        if(core==="place") return `Il semble surtout s’agir de faire ressentir un lieu : sa lumière, sa matière, sa présence.`;
+        if(core==="story") return `Il semble surtout s’agir de raconter une histoire : des gestes, des humains, une continuité.`;
+        return `Il semble surtout s’agir de garder un moment : quelque chose de simple, juste, vrai.`;
+      }
+      if(lang==="es"){
+        if(core==="place") return `Parece tratarse de hacer sentir un lugar: su luz, su textura, su presencia.`;
+        if(core==="story") return `Parece tratarse de contar una historia: gestos, personas, continuidad.`;
+        return `Parece tratarse de guardar un momento: algo simple, verdadero, preciso.`;
+      }
+      if(core==="place") return `It seems mainly about letting a place be felt — its light, texture and presence.`;
+      if(core==="story") return `It seems mainly about telling a story — people, gestures, continuity.`;
+      return `It seems mainly about holding a moment — something simple, truthful, precise.`;
+    })();
+
+    const intentLine = (() => {
+      const ids = state.intent;
+      if(lang==="fr"){
+        const map = { natural:"une sensation naturelle", atmosphere:"une atmosphère forte", truth:"un sentiment de vérité", elegance:"une élégance discrète" };
+        const list = ids.map(x=>map[x]).join(" et ");
+        return `Ce qui devrait rester : ${list || "une impression juste"} — sans forcer.`;
+      }
+      if(lang==="es"){
+        const map = { natural:"una sensación natural", atmosphere:"una atmósfera fuerte", truth:"una sensación de verdad", elegance:"una elegancia silenciosa" };
+        const list = ids.map(x=>map[x]).join(" y ");
+        return `Lo que debería permanecer: ${list || "una impresión precisa"} — sin forzar.`;
+      }
+      const map = { natural:"a natural feeling", atmosphere:"a strong atmosphere", truth:"a sense of truth", elegance:"a quiet elegance" };
+      const list = ids.map(x=>map[x]).join(" and ");
+      return `What should stay: ${list || "a precise feeling"} — without forcing it.`;
+    })();
+
+    const timeLine = (() => {
+      const t = state.time;
+      if(lang==="fr"){
+        if(t==="moment") return `C’est une présence pour un moment précis : on vise la clarté et l’essentiel.`;
+        if(t==="overtime") return `C’est une présence dans le temps : cohérence, série, réutilisation.`;
+        return `C’est une présence qui grandit : une base vivante qui s’installe.`;
+      }
+      if(lang==="es"){
+        if(t==="moment") return `Es presencia para un momento concreto: claridad y esencial.`;
+        if(t==="overtime") return `Es presencia a lo largo del tiempo: coherencia, serie, reutilización.`;
+        return `Es una presencia que crece: una base viva que se asienta.`;
+      }
+      if(t==="moment") return `It’s a presence for a specific moment: clarity and essentials.`;
+      if(t==="overtime") return `It’s a presence over time: consistency, series, reuse.`;
+      return `It’s a presence that grows: a living base that settles in.`;
+    })();
+
+    const close = (() => {
+      if(lang==="fr") return `Mon rôle est de traduire cela en images qui font sens pour ${whoLabel} — et qui restent justes dans le temps.`;
+      if(lang==="es") return `Mi papel es traducir esto en imágenes que tengan sentido para ${whoLabel} — y que sigan siendo precisas con el tiempo.`;
+      return `My role is to translate this into images that make sense for ${whoLabel} — and stay true over time.`;
+    })();
+
+    return { title: projLabel, lines:[coreLine, intentLine, timeLine, close] };
+  }
+
+  function essenceTags(){
+    const a = tr();
+    const tags = [];
+    if(state.core){
+      tags.push(a.core.opts[state.core].t);
+    }
+    // intent tags (localized)
+    state.intent.forEach(id => tags.push(a.core.intent[id].t));
+
+    // slider tag (localized)
+    const calm = state.sliders.calm, present = state.sliders.present, rich = state.sliders.rich;
+    let extra;
+    if(lang==="fr"){
+      if(calm>70 && present<45) extra="Présence calme";
+      else if(calm<40 && present>55) extra="Énergie incarnée";
+      else if(rich<40) extra="Simplicité";
+      else if(rich>70) extra="Détails & matière";
+      else extra="Équilibre";
+    } else if(lang==="es"){
+      if(calm>70 && present<45) extra="Presencia calmada";
+      else if(calm<40 && present>55) extra="Energía presente";
+      else if(rich<40) extra="Sencillez";
+      else if(rich>70) extra="Detalle y textura";
+      else extra="Equilibrio";
+    } else {
+      if(calm>70 && present<45) extra="Calm presence";
+      else if(calm<40 && present>55) extra="Embodied energy";
+      else if(rich<40) extra="Simplicity";
+      else if(rich>70) extra="Texture & detail";
+      else extra="Balance";
+    }
+    tags.push(extra);
+
+    return Array.from(new Set(tags)).slice(0,3);
+  }
+
+  function radarSVG(values){
+    const w=260, h=220, cx=w/2, cy=h/2+10, R=82;
+    const axes = [
+      { key:"calm", angle:-90 },
+      { key:"present", angle:30 },
+      { key:"rich", angle:150 }
+    ];
+    const a = tr();
+    const s = a.feel.s;
+
+    function pt(key, val){
+      const ang = axes.find(x=>x.key===key).angle * Math.PI/180;
+      const r = R * (val/100);
+      return { x: cx + Math.cos(ang)*r, y: cy + Math.sin(ang)*r };
+    }
+    const p1=pt("calm",values.calm), p2=pt("present",values.present), p3=pt("rich",values.rich);
+    const o1=pt("calm",100), o2=pt("present",100), o3=pt("rich",100);
+
+    const grid = [30,60,100].map(v=>{
+      const q1=pt("calm",v), q2=pt("present",v), q3=pt("rich",v);
+      return `<polygon points="${q1.x},${q1.y} ${q2.x},${q2.y} ${q3.x},${q3.y}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;
+    }).join("");
+
+    const poly = `<polygon points="${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.85)" stroke-width="1.5"/>`;
+
+    const axesLines = `
+      <line x1="${cx}" y1="${cy}" x2="${o1.x}" y2="${o1.y}" stroke="rgba(255,255,255,.20)"/>
+      <line x1="${cx}" y1="${cy}" x2="${o2.x}" y2="${o2.y}" stroke="rgba(255,255,255,.20)"/>
+      <line x1="${cx}" y1="${cy}" x2="${o3.x}" y2="${o3.y}" stroke="rgba(255,255,255,.20)"/>
+    `;
+
+    const labels = [
+      { txt: `${s.calm.l} ↔ ${s.calm.r}`, x:o1.x, y:o1.y-10, anchor:"middle" },
+      { txt: `${s.present.l} ↔ ${s.present.r}`, x:o2.x+10, y:o2.y+6, anchor:"start" },
+      { txt: `${s.rich.l} ↔ ${s.rich.r}`, x:o3.x-10, y:o3.y+6, anchor:"end" }
+    ].map(l=>`<text x="${l.x}" y="${l.y}" fill="rgba(255,255,255,.65)" font-size="11" text-anchor="${l.anchor}">${esc(l.txt)}</text>`).join("");
+
+    return `
+      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Atmosphere compass">
+        ${grid}
+        ${axesLines}
+        ${poly}
+        ${labels}
+      </svg>
+    `;
+  }
+
+  /* -----------------------------
+     render functions
+  ------------------------------ */
+  function renderIntro(){
+    const a = tr();
+    app.innerHTML = `
+      <div class="kicker">${esc(a.report.kicker)}</div>
+      <div class="bigtitle">${esc(a.intro.h1)}</div>
+      <p class="lead">${esc(a.intro.p).replace(/\n/g,"<br/>")}</p>
+      ${btns(a.ui.start, ()=>next())}
+    `;
+    bindBtns(()=>next());
+  }
+
+  function renderName(){
+    const a = tr();
+    app.innerHTML = `
+      <h1>${esc(a.who.nameH1)}</h1>
+      <p class="lead">${esc(a.who.nameHelp)}</p>
+      <div class="fieldlabel">${esc(a.ui.optional)}</div>
+      <input id="nameInput" type="text" value="${esc(state.name)}" placeholder="${esc(a.who.namePh)}" />
+      ${btns(a.ui.continue, ()=>{
+        state.name = document.getElementById("nameInput").value.trim();
+        next();
+      })}
+    `;
+    bindBtns(()=>{
+      state.name = document.getElementById("nameInput").value.trim();
+      next();
+    });
+  }
+
+  function renderProject(){
+    const a = tr();
+    app.innerHTML = `
+      <h1>${esc(a.who.projH1)}</h1>
+      <p class="lead">${esc(a.who.projHelp)}</p>
+      <div class="fieldlabel">${esc(a.ui.optional)}</div>
+      <input id="projInput" type="text" value="${esc(state.project)}" placeholder="${esc(a.who.projPh)}" />
+      ${btns(a.ui.continue, ()=>{
+        state.project = document.getElementById("projInput").value.trim();
+        next();
+      })}
+    `;
+    bindBtns(()=>{
+      state.project = document.getElementById("projInput").value.trim();
+      next();
+    });
+  }
+
+  function renderCore(){
+    const a = tr();
+    const c = a.core.opts;
+    const items = [
+      ["place", c.place.t, c.place.d],
+      ["story", c.story.t, c.story.d],
+      ["moment", c.moment.t, c.moment.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.core.h1)}</h1>
+      <p class="lead">${esc(a.core.help)}</p>
+      <div class="choices">
+        ${items.map(([id,t,d])=>`
+          <div class="choice ${state.core===id?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(t)}</div>
+            <div class="optDesc">${esc(d)}</div>
+          </div>
+        `).join("")}
+      </div>
+      ${btns(a.ui.continue, ()=>{
+        if(!state.core){ showToast(a.ui.pickOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".choice").forEach(el=>{
+      el.onclick = () => { state.core = el.dataset.id; safeRender(); };
+    });
+    bindBtns(()=>{
+      if(!state.core){ showToast(a.ui.pickOne); return; }
+      next();
+    });
+  }
+
+  function renderIntent(){
+    const a = tr();
+    const o = a.core.intent;
+    const items = [
+      ["natural", o.natural.t, o.natural.d],
+      ["atmosphere", o.atmosphere.t, o.atmosphere.d],
+      ["truth", o.truth.t, o.truth.d],
+      ["elegance", o.elegance.t, o.elegance.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.core.intentH1)}</h1>
+      <p class="lead">${esc(a.core.intentHelp)}</p>
+      <div class="checks">
+        ${items.map(([id,t,d])=>`
+          <div class="check ${state.intent.includes(id)?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(t)}</div>
+            <div class="optDesc">${esc(d)}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="meta">${esc(a.ui.maxTwo)}</div>
+      ${btns(a.ui.continue, ()=>{
+        if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".check").forEach(el=>{
+      el.onclick = () => {
+        const id = el.dataset.id;
+        if(state.intent.includes(id)){
+          state.intent = state.intent.filter(x=>x!==id);
+        } else {
+          if(state.intent.length>=2){ showToast(a.ui.maxTwo); return; }
+          state.intent = [...state.intent, id];
+        }
+        safeRender();
+      };
+    });
+    bindBtns(()=>{
+      if(state.intent.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+      next();
+    });
+  }
+
+  function renderTime(){
+    const a = tr();
+    const t = a.live.time;
+    const items = [
+      ["moment", t.moment.t, t.moment.d],
+      ["overtime", t.overtime.t, t.overtime.d],
+      ["grow", t.grow.t, t.grow.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.live.timeH1)}</h1>
+      <p class="lead">${esc(a.live.timeHelp)}</p>
+      <div class="choices">
+        ${items.map(([id,ti,de])=>`
+          <div class="choice ${state.time===id?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(ti)}</div>
+            <div class="optDesc">${esc(de)}</div>
+          </div>
+        `).join("")}
+      </div>
+      ${btns(a.ui.continue, ()=>{
+        if(!state.time){ showToast(a.ui.pickOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".choice").forEach(el=>{
+      el.onclick = () => { state.time = el.dataset.id; safeRender(); };
+    });
+    bindBtns(()=>{
+      if(!state.time){ showToast(a.ui.pickOne); return; }
+      next();
+    });
+  }
+
+  function renderWhere(){
+    const a = tr();
+    const w = a.live.where;
+    const items = [
+      ["website", w.website.t, w.website.d],
+      ["social", w.social.t, w.social.d],
+      ["editorial", w.editorial.t, w.editorial.d],
+      ["print", w.print.t, w.print.d]
+    ];
+    app.innerHTML = `
+      <h1>${esc(a.live.whereH1)}</h1>
+      <p class="lead">${esc(a.live.whereHelp)}</p>
+      <div class="checks">
+        ${items.map(([id,ti,de])=>`
+          <div class="check ${state.where.includes(id)?'sel':''}" data-id="${id}">
+            <div class="optTitle">${esc(ti)}</div>
+            <div class="optDesc">${esc(de)}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="meta">${esc(a.ui.maxTwo)}</div>
+      ${btns(a.ui.continue, ()=>{
+        if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+        next();
+      })}
+    `;
+    document.querySelectorAll(".check").forEach(el=>{
+      el.onclick = () => {
+        const id = el.dataset.id;
+        if(state.where.includes(id)){
+          state.where = state.where.filter(x=>x!==id);
+        } else {
+          if(state.where.length>=2){ showToast(a.ui.maxTwo); return; }
+          state.where = [...state.where, id];
+        }
+        safeRender();
+      };
+    });
+    bindBtns(()=>{
+      if(state.where.length===0){ showToast(a.ui.pickAtLeastOne); return; }
+      next();
+    });
+  }
+
+  function sliderBlock(key, left, right, hl, hr, value){
+    return `
+      <div class="slider">
+        <div class="slab"><span>${esc(left)}</span><span>${esc(right)}</span></div>
+        <input type="range" min="0" max="100" value="${value}" data-key="${key}">
+        <div class="smallhelp"><span>${esc(hl)}</span><span style="float:right">${esc(hr)}</span></div>
+      </div>
+    `;
+  }
+
+  function renderFeel(){
+    const a = tr();
+    const s = a.feel.s;
+
+    app.innerHTML = `
+      <h1>${esc(a.feel.h1)}</h1>
+      <p class="lead">${esc(a.feel.help)}</p>
+
+      ${sliderBlock("calm", s.calm.l, s.calm.r, s.calm.hl, s.calm.hr, state.sliders.calm)}
+      ${sliderBlock("present", s.present.l, s.present.r, s.present.hl, s.present.hr, state.sliders.present)}
+      ${sliderBlock("rich", s.rich.l, s.rich.r, s.rich.hl, s.rich.hr, state.sliders.rich)}
+
+      <div class="box" style="margin-top:14px">
+        <div class="kicker">${esc(a.acts.feel)}</div>
+        <div id="liveSentence" style="margin-top:8px; color:rgba(255,255,255,.86)">${esc(sliderSentence())}</div>
+      </div>
+
+      ${btns(a.ui.continue, ()=>next())}
+    `;
+
+    // IMPORTANT: do NOT re-render on input; update sentence only (prevents blank/flash bugs)
+    document.querySelectorAll('input[type="range"]').forEach(inp=>{
+      inp.addEventListener("input", () => {
+        state.sliders[inp.dataset.key] = Number(inp.value);
+
+        // subtle background reaction (safe)
+        const calm = state.sliders.calm/100;
+        document.querySelector(".bg").style.filter = `saturate(${0.9 + calm*0.25})`;
+
+        const live = document.getElementById("liveSentence");
+        if(live) live.textContent = sliderSentence();
+      });
+    });
+
+    bindBtns(()=>next());
+  }
+
+  function renderReport(){
+    const a = tr();
+    const { base, longTerm } = computeUsage();
+    const story = storyLines();
+    const tags = essenceTags();
+
+    const whereLabels = {
+      website: a.live.where.website.t,
+      social: a.live.where.social.t,
+      editorial: a.live.where.editorial.t,
+      print: a.live.where.print.t
     };
 
-    let lang = 'fr';
-    let step = 1;
-    let state = { name: "", project: "", essence: "", impression: "", email: "", sliders: { calm: 50, present: 50, rich: 50 } };
+    const usageBars = [
+      ["website", base.website],
+      ["social", base.social],
+      ["editorial", base.editorial],
+      ["print", base.print],
+      ["longTerm", longTerm]
+    ];
 
-    function changeLang(l) { lang = l; render(); }
+    const collabText = a.report.collab[state.time || "overtime"];
+    const projTitle = (state.project||"").trim() || (lang==="fr"?"Projet":lang==="es"?"Proyecto":"Project");
+    const who = (state.name||"").trim();
 
-    function render() {
-        const t = i18n[lang];
-        const container = document.getElementById('content');
-        container.innerHTML = "";
-        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-'+lang));
+    // Email CTA (works everywhere without needing a specific recipient)
+    const subject = (lang==="fr" ? `Discussion projet — ${projTitle}` :
+                    lang==="es" ? `Conversación del proyecto — ${projTitle}` :
+                                 `Project discussion — ${projTitle}`);
 
-        if (step === 1) {
-            container.innerHTML = `<h1>${t.s1_h}</h1><input type="text" id="nameInp" placeholder="..." value="${state.name}"><div class="nav-box"><button class="btn-circle" onclick="state.name=document.getElementById('nameInp').value||'Invité';step=2;render()">→</button></div>`;
-        } else if (step === 2) {
-            container.innerHTML = `<h1>${t.s2_h}</h1><input type="text" id="projInp" placeholder="..." value="${state.project}"><div class="nav-box"><button class="btn-circle" onclick="state.project=document.getElementById('projInp').value||'Vision';step=3;render()">→</button></div>`;
-        } else if (step === 3) {
-            container.innerHTML = `<h1>${t.s3_h}</h1><div class="choice-list">${t.s3_opts.map(o => `<button class="choice-item ${state.essence===o?'selected':''}" onclick="state.essence='${o}';step=4;render()">${o}</button>`).join('')}</div>`;
-        } else if (step === 4) {
-            container.innerHTML = `<h1>${t.s4_h}</h1><div class="choice-list">${t.s4_opts.map(o => `<button class="choice-item ${state.impression===o?'selected':''}" onclick="state.impression='${o}';step=5;render()">${o}</button>`).join('')}</div>`;
-        } else if (step === 5) {
-            container.innerHTML = `<h1>${t.s5_h}</h1>${renderSlider('calm', t.sliders.calm)}${renderSlider('present', t.sliders.present)}${renderSlider('rich', t.sliders.rich)}<div class="nav-box"><button class="btn-main" onclick="step=6;render()">Révéler la Vision</button></div>`;
-        } else {
-            renderReport(t);
-        }
+    const bodyLines = [
+      `${a.report.kicker} — ${projTitle}`,
+      who ? (lang==="fr" ? `Nom : ${who}` : lang==="es" ? `Nombre : ${who}` : `Name: ${who}`) : "",
+      "",
+      ...story.lines,
+      "",
+      `${a.report.sec2}:`,
+      `- ${whereLabels.website}: ${Math.round(base.website)}%`,
+      `- ${whereLabels.social}: ${Math.round(base.social)}%`,
+      `- ${whereLabels.editorial}: ${Math.round(base.editorial)}%`,
+      `- ${whereLabels.print}: ${Math.round(base.print)}%`,
+      `- ${a.ui.longTerm}: ${Math.round(longTerm)}%`,
+      "",
+      `${a.report.sec4}:`,
+      `- ${a.report.bullets.series}`,
+      `- ${a.report.bullets.rhythm}`,
+      `- ${a.report.bullets.real}`,
+      `- ${a.report.bullets.reuse}`,
+      "",
+      `${a.report.sec5}:`,
+      collabText
+    ].filter(Boolean);
+
+    const snapshotText = bodyLines.join("\n");
+    const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(snapshotText)}`;
+
+    app.innerHTML = `
+      <div class="kicker">${esc(a.report.kicker)}</div>
+      <div class="bigtitle">${esc(projTitle)}</div>
+      <div class="subtitle">${esc(a.report.sub)}${who ? " · " + esc(who) : ""}</div>
+
+      <div class="tags">
+        ${tags.map(tg=>`<div class="tag">${esc(tg)}</div>`).join("")}
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid2">
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec1)}</div>
+          <div style="margin-top:10px; color:rgba(255,255,255,.88)">
+            ${story.lines.map(l=>`<div style="margin-top:8px">${esc(l)}</div>`).join("")}
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec2)}</div>
+
+          ${usageBars.map(([k,v])=>{
+            const label = (k==="longTerm") ? a.ui.longTerm : whereLabels[k];
+            const vv = Math.max(0, Math.min(100, Math.round(v)));
+            return `
+              <div class="bar">
+                <div class="barhead"><span>${esc(label)}</span><span>${vv}%</span></div>
+                <div class="track"><div class="fill" style="width:${vv}%"></div></div>
+              </div>
+            `;
+          }).join("")}
+
+          <div class="smallhelp" style="margin-top:10px">
+            ${esc(lang==="fr"
+              ? "Ces barres indiquent surtout le rythme et la “durée de vie” des images — pas un plan marketing."
+              : lang==="es"
+                ? "Estas barras indican el ritmo y la “vida útil” de las imágenes — no un plan de marketing."
+                : "These bars indicate rhythm and image longevity — not a marketing plan."
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="grid2">
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec3)}</div>
+          <div style="margin-top:10px" id="radarWrap">${radarSVG(state.sliders)}</div>
+          <div class="smallhelp">${esc(sliderSentence())}</div>
+        </div>
+
+        <div class="box">
+          <div class="kicker">${esc(a.report.sec4)}</div>
+          <div style="margin-top:10px">
+            <div style="margin-top:8px">• ${esc(a.report.bullets.series)}</div>
+            <div style="margin-top:8px">• ${esc(a.report.bullets.rhythm)}</div>
+            <div style="margin-top:8px">• ${esc(a.report.bullets.real)}</div>
+            <div style="margin-top:8px">• ${esc(a.report.bullets.reuse)}</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="kicker">${esc(a.report.sec5)}</div>
+          <div style="margin-top:10px; color:rgba(255,255,255,.88)">${esc(collabText)}</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btnrow">
+        <button class="primary" id="talkBtn" type="button">${esc(a.ui.talk)}</button>
+        <button class="ghost" id="copyBtn" type="button">${esc(a.ui.copy)}</button>
+        <button class="ghost" id="emailBtn" type="button">${esc(a.ui.email)}</button>
+        <button class="ghost" id="backBtn" type="button">${esc(a.ui.back)}</button>
+      </div>
+    `;
+
+    document.getElementById("talkBtn").onclick = () => { window.location.href = mailto; };
+    document.getElementById("emailBtn").onclick = () => { window.location.href = mailto; };
+    document.getElementById("backBtn").onclick = prev;
+
+    document.getElementById("copyBtn").onclick = async () => {
+      try{
+        await navigator.clipboard.writeText(snapshotText);
+        showToast(tr().ui.copied);
+      }catch(_){
+        // fallback: still show toast
+        showToast(tr().ui.copied);
+      }
+    };
+  }
+
+  /* -----------------------------
+     safe render (prevents blank screen)
+  ------------------------------ */
+  function safeRender(scrollTop=false){
+    try{
+      setHeader();
+      app.classList.remove("fade"); void app.offsetWidth; app.classList.add("fade");
+      steps[step].render();
+      if(scrollTop) window.scrollTo({top:0, behavior:"smooth"});
+    }catch(e){
+      // Hard fallback visible on screen (no blank)
+      app.innerHTML = `
+        <div class="kicker">Error</div>
+        <div class="bigtitle">Something went wrong</div>
+        <p class="lead">Refresh the page. If it persists, copy the error below.</p>
+        <pre style="white-space:pre-wrap;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);padding:12px;border-radius:14px;background:rgba(255,255,255,.04)">${esc(String(e))}</pre>
+      `;
     }
+  }
 
-    function renderSlider(key, labels) {
-        return `<div class="slider-group"><div class="slider-header"><span>${labels[0]}</span><span>${labels[1]}</span></div><input type="range" min="0" max="100" value="${state.sliders[key]}" oninput="state.sliders.${key}=this.value"></div>`;
-    }
-
-    function renderReport(t) {
-        const container = document.getElementById('content');
-        
-        // Intelligence Narrative : Marina interprète
-        let interpretation = "";
-        if(lang === 'fr') {
-            interpretation = `C'est un équilibre fascinant : tu cherches à capturer <b>${state.essence.toLowerCase()}</b> à travers le prisme de <b>${state.impression.toLowerCase()}</b>. `;
-            interpretation += state.sliders.rich < 30 ? "Ton approche rejette l'artifice pour se concentrer sur l'essentiel absolu. " : "Tu embrasses la complexité des détails pour créer une immersion totale. ";
-        } else if(lang === 'es') {
-            interpretation = `Es un equilibrio fascinante: buscas capturar <b>${state.essence.toLowerCase()}</b> a través del prisma de <b>${state.impression.toLowerCase()}</b>. `;
-            interpretation += state.sliders.rich < 30 ? "Tu enfoque rechaza el artificio para centrarse en lo esencial. " : "Abrazas la complejidad de los detalles para crear una inmersión total. ";
-        } else {
-            interpretation = `It's a fascinating balance: you seek to capture <b>${state.essence.toLowerCase()}</b> through the lens of <b>${state.impression.toLowerCase()}</b>. `;
-            interpretation += state.sliders.rich < 30 ? "Your approach rejects artifice to focus on the absolute essential. " : "You embrace the complexity of details to create total immersion. ";
-        }
-
-        container.innerHTML = `
-            <h1>${t.rep_h}</h1>
-            <div style="line-height:1.8; font-size:18px;">
-                <p>Hello <b>${state.name}</b>,</p>
-                <p>${interpretation}</p>
-                
-                <div id="chart-container">
-                    <canvas id="visionChart" style="max-width:350px"></canvas>
-                </div>
-
-                <p style="font-size:15px; color:var(--muted); border-left: 2px solid #fff; padding-left: 20px;">
-                    <b>Piste de réflexion :</b> Pour ton projet "${state.project}", je suggère d'explorer des optiques qui respectent cette ${state.sliders.present > 50 ? 'proximité physique' : 'distance contemplative'}.
-                </p>
-
-                <div style="margin-top:40px; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px;">
-                    <p style="margin-top:0"><b>On approfondit ensemble ?</b></p>
-                    <input type="email" id="emailInp" placeholder="Ton adresse email...">
-                    <button class="btn-main" onclick="sendFinal()">${t.cta}</button>
-                </div>
-            </div>`;
-
-        
-
-        new Chart(document.getElementById('visionChart'), {
-            type: 'radar',
-            data: {
-                labels: [t.sliders.calm[1], t.sliders.present[1], t.sliders.rich[1]],
-                datasets: [{ 
-                    label: state.project,
-                    data: [state.sliders.calm, state.sliders.present, state.sliders.rich], 
-                    backgroundColor: 'rgba(255,255,255,0.2)', 
-                    borderColor: '#fff',
-                    pointBackgroundColor: '#fff',
-                    borderWidth: 3
-                }]
-            },
-            options: { 
-                scales: { 
-                    r: { 
-                        min: 0, max: 100, ticks: { display: false }, 
-                        grid: { color: 'rgba(255,255,255,0.1)' },
-                        angleLines: { color: 'rgba(255,255,255,0.1)' },
-                        pointLabels: { color: '#888', font: { size: 12, weight: '600' } }
-                    } 
-                }, 
-                plugins: { legend: { display: false } } 
-            }
-        });
-    }
-
-    function sendFinal() {
-        const email = document.getElementById('emailInp').value;
-        if(!email || !email.includes('@')) { alert(lang==='fr'?"Email invalide":"Invalid email"); return; }
-        
-        const mailContent = `Marina Vision Report\n\nProject: ${state.project}\nClient: ${state.name}\nEssence: ${state.essence}\nEmotion: ${state.impression}\nScores: Calm/Lively:${state.sliders.calm}, Discreet/Present:${state.sliders.present}, Simple/Rich:${state.sliders.rich}\n\nEmail Client: ${email}`;
-        
-        window.location.href = `mailto:hello@mobilitylab.ch?subject=Vision MARINA: ${state.project}&body=${encodeURIComponent(mailContent)}`;
-    }
-
-    window.onload = () => render();
+  /* -----------------------------
+     boot
+  ------------------------------ */
+  setLang("fr");        // sets active button + renders
+  safeRender(true);     // ensure content visible immediately
+})();
 </script>
 </body>
 </html>
