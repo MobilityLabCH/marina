@@ -1142,7 +1142,7 @@
           bar(whereLabels.social, score.base.social) +
           bar(whereLabels.editorial, score.base.editorial) +
           bar(whereLabels.print, score.base.print) +
-          bar((lang==="fr")?"Durée de vie":(lang==="es")?"Vida útil":"Longevity", score.longevity) +
+          var longevityLabel = (lang==="fr") ? "Durée de vie" : (lang==="es") ? "Vida útil" : "Longevity"; ... bar(longevityLabel, score.longevity) +
           (state.avoid ? ('<div class="micro" style="margin-top:10px">'+esc((lang==="fr")?"À éviter: ":(lang==="es")?"Evitar: ":"Avoid: ")+state.avoid)+'</div>') : '') +
         '</div>' +
 
