@@ -3,1433 +3,900 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Marinaphoto — Photography Brief</title>
+<title>Marinaphoto — Brief</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
-
-:root {
-  --cream: #F5F1E8;
-  --gold: #C8A882;
-  --dark: #2C2C2C;
-  --white: #FEFEFE;
-  --gold-light: #E5D5BC;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--cream);
-  color: var(--dark);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-h1, h2, h3 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-h1 { font-size: clamp(28px, 5vw, 42px); margin-bottom: 16px; }
-
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
-}
-
-.header {
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 32px;
-  animation: fadeInDown 0.6s ease;
-}
-
-.brand-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.brand small {
-  font-size: 14px;
-  color: var(--gold);
-  font-weight: 400;
-  margin-left: 8px;
-}
-
-.lang-switcher {
-  display: flex;
-  gap: 4px;
-  background: var(--white);
-  padding: 4px;
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.08);
-}
-
-.lang-switcher button {
-  background: transparent;
-  border: none;
-  color: var(--dark);
-  opacity: 0.5;
-  padding: 8px 12px;
-  border-radius: 16px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 13px;
-  transition: all 0.3s ease;
-}
-
-.lang-switcher button.active {
-  background: var(--gold);
-  color: var(--white);
-  opacity: 1;
-}
-
-.progress-container {
-  background: var(--white);
-  border-radius: 20px;
-  padding: 20px 24px;
-  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.08);
-}
-
-.progress-bar {
-  height: 8px;
-  background: var(--cream);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  border-radius: 10px;
-  width: 0%;
-  transition: width 0.6s ease;
-}
-
-.progress-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--dark);
-  opacity: 0.7;
-  font-weight: 500;
-}
-
-.time-remaining {
-  color: var(--gold);
-  font-weight: 600;
-}
-
-.card {
-  width: 100%;
-  max-width: 900px;
-  background: var(--white);
-  border-radius: 24px;
-  padding: clamp(32px, 5vw, 48px);
-  box-shadow: 0 8px 40px rgba(44, 44, 44, 0.12);
-  animation: fadeInUp 0.6s ease;
-  min-height: 500px;
-}
-
-.kicker {
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 700;
-  margin-bottom: 16px;
-}
-
-.lead {
-  font-size: 18px;
-  opacity: 0.8;
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-.quote {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-style: italic;
-  color: var(--gold);
-  margin: 32px 0;
-  text-align: center;
-  line-height: 1.4;
-}
-
-input[type="text"],
-input[type="email"],
-textarea {
-  width: 100%;
-  padding: 16px 20px;
-  background: var(--cream);
-  border: 2px solid transparent;
-  border-radius: 16px;
-  outline: none;
-  margin-top: 16px;
-  font-size: 16px;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.3s ease;
-}
-
-input:focus, textarea:focus {
-  border-color: var(--gold);
-  background: var(--white);
-  box-shadow: 0 0 0 4px rgba(200, 168, 130, 0.1);
-}
-
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 24px 0;
-}
-
-.option {
-  padding: 20px 24px;
-  background: var(--cream);
-  border: 2px solid transparent;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.option:hover {
-  background: var(--white);
-  border-color: var(--gold-light);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.08);
-}
-
-.option.selected {
-  background: var(--white);
-  border-color: var(--gold);
-  box-shadow: 0 0 0 4px rgba(200, 168, 130, 0.1);
-}
-
-.option.selected::after {
-  content: '✓';
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  width: 28px;
-  height: 28px;
-  background: var(--gold);
-  color: var(--white);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
-.option-title {
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.option-desc {
-  font-size: 14px;
-  opacity: 0.7;
-  line-height: 1.5;
-}
-
-.vibe-section {
-  margin: 32px 0;
-}
-
-.vibe-item {
-  background: var(--cream);
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 24px;
-}
-
-.vibe-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.vibe-label {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-input[type="range"] {
-  width: 100%;
-  height: 8px;
-  -webkit-appearance: none;
-  background: rgba(200, 168, 130, 0.2);
-  border-radius: 10px;
-  outline: none;
-  cursor: pointer;
-  margin-bottom: 16px;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 24px;
-  height: 24px;
-  background: var(--gold);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(200, 168, 130, 0.4);
-}
-
-.vibe-images {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.vibe-image {
-  aspect-ratio: 4/3;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 2px solid transparent;
-  opacity: 0.3;
-  transition: all 0.3s ease;
-}
-
-.vibe-image.active {
-  opacity: 1;
-  border-color: var(--gold);
-}
-
-.vibe-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.buttons {
-  display: flex;
-  gap: 12px;
-  margin-top: 32px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 16px 32px;
-  border-radius: 50px;
-  border: 2px solid var(--gold);
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.3s ease;
-}
-
-button.primary {
-  background: var(--gold);
-  color: var(--white);
-}
-
-button.primary:hover {
-  background: #B89970;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(200, 168, 130, 0.3);
-}
-
-button.secondary {
-  background: transparent;
-  color: var(--gold);
-}
-
-button.secondary:hover {
-  background: var(--gold);
-  color: var(--white);
-}
-
-.loading {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid var(--cream);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 24px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.report-hero {
-  text-align: center;
-  padding: 60px 20px 40px;
-  margin: -48px -48px 40px -48px;
-  background: linear-gradient(180deg, rgba(200, 168, 130, 0.05) 0%, transparent 100%);
-  border-radius: 24px 24px 0 0;
-}
-
-.report-hero h1 {
-  font-size: clamp(36px, 6vw, 72px);
-  margin-bottom: 16px;
-  background: linear-gradient(135deg, var(--dark) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.report-hero .subtitle {
-  font-size: 18px;
-  color: var(--gold);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.report-hero .date {
-  font-size: 14px;
-  opacity: 0.5;
-}
-
-.report-brief {
-  border-left: 4px solid var(--gold);
-  border-radius: 0 20px 20px 0;
-  padding: 40px;
-  margin: 40px 0;
-  line-height: 1.9;
-  font-size: 18px;
-  background: var(--white);
-  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.06);
-}
-
-.report-brief p {
-  margin-bottom: 24px;
-}
-
-.report-cta {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  border-radius: 24px;
-  padding: 48px;
-  margin-top: 48px;
-  text-align: center;
-  color: var(--white);
-}
-
-.report-cta h3 {
-  color: var(--white);
-  font-size: 28px;
-  margin-bottom: 16px;
-}
-
-.report-cta .quote-closing {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-style: italic;
-  margin: 24px 0;
-  opacity: 0.95;
-}
-
-.report-cta p {
-  color: var(--white);
-  font-size: 17px;
-  margin-bottom: 32px;
-  opacity: 0.95;
-  line-height: 1.7;
-}
-
-.report-cta button.primary {
-  background: var(--white);
-  color: var(--gold);
-  border-color: var(--white);
-}
-
-.report-cta button.primary:hover {
-  background: var(--cream);
-}
-
-.report-cta button.secondary {
-  background: transparent;
-  color: var(--white);
-  border-color: var(--white);
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 768px) {
-  .card { padding: 24px 20px; }
-  .buttons { flex-direction: column; }
-  button { width: 100%; }
-  .vibe-images { grid-template-columns: repeat(2, 1fr); }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
+:root{--cream:#F5F1E8;--gold:#C8A882;--gold-l:#E8D5BC;--dark:#2C2C2C;--white:#FEFEFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;}
+.page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 20px 60px;}
+
+/* TOP BAR */
+.topbar{width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark);}
+.brand em{font-style:normal;color:var(--gold);font-family:'Inter',sans-serif;font-size:12px;font-weight:400;margin-left:8px;}
+.langs{display:flex;gap:2px;background:var(--white);border-radius:20px;padding:3px;box-shadow:0 2px 12px rgba(44,44,44,.08);}
+.langs button{border:none;background:transparent;color:var(--dark);opacity:.4;font-size:12px;font-weight:700;padding:7px 11px;border-radius:16px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.langs button.on{background:var(--gold);color:var(--white);opacity:1;}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:860px;background:var(--white);border-radius:16px;padding:16px 22px;margin-bottom:22px;box-shadow:0 2px 16px rgba(44,44,44,.06);}
+.prog-bar{height:5px;background:var(--cream);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));border-radius:10px;transition:width .5s ease;}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;font-weight:500;opacity:.6;}
+.prog-meta .t{color:var(--gold);font-weight:700;opacity:1;}
+
+/* CARD */
+.card{width:100%;max-width:860px;background:var(--white);border-radius:24px;padding:clamp(28px,5vw,52px);box-shadow:0 8px 40px rgba(44,44,44,.10);animation:up .4s ease;}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPOGRAPHY */
+.kicker{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,38px);font-weight:700;line-height:1.2;margin-bottom:12px;}
+.sub{font-size:17px;opacity:.7;line-height:1.65;margin-bottom:26px;}
+.opening-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(20px,3vw,30px);color:var(--gold);line-height:1.45;text-align:center;margin:20px 0 32px;}
+
+/* INPUTS */
+input[type=text],input[type=email]{width:100%;padding:15px 20px;border:2px solid transparent;background:var(--cream);border-radius:14px;font-size:16px;font-family:'Inter',sans-serif;color:var(--dark);outline:none;margin-top:8px;transition:all .25s;}
+input:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 4px rgba(200,168,130,.12);}
+input::placeholder{opacity:.4;}
+
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{padding:18px 22px;background:var(--cream);border:2px solid transparent;border-radius:18px;cursor:pointer;transition:all .25s;position:relative;user-select:none;}
+.opt:hover{background:var(--white);border-color:var(--gold-l);transform:translateY(-2px);box-shadow:0 4px 20px rgba(44,44,44,.07);}
+.opt.sel{background:var(--white);border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,168,130,.15);}
+.opt.sel::after{content:'✓';position:absolute;top:50%;right:20px;transform:translateY(-50%);width:26px;height:26px;background:var(--gold);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;line-height:26px;text-align:center;}
+.opt-t{font-size:16px;font-weight:700;margin-bottom:3px;padding-right:36px;}
+.opt-d{font-size:13px;opacity:.6;line-height:1.4;padding-right:36px;}
+
+/* VIBE SLIDERS — images illustratives seulement */
+.vibe-block{background:var(--cream);border-radius:20px;padding:22px;margin-bottom:18px;}
+.vibe-label-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px;opacity:.75;}
+.vibe-cat{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.45;margin-bottom:10px;}
+input[type=range]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--gold) var(--p,50%),rgba(200,168,130,.2) var(--p,50%));border-radius:10px;outline:none;cursor:pointer;margin:10px 0 16px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--white);border:3px solid var(--gold);border-radius:50%;box-shadow:0 2px 8px rgba(200,168,130,.4);}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--white);border:3px solid var(--gold);border-radius:50%;}
+/* Deux images illustrant les deux extrêmes — LECTURE SEULE */
+.vibe-illus{display:grid;grid-template-columns:1fr 1fr;gap:8px;pointer-events:none;}
+.vibe-img{border-radius:12px;overflow:hidden;aspect-ratio:3/2;position:relative;}
+.vibe-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.vibe-img-lbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(44,44,44,.65));color:#fff;font-size:11px;font-weight:600;padding:12px 10px 7px;letter-spacing:.5px;}
+
+/* BUTTONS */
+.btns{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;}
+.bp{padding:14px 32px;background:var(--gold);color:var(--white);border:2px solid var(--gold);border-radius:50px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;}
+.bp:hover{background:#b89060;border-color:#b89060;transform:translateY(-2px);box-shadow:0 8px 20px rgba(200,168,130,.3);}
+.bs{padding:14px 24px;background:transparent;color:var(--gold);border:2px solid var(--gold);border-radius:50px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;}
+.bs:hover{background:var(--gold);color:var(--white);transform:translateY(-2px);}
+
+/* LOADING */
+.loading{text-align:center;padding:80px 20px;}
+.spinner{width:50px;height:50px;border:4px solid var(--cream);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 22px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading h2{font-family:'Playfair Display',serif;margin-bottom:10px;}
+.loading p{opacity:.6;font-size:16px;}
+
+/* RAPPORT */
+.rpt-hero{text-align:center;padding:56px 24px 40px;margin:-52px -52px 40px;background:linear-gradient(160deg,rgba(200,168,130,.07) 0%,transparent 60%);border-radius:24px 24px 0 0;border-bottom:1px solid rgba(200,168,130,.15);}
+.rpt-hero h1{font-family:'Playfair Display',serif;font-size:clamp(38px,7vw,72px);font-weight:900;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--dark) 30%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.rpt-hero .client{font-size:18px;color:var(--gold);font-weight:600;margin-bottom:6px;}
+.rpt-hero .rdate{font-size:13px;opacity:.45;}
+.rpt-body{border-left:3px solid var(--gold);padding:4px 0 4px 32px;margin:0 0 44px;}
+.rpt-body p{font-size:18px;line-height:1.9;color:var(--dark);margin-bottom:22px;}
+.rpt-body p:last-child{margin-bottom:0;}
+
+/* CTA FINALE */
+.rpt-cta{background:linear-gradient(135deg,var(--gold) 0%,#b8916a 100%);border-radius:24px;padding:48px;text-align:center;}
+.rpt-cta h2{font-family:'Playfair Display',serif;font-size:26px;color:#fff;margin-bottom:10px;}
+.closing-q{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:#fff;opacity:.95;margin:18px 0 24px;line-height:1.5;}
+.rpt-cta p{color:#fff;opacity:.92;font-size:16px;line-height:1.65;margin-bottom:30px;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.rpt-cta .bp{background:#fff;color:var(--gold);border-color:#fff;}
+.rpt-cta .bp:hover{background:var(--cream);}
+.rpt-cta .bs{background:transparent;color:#fff;border-color:rgba(255,255,255,.7);}
+.rpt-cta .bs:hover{background:rgba(255,255,255,.15);}
+
+@media(max-width:640px){
+  .card{padding:22px 18px;}
+  .rpt-hero{margin:-22px -18px 30px;padding:38px 18px 26px;}
+  .rpt-body{padding-left:18px;}
+  .rpt-cta{padding:30px 20px;}
+  .btns,.cta-btns{flex-direction:column;}
+  .bp,.bs{width:100%;text-align:center;}
 }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div class="brand-header">
-      <div class="brand">MARINAPHOTO<small>Photography Brief</small></div>
-      <div class="lang-switcher">
-        <button onclick="setLang('en')" id="btn-en">EN</button>
-        <button onclick="setLang('fr')" id="btn-fr" class="active">FR</button>
-        <button onclick="setLang('es')" id="btn-es">ES</button>
-        <button onclick="setLang('ca')" id="btn-ca">CA</button>
-      </div>
-    </div>
-    <div class="progress-container">
-      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-      <div class="progress-info">
-        <span id="step-label">—</span>
-        <span class="time-remaining" id="time-remaining">~3 min</span>
-      </div>
+<div class="page">
+  <div class="topbar">
+    <div class="brand">MARINAPHOTO <em>Photography Brief</em></div>
+    <div class="langs">
+      <button id="l-fr" class="on" onclick="setLang('fr')">FR</button>
+      <button id="l-en" onclick="setLang('en')">EN</button>
+      <button id="l-es" onclick="setLang('es')">ES</button>
+      <button id="l-ca" onclick="setLang('ca')">CA</button>
     </div>
   </div>
-  <div class="card" id="content"></div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="pbar"></div></div>
+    <div class="prog-meta"><span id="pstep"></span><span class="t" id="ptime"></span></div>
+  </div>
+  <div class="card" id="card"></div>
 </div>
 <script>
-let currentStep = 0;
-let currentLang = 'fr';
-let state = {
-  name: '', project: '', core: null, intent: [], time: null,
-  where: [], location: null, timing: null,
-  sliders: { calm: 50, present: 50, rich: 50 },
-  visuals: { calm: 1, present: 1, rich: 1 },
-  email: ''
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let L = 'fr', step = 0;
+const TOTAL = 11;
+const S = {
+  name:'', project:'', type:null,
+  priorities:[], usage:null, channels:[],
+  location:null, timing:null,
+  calm:50, present:50, rich:50,
+  email:'', briefText:''
 };
 
-const vibeImages = {
-  calm: [
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400',
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400',
-    'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400'
-  ],
-  present: [
-    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=400',
-    'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=400',
-    'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400'
-  ],
-  rich: [
-    'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400',
-    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400',
-    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400'
-  ]
+// ═══════════════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════════════
+const TX = {
+fr:{
+  steps:['Intro','Prénom','Projet','Type','Priorités','Usage','Canaux','Lieu','Timing','Ambiance','Contact'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 sec','30 sec','20 sec'],
+  back:'Retour', maxTwo:'Maximum 2 choix', mustPick:'Veuillez choisir une option', emailErr:'Email invalide',
+  intro:{kicker:'Commençons',quote:'Je sais ce qu\'une image représente pour vous…',title:'3 minutes pour comprendre votre projet.',sub:'Quelques questions simples. Je transforme vos réponses en un brief personnalisé qui nous guide.',btn:'Commencer'},
+  name:{kicker:'À propos de vous',title:'Votre prénom',ph:'Ex : Sophie',btn:'Continuer'},
+  project:{kicker:'Le projet',title:'Comment s\'appelle votre projet ?',sub:'Un nom, même provisoire.',ph:'Ex : Hôtel Can Ros / Bodega Garraf',btn:'Continuer'},
+  type:{kicker:'Nature du projet',title:'Votre projet, c\'est avant tout…',opts:[
+    {id:'place',t:'🏠 Un lieu à faire ressentir',d:'Hôtel, restaurant, architecture. La lumière, l\'espace, l\'atmosphère.'},
+    {id:'story',t:'📖 Une histoire à raconter',d:'Artisan, marque, projet. Les gens, les gestes, le contexte.'},
+    {id:'moment',t:'⏳ Un moment à garder',d:'Famille, couple, événement. L\'instant, l\'émotion, la vie.'}
+  ],btn:'Continuer'},
+  priorities:{kicker:'L\'effet recherché',title:'Ce que vous voulez transmettre',sub:'1 ou 2 priorités',opts:[
+    {id:'auth',t:'Authenticité',d:'Vrai, présent, pas artificiel'},
+    {id:'brand',t:'Cohérence',d:'Aligné avec votre identité visuelle'},
+    {id:'singular',t:'Singularité',d:'Un regard reconnaissable, pas du déjà-vu'},
+    {id:'trust',t:'Crédibilité',d:'Professionnel, humain, qui inspire confiance'}
+  ],btn:'Continuer'},
+  usage:{kicker:'Usage',title:'Ces images vont servir à…',opts:[
+    {id:'launch',t:'📆 Un lancement',d:'Campagne, événement, ouverture — une deadline précise'},
+    {id:'base',t:'🔁 Constituer une base',d:'Un fonds d\'images réutilisables sur la durée'},
+    {id:'series',t:'🌱 Une série régulière',d:'Contenu récurrent, qui évolue dans le temps'}
+  ],btn:'Continuer'},
+  channels:{kicker:'Diffusion',title:'Où ces images vivront-elles ?',sub:'Max 2',opts:[
+    {id:'web',t:'Site web'},{id:'social',t:'Réseaux sociaux'},{id:'press',t:'Presse / éditorial'},{id:'print',t:'Print / affichage'}
+  ],btn:'Continuer'},
+  location:{kicker:'Logistique',title:'Où se déroule la séance ?',opts:[
+    {id:'sitges',t:'📍 Sitges et environs',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelone',d:'Ville ou périphérie'},
+    {id:'cat',t:'📍 Ailleurs en Catalogne',d:'Costa Brava, Tarragone, intérieur…'},
+    {id:'other',t:'📍 En dehors de Catalogne',d:'À définir ensemble'}
+  ],btn:'Continuer'},
+  timing:{kicker:'Planning',title:'Quand avez-vous besoin des images ?',opts:[
+    {id:'fixed',t:'📅 Date fixée',d:'J\'ai une deadline précise'},
+    {id:'approx',t:'📆 Période approximative',d:'Dans les prochaines semaines ou mois'},
+    {id:'flex',t:'🌊 Pas d\'urgence',d:'On cale ça ensemble'}
+  ],btn:'Continuer'},
+  vibe:{kicker:'Direction artistique',title:'Comment je dois photographier',
+    sub:'Ajustez les trois curseurs. Les photos illustrent chaque extrême — elles ne sont pas cliquables.',
+    sliders:[
+      {id:'calm',cat:'Énergie',lo:'Calme & contemplatif',hi:'Vivant & dynamique',
+        imgs:[{src:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=75',lbl:'Calme'},
+              {src:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=75',lbl:'Vivant'}]},
+      {id:'present',cat:'Proximité',lo:'Distance & contexte',hi:'Intime & détails',
+        imgs:[{src:'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=75',lbl:'Vue large'},
+              {src:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=75',lbl:'Proximité'}]},
+      {id:'rich',cat:'Esthétique',lo:'Épuré & minimaliste',hi:'Texturé & riche',
+        imgs:[{src:'https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?w=500&q=75',lbl:'Épuré'},
+              {src:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=75',lbl:'Texturé'}]}
+    ],btn:'Voir le brief'},
+  contact:{kicker:'Dernière étape',title:'Votre adresse email',sub:'Pour recevoir ce brief et commencer à échanger.',ph:'vous@email.com',btn:'Générer le brief'},
+  report:{loading:'Rédaction de votre brief…',loadSub:'L\'IA analyse vos réponses et compose votre brief personnalisé.',
+    ctaTitle:'La suite',ctaQuote:'…Et maintenant vous savez ce qu\'une image représente pour moi.',
+    ctaText:'Discutons de votre projet. Je vous prépare une proposition personnalisée — approche, planning et budget.',
+    btnEmail:'Envoyer le brief à Marina',btnRdv:'Prendre rendez-vous',btnPdf:'Télécharger en PDF',btnRestart:'Nouveau brief'},
+  emailSubj:'Brief photo',emailHi:'Bonjour Marina,',emailIntro:'Voici mon brief complété via le questionnaire en ligne.',emailSign:'Cordialement,',
+  restartConfirm:'Recommencer le questionnaire ?',
+  pdfFilename:'marinaphoto-brief'
+},
+en:{
+  steps:['Intro','Name','Project','Type','Priorities','Use','Channels','Location','Timing','Vibe','Contact'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 sec','30 sec','20 sec'],
+  back:'Back', maxTwo:'Maximum 2 choices', mustPick:'Please choose an option', emailErr:'Invalid email',
+  intro:{kicker:'Let\'s start',quote:'I know what an image means to you…',title:'3 minutes to understand your project.',sub:'A few simple questions. I turn your answers into a personalised brief that guides our work.',btn:'Start'},
+  name:{kicker:'About you',title:'Your first name',ph:'e.g. Sophie',btn:'Continue'},
+  project:{kicker:'The project',title:'What is your project called?',sub:'A name, even a working one.',ph:'e.g. Hotel Can Ros / Garraf Winery',btn:'Continue'},
+  type:{kicker:'Project type',title:'Your project is mainly…',opts:[
+    {id:'place',t:'🏠 A place to make felt',d:'Hotel, restaurant, architecture. Light, space, atmosphere.'},
+    {id:'story',t:'📖 A story to tell',d:'Artisan, brand, project. People, gestures, context.'},
+    {id:'moment',t:'⏳ A moment to keep',d:'Family, couple, event. The instant, emotion, life.'}
+  ],btn:'Continue'},
+  priorities:{kicker:'The desired effect',title:'What you want to convey',sub:'1 or 2 priorities',opts:[
+    {id:'auth',t:'Authenticity',d:'Real, present, not artificial'},
+    {id:'brand',t:'Coherence',d:'Aligned with your visual identity'},
+    {id:'singular',t:'Singularity',d:'A recognisable eye, nothing generic'},
+    {id:'trust',t:'Credibility',d:'Professional, human, trust-inspiring'}
+  ],btn:'Continue'},
+  usage:{kicker:'Use',title:'These images will serve…',opts:[
+    {id:'launch',t:'📆 A launch',d:'Campaign, event, opening — a precise deadline'},
+    {id:'base',t:'🔁 Building a library',d:'A reusable image bank over time'},
+    {id:'series',t:'🌱 An ongoing series',d:'Regular content, evolving over time'}
+  ],btn:'Continue'},
+  channels:{kicker:'Distribution',title:'Where will these images live?',sub:'Max 2',opts:[
+    {id:'web',t:'Website'},{id:'social',t:'Social media'},{id:'press',t:'Press / editorial'},{id:'print',t:'Print / display'}
+  ],btn:'Continue'},
+  location:{kicker:'Logistics',title:'Where will the shoot take place?',opts:[
+    {id:'sitges',t:'📍 Sitges area',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelona',d:'City or surroundings'},
+    {id:'cat',t:'📍 Elsewhere in Catalonia',d:'Costa Brava, Tarragona, inland…'},
+    {id:'other',t:'📍 Outside Catalonia',d:'To define together'}
+  ],btn:'Continue'},
+  timing:{kicker:'Schedule',title:'When do you need the images?',opts:[
+    {id:'fixed',t:'📅 Fixed date',d:'I have a precise deadline'},
+    {id:'approx',t:'📆 Approximate timeframe',d:'Within the next weeks or months'},
+    {id:'flex',t:'🌊 No urgency',d:'We figure it out together'}
+  ],btn:'Continue'},
+  vibe:{kicker:'Artistic direction',title:'How should I photograph',
+    sub:'Adjust the three sliders. Photos illustrate each extreme — they are not clickable.',
+    sliders:[
+      {id:'calm',cat:'Energy',lo:'Calm & contemplative',hi:'Lively & dynamic',
+        imgs:[{src:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=75',lbl:'Still'},
+              {src:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=75',lbl:'Lively'}]},
+      {id:'present',cat:'Proximity',lo:'Distance & context',hi:'Intimate & details',
+        imgs:[{src:'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=75',lbl:'Wide'},
+              {src:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=75',lbl:'Close'}]},
+      {id:'rich',cat:'Aesthetic',lo:'Minimal & clean',hi:'Textured & rich',
+        imgs:[{src:'https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?w=500&q=75',lbl:'Minimal'},
+              {src:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=75',lbl:'Textured'}]}
+    ],btn:'See brief'},
+  contact:{kicker:'Last step',title:'Your email address',sub:'To send you this brief and start the conversation.',ph:'you@email.com',btn:'Generate brief'},
+  report:{loading:'Writing your brief…',loadSub:'AI is analysing your answers and composing your personalised brief.',
+    ctaTitle:'Next step',ctaQuote:'…And now you know what an image means to me.',
+    ctaText:'Let\'s talk about your project. I\'ll prepare a personalised proposal — approach, timeline and budget.',
+    btnEmail:'Send brief to Marina',btnRdv:'Book a call',btnPdf:'Download PDF',btnRestart:'New brief'},
+  emailSubj:'Photo brief',emailHi:'Hello Marina,',emailIntro:'Here is my completed brief from the online questionnaire.',emailSign:'Best regards,',
+  restartConfirm:'Restart the questionnaire?',
+  pdfFilename:'marinaphoto-brief'
+},
+es:{
+  steps:['Intro','Nombre','Proyecto','Tipo','Prioridades','Uso','Canales','Lugar','Timing','Vibra','Contacto'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 seg','30 seg','20 seg'],
+  back:'Atrás', maxTwo:'Máximo 2 opciones', mustPick:'Por favor elija una opción', emailErr:'Email inválido',
+  intro:{kicker:'Empecemos',quote:'Sé lo que una imagen significa para ti…',title:'3 minutos para entender tu proyecto.',sub:'Algunas preguntas simples. Transformo tus respuestas en un brief personalizado que guía nuestra colaboración.',btn:'Empezar'},
+  name:{kicker:'Sobre ti',title:'Tu nombre',ph:'ej. Sofía',btn:'Continuar'},
+  project:{kicker:'El proyecto',title:'¿Cómo se llama tu proyecto?',sub:'Un nombre, aunque sea provisional.',ph:'ej. Hotel Can Ros / Bodega Garraf',btn:'Continuar'},
+  type:{kicker:'Naturaleza del proyecto',title:'Tu proyecto es sobre todo…',opts:[
+    {id:'place',t:'🏠 Un lugar para sentir',d:'Hotel, restaurante, arquitectura. Luz, espacio, atmósfera.'},
+    {id:'story',t:'📖 Una historia que contar',d:'Artesano, marca, proyecto. Personas, gestos, contexto.'},
+    {id:'moment',t:'⏳ Un momento para guardar',d:'Familia, pareja, evento. El instante, la emoción, la vida.'}
+  ],btn:'Continuar'},
+  priorities:{kicker:'El efecto deseado',title:'Lo que quieres transmitir',sub:'1 o 2 prioridades',opts:[
+    {id:'auth',t:'Autenticidad',d:'Real, presente, no artificial'},
+    {id:'brand',t:'Coherencia',d:'Alineado con tu identidad visual'},
+    {id:'singular',t:'Singularidad',d:'Una mirada reconocible, nada genérico'},
+    {id:'trust',t:'Credibilidad',d:'Profesional, humano, que inspira confianza'}
+  ],btn:'Continuar'},
+  usage:{kicker:'Uso',title:'Estas imágenes servirán para…',opts:[
+    {id:'launch',t:'📆 Un lanzamiento',d:'Campaña, evento, apertura — una fecha límite precisa'},
+    {id:'base',t:'🔁 Construir una biblioteca',d:'Un fondo de imágenes reutilizables a lo largo del tiempo'},
+    {id:'series',t:'🌱 Una serie continua',d:'Contenido regular, que evoluciona en el tiempo'}
+  ],btn:'Continuar'},
+  channels:{kicker:'Difusión',title:'¿Dónde vivirán estas imágenes?',sub:'Máx 2',opts:[
+    {id:'web',t:'Web'},{id:'social',t:'Redes sociales'},{id:'press',t:'Prensa / editorial'},{id:'print',t:'Impresión / display'}
+  ],btn:'Continuar'},
+  location:{kicker:'Logística',title:'¿Dónde se realizará la sesión?',opts:[
+    {id:'sitges',t:'📍 Sitges y alrededores',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelona',d:'Ciudad o alrededores'},
+    {id:'cat',t:'📍 Otra parte de Cataluña',d:'Costa Brava, Tarragona, interior…'},
+    {id:'other',t:'📍 Fuera de Cataluña',d:'A definir juntos'}
+  ],btn:'Continuar'},
+  timing:{kicker:'Planificación',title:'¿Cuándo necesitas las imágenes?',opts:[
+    {id:'fixed',t:'📅 Fecha fija',d:'Tengo una fecha límite precisa'},
+    {id:'approx',t:'📆 Período aproximado',d:'En las próximas semanas o meses'},
+    {id:'flex',t:'🌊 Sin urgencia',d:'Lo decidimos juntos'}
+  ],btn:'Continuar'},
+  vibe:{kicker:'Dirección artística',title:'Cómo debo fotografiar',
+    sub:'Ajusta los tres controles. Las fotos ilustran cada extremo — no son clicables.',
+    sliders:[
+      {id:'calm',cat:'Energía',lo:'Calmo & contemplativo',hi:'Vivo & dinámico',
+        imgs:[{src:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=75',lbl:'Sereno'},
+              {src:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=75',lbl:'Vivo'}]},
+      {id:'present',cat:'Proximidad',lo:'Distancia & contexto',hi:'Íntimo & detalles',
+        imgs:[{src:'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=75',lbl:'Amplio'},
+              {src:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=75',lbl:'Cercano'}]},
+      {id:'rich',cat:'Estética',lo:'Limpio & minimalista',hi:'Texturado & rico',
+        imgs:[{src:'https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?w=500&q=75',lbl:'Limpio'},
+              {src:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=75',lbl:'Texturado'}]}
+    ],btn:'Ver brief'},
+  contact:{kicker:'Último paso',title:'Tu dirección de email',sub:'Para enviarte este brief y empezar a hablar.',ph:'tu@email.com',btn:'Generar brief'},
+  report:{loading:'Redactando tu brief…',loadSub:'La IA analiza tus respuestas y compone tu brief personalizado.',
+    ctaTitle:'El próximo paso',ctaQuote:'…Y ahora sabes lo que una imagen significa para mí.',
+    ctaText:'Hablemos de tu proyecto. Te preparo una propuesta personalizada — enfoque, planificación y presupuesto.',
+    btnEmail:'Enviar brief a Marina',btnRdv:'Reservar una llamada',btnPdf:'Descargar PDF',btnRestart:'Nuevo brief'},
+  emailSubj:'Brief fotográfico',emailHi:'Hola Marina,',emailIntro:'Aquí está mi brief completado a través del cuestionario en línea.',emailSign:'Saludos,',
+  restartConfirm:'¿Reiniciar el cuestionario?',
+  pdfFilename:'marinaphoto-brief'
+},
+ca:{
+  steps:['Intro','Nom','Projecte','Tipus','Prioritats','Ús','Canals','Lloc','Timing','Vibra','Contacte'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 seg','30 seg','20 seg'],
+  back:'Enrere', maxTwo:'Màxim 2 opcions', mustPick:'Si us plau, tria una opció', emailErr:'Email invàlid',
+  intro:{kicker:'Comencem',quote:'Sé el que una imatge significa per a tu…',title:'3 minuts per entendre el teu projecte.',sub:'Unes quantes preguntes simples. Transformo les teves respostes en un brief personalitzat que guia la nostra col·laboració.',btn:'Començar'},
+  name:{kicker:'Sobre tu',title:'El teu nom',ph:'ex. Núria',btn:'Continuar'},
+  project:{kicker:'El projecte',title:'Com s\'anomena el teu projecte?',sub:'Un nom, encara que sigui provisional.',ph:'ex. Hotel Can Ros / Celler Garraf',btn:'Continuar'},
+  type:{kicker:'Naturalesa del projecte',title:'El teu projecte és sobretot…',opts:[
+    {id:'place',t:'🏠 Un lloc per sentir',d:'Hotel, restaurant, arquitectura. Llum, espai, atmosfera.'},
+    {id:'story',t:'📖 Una història per explicar',d:'Artesà, marca, projecte. Persones, gestos, context.'},
+    {id:'moment',t:'⏳ Un moment per guardar',d:'Família, parella, esdeveniment. L\'instant, l\'emoció, la vida.'}
+  ],btn:'Continuar'},
+  priorities:{kicker:'L\'efecte desitjat',title:'El que vols transmetre',sub:'1 o 2 prioritats',opts:[
+    {id:'auth',t:'Autenticitat',d:'Real, present, no artificial'},
+    {id:'brand',t:'Coherència',d:'Alineat amb la teva identitat visual'},
+    {id:'singular',t:'Singularitat',d:'Una mirada reconeixible, res genèric'},
+    {id:'trust',t:'Credibilitat',d:'Professional, humà, que inspira confiança'}
+  ],btn:'Continuar'},
+  usage:{kicker:'Ús',title:'Aquestes imatges serviran per a…',opts:[
+    {id:'launch',t:'📆 Un llançament',d:'Campanya, esdeveniment, obertura — una data límit precisa'},
+    {id:'base',t:'🔁 Construir una biblioteca',d:'Un fons d\'imatges reutilitzables al llarg del temps'},
+    {id:'series',t:'🌱 Una sèrie contínua',d:'Contingut regular, que evoluciona en el temps'}
+  ],btn:'Continuar'},
+  channels:{kicker:'Difusió',title:'On viuran aquestes imatges?',sub:'Màx 2',opts:[
+    {id:'web',t:'Web'},{id:'social',t:'Xarxes socials'},{id:'press',t:'Premsa / editorial'},{id:'print',t:'Impressió / cartelleria'}
+  ],btn:'Continuar'},
+  location:{kicker:'Logística',title:'On es farà la sessió?',opts:[
+    {id:'sitges',t:'📍 Sitges i rodalia',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelona',d:'Ciutat o voltants'},
+    {id:'cat',t:'📍 Altra part de Catalunya',d:'Costa Brava, Tarragona, interior…'},
+    {id:'other',t:'📍 Fora de Catalunya',d:'A definir junts'}
+  ],btn:'Continuar'},
+  timing:{kicker:'Planificació',title:'Quan necessites les imatges?',opts:[
+    {id:'fixed',t:'📅 Data fixada',d:'Tinc una data límit precisa'},
+    {id:'approx',t:'📆 Període aproximat',d:'En les properes setmanes o mesos'},
+    {id:'flex',t:'🌊 Sense urgència',d:'Ho decidim junts'}
+  ],btn:'Continuar'},
+  vibe:{kicker:'Direcció artística',title:'Com he de fotografiar',
+    sub:'Ajusta els tres controls. Les fotos il·lustren cada extrem — no es poden clicar.',
+    sliders:[
+      {id:'calm',cat:'Energia',lo:'Calmat & contemplatiu',hi:'Viu & dinàmic',
+        imgs:[{src:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=75',lbl:'Serè'},
+              {src:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=75',lbl:'Viu'}]},
+      {id:'present',cat:'Proximitat',lo:'Distància & context',hi:'Íntim & detalls',
+        imgs:[{src:'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500&q=75',lbl:'Ampli'},
+              {src:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=75',lbl:'Proper'}]},
+      {id:'rich',cat:'Estètica',lo:'Net & minimalista',hi:'Texturat & ric',
+        imgs:[{src:'https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?w=500&q=75',lbl:'Net'},
+              {src:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=75',lbl:'Texturat'}]}
+    ],btn:'Veure brief'},
+  contact:{kicker:'Darrer pas',title:'El teu email',sub:'Per enviar-te aquest brief i començar a parlar.',ph:'tu@email.cat',btn:'Generar brief'},
+  report:{loading:'Redactant el teu brief…',loadSub:'La IA analitza les teves respostes i compon el teu brief personalitzat.',
+    ctaTitle:'El proper pas',ctaQuote:'…I ara saps el que una imatge significa per a mi.',
+    ctaText:'Parlem del teu projecte. Et preparo una proposta personalitzada — enfocament, planificació i pressupost.',
+    btnEmail:'Enviar brief a Marina',btnRdv:'Reservar una trucada',btnPdf:'Descarregar PDF',btnRestart:'Nou brief'},
+  emailSubj:'Brief fotogràfic',emailHi:'Hola Marina,',emailIntro:'Aquí tens el meu brief completat a través del qüestionari en línia.',emailSign:'Cordialment,',
+  restartConfirm:'Reiniciar el qüestionari?',
+  pdfFilename:'marinaphoto-brief'
+}
 };
 
-const translations = {
-  fr: {
-    steps: ['Intro', 'Vous', 'Projet', 'Type', 'Priorités', 'Usage', 'Canaux', 'Lieu', 'Timing', 'Ambiance', 'Contact', 'Brief'],
-    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 sec', '30 sec', '10 sec', 'Terminé'],
-    intro: {
-      quote: 'Je sais ce qu\'une image représente pour vous...',
-      title: '3 minutes pour comprendre votre projet.',
-      text: 'Quelques questions simples, des réponses instinctives. Je transforme ça en un brief clair qui nous guide.',
-      button: 'Commencer'
-    },
-    name: { title: 'Votre prénom', placeholder: 'Ex : Alex', button: 'Continuer' },
-    project: { title: 'Nom du projet', placeholder: 'Ex : Hôtel Casa Marina', button: 'Continuer' },
-    core: {
-      title: 'Votre projet, c\'est plutôt…',
-      options: [
-        { id: 'place', title: '🏠 Un lieu', desc: 'Faire ressentir l\'espace, la lumière, l\'atmosphère' },
-        { id: 'story', title: '📖 Une histoire', desc: 'Des gens, des gestes, une narration' },
-        { id: 'moment', title: '⏳ Un moment', desc: 'Capturer l\'essentiel, l\'instant' }
-      ],
-      button: 'Continuer'
-    },
-    intent: {
-      title: 'Ce qui compte le plus',
-      text: '1 ou 2 priorités',
-      options: [
-        { id: 'auth', title: 'Authenticité', desc: 'Vrai, présent, tangible' },
-        { id: 'brand', title: 'Cohérence', desc: 'Aligné avec votre identité' },
-        { id: 'fresh', title: 'Singularité', desc: 'Un regard unique, reconnaissable' },
-        { id: 'trust', title: 'Crédibilité', desc: 'Professionnel et humain' }
-      ],
-      button: 'Continuer'
-    },
-    time: {
-      title: 'Ces images vont servir…',
-      options: [
-        { id: 'moment', title: '📆 Un événement précis', desc: 'Lancement, campagne' },
-        { id: 'base', title: '🔁 Une base long-terme', desc: 'Réutilisable, durable' },
-        { id: 'series', title: '🌱 Une série continue', desc: 'Évolutif dans le temps' }
-      ],
-      button: 'Continuer'
-    },
-    where: {
-      title: 'Diffusion principale',
-      text: 'Max 2',
-      options: [
-        { id: 'web', title: 'Site web' },
-        { id: 'social', title: 'Réseaux sociaux' },
-        { id: 'editorial', title: 'Presse / éditorial' },
-        { id: 'print', title: 'Print' }
-      ],
-      button: 'Continuer'
-    },
-    location: {
-      title: 'Où se déroule la séance ?',
-      options: [
-        { id: 'sitges', title: '📍 Sitges et environs' },
-        { id: 'barcelona', title: '📍 Barcelone' },
-        { id: 'catalonia', title: '📍 Ailleurs en Catalogne' },
-        { id: 'other', title: '📍 En dehors' }
-      ],
-      button: 'Continuer'
-    },
-    timing: {
-      title: 'Quand avez-vous besoin des images ?',
-      options: [
-        { id: 'fixed', title: '📅 Date fixée' },
-        { id: 'approx', title: '📆 Période approximative' },
-        { id: 'flexible', title: '🌊 Flexible' }
-      ],
-      button: 'Continuer'
-    },
-    vibe: {
-      title: 'Comment je dois photographier',
-      text: 'Ajustez selon l\'ambiance souhaitée. Les images en dessous illustrent chaque extrême.',
-      sliders: [
-        { id: 'calm', left: '😌 Calme', right: '⚡ Vivant' },
-        { id: 'present', left: '👀 Distant', right: '🤍 Proche' },
-        { id: 'rich', left: '✂️ Épuré', right: '🧱 Texturé' }
-      ],
-      button: 'Continuer'
-    },
-    contact: {
-      title: 'Votre email',
-      text: 'Pour recevoir le brief',
-      placeholder: 'votre@email.com',
-      button: 'Voir le rapport'
-    },
-    report: {
-      loading: 'Génération de votre brief personnalisé...',
-      ctaTitle: 'Prochaine étape',
-      ctaQuote: 'Maintenant vous savez ce qu\'une image représente pour moi...',
-      ctaText: 'Discutons de votre projet. Je vous prépare une proposition sur mesure avec planning et tarifs.',
-      buttons: { email: 'Envoyer à Marina', pdf: 'Télécharger PDF', restart: 'Recommencer' }
-    },
-    back: 'Retour',
-    pickOne: 'Choisissez une option',
-    pickMax: 'Maximum 2 choix',
-    emailInvalid: 'Email invalide'
-  },
-  en: {
-    steps: ['Intro', 'You', 'Project', 'Type', 'Priorities', 'Use', 'Channels', 'Location', 'Timing', 'Vibe', 'Contact', 'Brief'],
-    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 sec', '30 sec', '10 sec', 'Done'],
-    intro: {
-      quote: 'I know what an image means to you...',
-      title: '3 minutes to understand your project.',
-      text: 'A few simple questions, instinctive answers. I turn that into a clear brief that guides us.',
-      button: 'Start'
-    },
-    name: { title: 'Your first name', placeholder: 'e.g. Alex', button: 'Continue' },
-    project: { title: 'Project name', placeholder: 'e.g. Casa Marina Hotel', button: 'Continue' },
-    core: {
-      title: 'Your project is mainly…',
-      options: [
-        { id: 'place', title: '🏠 A place', desc: 'Make people feel the space, light, atmosphere' },
-        { id: 'story', title: '📖 A story', desc: 'People, gestures, a narrative' },
-        { id: 'moment', title: '⏳ A moment', desc: 'Capture what matters, the instant' }
-      ],
-      button: 'Continue'
-    },
-    intent: {
-      title: 'What matters most',
-      text: '1 or 2 priorities',
-      options: [
-        { id: 'auth', title: 'Authenticity', desc: 'Real, present, tangible' },
-        { id: 'brand', title: 'Coherence', desc: 'Aligned with your identity' },
-        { id: 'fresh', title: 'Singularity', desc: 'A unique, recognizable eye' },
-        { id: 'trust', title: 'Credibility', desc: 'Professional and human' }
-      ],
-      button: 'Continue'
-    },
-    time: {
-      title: 'These images will serve…',
-      options: [
-        { id: 'moment', title: '📆 A specific event', desc: 'Launch, campaign' },
-        { id: 'base', title: '🔁 Long-term base', desc: 'Reusable, lasting' },
-        { id: 'series', title: '🌱 Ongoing series', desc: 'Evolving over time' }
-      ],
-      button: 'Continue'
-    },
-    where: {
-      title: 'Main distribution',
-      text: 'Max 2',
-      options: [
-        { id: 'web', title: 'Website' },
-        { id: 'social', title: 'Social media' },
-        { id: 'editorial', title: 'Press / editorial' },
-        { id: 'print', title: 'Print' }
-      ],
-      button: 'Continue'
-    },
-    location: {
-      title: 'Where will the shoot take place?',
-      options: [
-        { id: 'sitges', title: '📍 Sitges area' },
-        { id: 'barcelona', title: '📍 Barcelona' },
-        { id: 'catalonia', title: '📍 Elsewhere in Catalonia' },
-        { id: 'other', title: '📍 Outside' }
-      ],
-      button: 'Continue'
-    },
-    timing: {
-      title: 'When do you need the images?',
-      options: [
-        { id: 'fixed', title: '📅 Fixed date' },
-        { id: 'approx', title: '📆 Approximate period' },
-        { id: 'flexible', title: '🌊 Flexible' }
-      ],
-      button: 'Continue'
-    },
-    vibe: {
-      title: 'How should I photograph',
-      text: 'Adjust to match your desired vibe. Images below illustrate each extreme.',
-      sliders: [
-        { id: 'calm', left: '😌 Calm', right: '⚡ Lively' },
-        { id: 'present', left: '👀 Distant', right: '🤍 Close' },
-        { id: 'rich', left: '✂️ Minimal', right: '🧱 Textured' }
-      ],
-      button: 'Continue'
-    },
-    contact: {
-      title: 'Your email',
-      text: 'To receive the brief',
-      placeholder: 'your@email.com',
-      button: 'See report'
-    },
-    report: {
-      loading: 'Creating your personalized brief...',
-      ctaTitle: 'Next step',
-      ctaQuote: 'Now you know what an image means to me...',
-      ctaText: 'Let\'s discuss your project. I\'ll prepare a tailored proposal with timeline and pricing.',
-      buttons: { email: 'Send to Marina', pdf: 'Download PDF', restart: 'Restart' }
-    },
-    back: 'Back',
-    pickOne: 'Pick one',
-    pickMax: 'Maximum 2 choices',
-    emailInvalid: 'Invalid email'
-  },
-  es: {
-    steps: ['Intro', 'Usted', 'Proyecto', 'Tipo', 'Prioridades', 'Uso', 'Canales', 'Lugar', 'Timing', 'Vibra', 'Contacto', 'Brief'],
-    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 seg', '30 seg', '10 seg', 'Listo'],
-    intro: {
-      quote: 'Sé lo que una imagen representa para ti...',
-      title: '3 minutos para entender su proyecto.',
-      text: 'Algunas preguntas simples, respuestas instintivas. Lo transformo en un brief claro que nos guía.',
-      button: 'Empezar'
-    },
-    name: { title: 'Su nombre', placeholder: 'ej. Alex', button: 'Continuar' },
-    project: { title: 'Nombre del proyecto', placeholder: 'ej. Hotel Casa Marina', button: 'Continuar' },
-    core: {
-      title: 'Su proyecto es sobre todo…',
-      options: [
-        { id: 'place', title: '🏠 Un lugar', desc: 'Sentir el espacio, la luz, la atmósfera' },
-        { id: 'story', title: '📖 Una historia', desc: 'Personas, gestos, un relato' },
-        { id: 'moment', title: '⏳ Un momento', desc: 'Capturar lo esencial, el instante' }
-      ],
-      button: 'Continuar'
-    },
-    intent: {
-      title: 'Lo que más importa',
-      text: '1 o 2 prioridades',
-      options: [
-        { id: 'auth', title: 'Autenticidad', desc: 'Real, presente, tangible' },
-        { id: 'brand', title: 'Coherencia', desc: 'Alineado con su identidad' },
-        { id: 'fresh', title: 'Singularidad', desc: 'Una mirada única' },
-        { id: 'trust', title: 'Credibilidad', desc: 'Profesional y humano' }
-      ],
-      button: 'Continuar'
-    },
-    time: {
-      title: 'Estas imágenes servirán para…',
-      options: [
-        { id: 'moment', title: '📆 Un evento preciso', desc: 'Lanzamiento, campaña' },
-        { id: 'base', title: '🔁 Base largo plazo', desc: 'Reutilizable, duradero' },
-        { id: 'series', title: '🌱 Serie continua', desc: 'Evolución en el tiempo' }
-      ],
-      button: 'Continuar'
-    },
-    where: {
-      title: 'Difusión principal',
-      text: 'Máx 2',
-      options: [
-        { id: 'web', title: 'Web' },
-        { id: 'social', title: 'Redes sociales' },
-        { id: 'editorial', title: 'Prensa / editorial' },
-        { id: 'print', title: 'Impresión' }
-      ],
-      button: 'Continuar'
-    },
-    location: {
-      title: '¿Dónde se realiza la sesión?',
-      options: [
-        { id: 'sitges', title: '📍 Sitges y alrededores' },
-        { id: 'barcelona', title: '📍 Barcelona' },
-        { id: 'catalonia', title: '📍 Otra parte de Cataluña' },
-        { id: 'other', title: '📍 Fuera' }
-      ],
-      button: 'Continuar'
-    },
-    timing: {
-      title: '¿Cuándo necesita las imágenes?',
-      options: [
-        { id: 'fixed', title: '📅 Fecha fija' },
-        { id: 'approx', title: '📆 Período aproximado' },
-        { id: 'flexible', title: '🌊 Flexible' }
-      ],
-      button: 'Continuar'
-    },
-    vibe: {
-      title: 'Cómo debo fotografiar',
-      text: 'Ajuste según la vibra deseada. Las imágenes abajo ilustran cada extremo.',
-      sliders: [
-        { id: 'calm', left: '😌 Calmo', right: '⚡ Vivo' },
-        { id: 'present', left: '👀 Distante', right: '🤍 Cercano' },
-        { id: 'rich', left: '✂️ Limpio', right: '🧱 Texturado' }
-      ],
-      button: 'Continuar'
-    },
-    contact: {
-      title: 'Su email',
-      text: 'Para recibir el brief',
-      placeholder: 'su@email.com',
-      button: 'Ver informe'
-    },
-    report: {
-      loading: 'Creando su brief personalizado...',
-      ctaTitle: 'Próximo paso',
-      ctaQuote: 'Ahora sabe lo que una imagen representa para mí...',
-      ctaText: 'Hablemos de su proyecto. Le preparo una propuesta a medida con planificación y tarifas.',
-      buttons: { email: 'Enviar a Marina', pdf: 'Descargar PDF', restart: 'Reiniciar' }
-    },
-    back: 'Atrás',
-    pickOne: 'Elija una',
-    pickMax: 'Máximo 2 opciones',
-    emailInvalid: 'Email inválido'
-  },
-  ca: {
-    steps: ['Intro', 'Vostè', 'Projecte', 'Tipus', 'Prioritats', 'Ús', 'Canals', 'Lloc', 'Timing', 'Vibra', 'Contacte', 'Brief'],
-    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 seg', '30 seg', '10 seg', 'Fet'],
-    intro: {
-      quote: 'Sé què significa una imatge per a tu...',
-      title: '3 minuts per entendre el teu projecte.',
-      text: 'Unes quantes preguntes senzilles, respostes instintives. Ho transformo en un brief clar que ens guia.',
-      button: 'Començar'
-    },
-    name: { title: 'El teu nom', placeholder: 'ex. Àlex', button: 'Continuar' },
-    project: { title: 'Nom del projecte', placeholder: 'ex. Hotel Casa Marina', button: 'Continuar' },
-    core: {
-      title: 'El teu projecte és sobretot…',
-      options: [
-        { id: 'place', title: '🏠 Un lloc', desc: 'Sentir l\'espai, la llum, l\'atmosfera' },
-        { id: 'story', title: '📖 Una història', desc: 'Persones, gestos, un relat' },
-        { id: 'moment', title: '⏳ Un moment', desc: 'Capturar l\'essencial, l\'instant' }
-      ],
-      button: 'Continuar'
-    },
-    intent: {
-      title: 'El que més importa',
-      text: '1 o 2 prioritats',
-      options: [
-        { id: 'auth', title: 'Autenticitat', desc: 'Real, present, tangible' },
-        { id: 'brand', title: 'Coherència', desc: 'Alineat amb la teva identitat' },
-        { id: 'fresh', title: 'Singularitat', desc: 'Una mirada única' },
-        { id: 'trust', title: 'Credibilitat', desc: 'Professional i humà' }
-      ],
-      button: 'Continuar'
-    },
-    time: {
-      title: 'Aquestes imatges serviran per…',
-      options: [
-        { id: 'moment', title: '📆 Un esdeveniment concret', desc: 'Llançament, campanya' },
-        { id: 'base', title: '🔁 Base llarg termini', desc: 'Reutilitzable, durador' },
-        { id: 'series', title: '🌱 Sèrie contínua', desc: 'Evolució en el temps' }
-      ],
-      button: 'Continuar'
-    },
-    where: {
-      title: 'Difusió principal',
-      text: 'Màx 2',
-      options: [
-        { id: 'web', title: 'Web' },
-        { id: 'social', title: 'Xarxes socials' },
-        { id: 'editorial', title: 'Premsa / editorial' },
-        { id: 'print', title: 'Impressió' }
-      ],
-      button: 'Continuar'
-    },
-    location: {
-      title: 'On es realitza la sessió?',
-      options: [
-        { id: 'sitges', title: '📍 Sitges i rodal' },
-        { id: 'barcelona', title: '📍 Barcelona' },
-        { id: 'catalonia', title: '📍 Altra part de Catalunya' },
-        { id: 'other', title: '📍 Fora' }
-      ],
-      button: 'Continuar'
-    },
-    timing: {
-      title: 'Quan necessites les imatges?',
-      options: [
-        { id: 'fixed', title: '📅 Data fixada' },
-        { id: 'approx', title: '📆 Període aproximat' },
-        { id: 'flexible', title: '🌊 Flexible' }
-      ],
-      button: 'Continuar'
-    },
-    vibe: {
-      title: 'Com he de fotografiar',
-      text: 'Ajusta segons l\'ambient desitjat. Les imatges a sota il·lustren cada extrem.',
-      sliders: [
-        { id: 'calm', left: '😌 Calmat', right: '⚡ Viu' },
-        { id: 'present', left: '👀 Distant', right: '🤍 Proper' },
-        { id: 'rich', left: '✂️ Net', right: '🧱 Texturat' }
-      ],
-      button: 'Continuar'
-    },
-    contact: {
-      title: 'El teu email',
-      text: 'Per rebre el brief',
-      placeholder: 'el_teu@email.cat',
-      button: 'Veure informe'
-    },
-    report: {
-      loading: 'Creant el teu brief personalitzat...',
-      ctaTitle: 'Proper pas',
-      ctaQuote: 'Ara saps què significa una imatge per a mi...',
-      ctaText: 'Parlem del teu projecte. Et preparo una proposta a mida amb planificació i tarifes.',
-      buttons: { email: 'Enviar a Marina', pdf: 'Descarregar PDF', restart: 'Reiniciar' }
-    },
-    back: 'Enrere',
-    pickOne: 'Tria una',
-    pickMax: 'Màxim 2 opcions',
-    emailInvalid: 'Email invàlid'
-  }
-};
+const t = k => { let r=TX[L]; for(const p of k.split('.')) r=r[p]; return r; };
 
-const t = (key) => {
-  const keys = key.split('.');
-  let result = translations[currentLang];
-  for (let k of keys) {
-    result = result[k];
-    if (!result) return key;
-  }
-  return result;
-};
-
-function setLang(lang) {
-  currentLang = lang;
-  ['en','fr','es','ca'].forEach(l => document.getElementById('btn-'+l).classList.remove('active'));
-  document.getElementById('btn-'+lang).classList.add('active');
-  render();
+// ═══════════════════════════════════════════════════════
+// PROGRESS + NAV
+// ═══════════════════════════════════════════════════════
+function upProg(){
+  document.getElementById('pbar').style.width=((step+1)/TOTAL*100)+'%';
+  document.getElementById('pstep').textContent=(step+1)+'/'+TOTAL+' · '+t('steps')[step];
+  document.getElementById('ptime').textContent='~'+t('times')[step];
+}
+function setLang(l){
+  L=l;
+  ['fr','en','es','ca'].forEach(x=>document.getElementById('l-'+x).classList.remove('on'));
+  document.getElementById('l-'+l).classList.add('on');
+  go();
+}
+function fwd(){if(step<TOTAL-1){step++;go();}}
+function bck(){if(step>0){step--;go();}}
+function go(){
+  upProg();
+  const c=document.getElementById('card');
+  c.style.cssText='opacity:0;transform:translateY(10px);transition:none;';
+  setTimeout(()=>{
+    draw();
+    c.style.cssText='opacity:1;transform:translateY(0);transition:all .35s ease;';
+    window.scrollTo({top:0,behavior:'smooth'});
+  },60);
 }
 
-function updateProgress() {
-  const progress = ((currentStep + 1) / 12) * 100;
-  document.getElementById('progress').style.width = progress + '%';
-  document.getElementById('step-label').textContent = (currentStep + 1) + '/12 · ' + t('steps')[currentStep];
-  document.getElementById('time-remaining').textContent = '~' + t('timeEstimates')[currentStep];
+// ═══════════════════════════════════════════════════════
+// DRAW STEPS
+// ═══════════════════════════════════════════════════════
+function draw(){
+  const c=document.getElementById('card');
+  const fns=[drawIntro,drawName,drawProject,drawType,drawPriorities,
+              drawUsage,drawChannels,drawLocation,drawTiming,drawVibe,drawContact];
+  if(fns[step]) c.innerHTML=fns[step]();
+  bindOpts();
+  initSliders();
 }
 
-function nextStep() {
-  if (currentStep < 11) {
-    currentStep++;
-    render();
-  }
+const BK = ()=>`<button class="bs" onclick="bck()">← ${t('back')}</button>`;
+
+function drawIntro(){
+  return `<div class="kicker">${t('intro.kicker')}</div>
+  <div class="opening-quote">"${t('intro.quote')}"</div>
+  <h1>${t('intro.title')}</h1>
+  <p class="sub">${t('intro.sub')}</p>
+  <div class="btns"><button class="bp" onclick="fwd()">${t('intro.btn')}</button></div>`;
+}
+function drawName(){
+  return `<div class="kicker">${t('name.kicker')}</div>
+  <h1>${t('name.title')}</h1>
+  <input type="text" id="f-name" value="${esc(S.name)}" placeholder="${t('name.ph')}">
+  <div class="btns"><button class="bp" onclick="svName()">${t('name.btn')}</button>${BK()}</div>`;
+}
+function drawProject(){
+  return `<div class="kicker">${t('project.kicker')}</div>
+  <h1>${t('project.title')}</h1><p class="sub">${t('project.sub')}</p>
+  <input type="text" id="f-proj" value="${esc(S.project)}" placeholder="${t('project.ph')}">
+  <div class="btns"><button class="bp" onclick="svProject()">${t('project.btn')}</button>${BK()}</div>`;
+}
+function drawOpts(key, field, multi, stateRef){
+  const opts=t(key+'.opts');
+  return `<div class="kicker">${t(key+'.kicker')}</div>
+  <h1>${t(key+'.title')}</h1>
+  ${t(key+'.sub') ? `<p class="sub">${t(key+'.sub')}</p>` : ''}
+  <div class="opts">${opts.map(o=>`
+    <div class="opt${(multi?stateRef.includes(o.id):stateRef===o.id)?' sel':''}" data-id="${o.id}" data-field="${field}" data-multi="${multi}">
+      <div class="opt-t">${o.t}</div>${o.d?`<div class="opt-d">${o.d}</div>`:''}
+    </div>`).join('')}
+  </div>
+  <div class="btns">
+    <button class="bp" onclick="${multi?`valMulti('${field}',2)`:`valSingle('${field}')`}">${t(key+'.btn')}</button>
+    ${BK()}
+  </div>`;
+}
+function drawType(){return drawOpts('type','type',false,S.type);}
+function drawPriorities(){return drawOpts('priorities','priorities',true,S.priorities);}
+function drawUsage(){return drawOpts('usage','usage',false,S.usage);}
+function drawChannels(){return drawOpts('channels','channels',true,S.channels);}
+function drawLocation(){return drawOpts('location','location',false,S.location);}
+function drawTiming(){return drawOpts('timing','timing',false,S.timing);}
+
+function drawVibe(){
+  const sls=t('vibe.sliders');
+  return `<div class="kicker">${t('vibe.kicker')}</div>
+  <h1>${t('vibe.title')}</h1>
+  <p class="sub">${t('vibe.sub')}</p>
+  ${sls.map(sl=>`
+  <div class="vibe-block">
+    <div class="vibe-cat">${sl.cat}</div>
+    <div class="vibe-label-row"><span>${sl.lo}</span><span>${sl.hi}</span></div>
+    <input type="range" min="0" max="100" value="${S[sl.id]}" data-key="${sl.id}"
+      style="--p:${S[sl.id]}%"
+      oninput="S['${sl.id}']=+this.value;this.style.setProperty('--p',this.value+'%')">
+    <div class="vibe-illus">
+      ${sl.imgs.map(img=>`
+      <div class="vibe-img">
+        <img src="${img.src}" alt="${img.lbl}" loading="lazy">
+        <div class="vibe-img-lbl">${img.lbl}</div>
+      </div>`).join('')}
+    </div>
+  </div>`).join('')}
+  <div class="btns"><button class="bp" onclick="fwd()">${t('vibe.btn')}</button>${BK()}</div>`;
 }
 
-function prevStep() {
-  if (currentStep > 0) {
-    currentStep--;
-    render();
-  }
+function drawContact(){
+  return `<div class="kicker">${t('contact.kicker')}</div>
+  <h1>${t('contact.title')}</h1>
+  <p class="sub">${t('contact.sub')}</p>
+  <input type="email" id="f-email" value="${esc(S.email)}" placeholder="${t('contact.ph')}">
+  <div class="btns"><button class="bp" onclick="svEmail()">${t('contact.btn')}</button>${BK()}</div>`;
 }
 
-function render() {
-  updateProgress();
-  const content = document.getElementById('content');
-  content.classList.remove('fade-in');
-  setTimeout(() => {
-    renderStep();
-    content.classList.add('fade-in');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 50);
-}
-
-function renderStep() {
-  const content = document.getElementById('content');
-  let html = '';
-  switch(currentStep) {
-    case 0: html = renderIntro(); break;
-    case 1: html = renderName(); break;
-    case 2: html = renderProject(); break;
-    case 3: html = renderCore(); break;
-    case 4: html = renderIntent(); break;
-    case 5: html = renderTime(); break;
-    case 6: html = renderWhere(); break;
-    case 7: html = renderLocation(); break;
-    case 8: html = renderTiming(); break;
-    case 9: html = renderVibe(); break;
-    case 10: html = renderContact(); break;
-    case 11: renderReport(); return;
-  }
-  content.innerHTML = html;
-  bindEvents();
-}
-
-function renderIntro() {
-  return `
-    <div class="quote">"${t('intro.quote')}"</div>
-    <h1>${t('intro.title')}</h1>
-    <p class="lead">${t('intro.text')}</p>
-    <div class="buttons">
-      <button class="primary" onclick="nextStep()">${t('intro.button')}</button>
-    </div>
-  `;
-}
-
-function renderName() {
-  return `
-    <h1>${t('name.title')}</h1>
-    <input type="text" id="name-input" value="${state.name}" placeholder="${t('name.placeholder')}">
-    <div class="buttons">
-      <button class="primary" onclick="saveName()">${t('name.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderProject() {
-  return `
-    <h1>${t('project.title')}</h1>
-    <input type="text" id="project-input" value="${state.project}" placeholder="${t('project.placeholder')}">
-    <div class="buttons">
-      <button class="primary" onclick="saveProject()">${t('project.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderCore() {
-  const options = t('core.options');
-  return `
-    <h1>${t('core.title')}</h1>
-    <div class="options">
-      ${options.map(opt => `
-        <div class="option ${state.core === opt.id ? 'selected' : ''}" data-id="${opt.id}">
-          <div class="option-title">${opt.title}</div>
-          <div class="option-desc">${opt.desc}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="validateCore()">${t('core.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderIntent() {
-  const options = t('intent.options');
-  return `
-    <h1>${t('intent.title')}</h1>
-    <p class="lead">${t('intent.text')}</p>
-    <div class="options">
-      ${options.map(opt => `
-        <div class="option ${state.intent.includes(opt.id) ? 'selected' : ''}" data-id="${opt.id}">
-          <div class="option-title">${opt.title}</div>
-          <div class="option-desc">${opt.desc}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="validateIntent()">${t('intent.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderTime() {
-  const options = t('time.options');
-  return `
-    <h1>${t('time.title')}</h1>
-    <div class="options">
-      ${options.map(opt => `
-        <div class="option ${state.time === opt.id ? 'selected' : ''}" data-id="${opt.id}">
-          <div class="option-title">${opt.title}</div>
-          <div class="option-desc">${opt.desc}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="validateTime()">${t('time.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderWhere() {
-  const options = t('where.options');
-  return `
-    <h1>${t('where.title')}</h1>
-    <p class="lead">${t('where.text')}</p>
-    <div class="options">
-      ${options.map(opt => `
-        <div class="option ${state.where.includes(opt.id) ? 'selected' : ''}" data-id="${opt.id}">
-          <div class="option-title">${opt.title}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="validateWhere()">${t('where.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderLocation() {
-  const options = t('location.options');
-  return `
-    <h1>${t('location.title')}</h1>
-    <div class="options">
-      ${options.map(opt => `
-        <div class="option ${state.location === opt.id ? 'selected' : ''}" data-id="${opt.id}">
-          <div class="option-title">${opt.title}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="validateLocation()">${t('location.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderTiming() {
-  const options = t('timing.options');
-  return `
-    <h1>${t('timing.title')}</h1>
-    <div class="options">
-      ${options.map(opt => `
-        <div class="option ${state.timing === opt.id ? 'selected' : ''}" data-id="${opt.id}">
-          <div class="option-title">${opt.title}</div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="validateTiming()">${t('timing.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderVibe() {
-  const sliders = t('vibe.sliders');
-  return `
-    <h1>${t('vibe.title')}</h1>
-    <p class="lead">${t('vibe.text')}</p>
-    <div class="vibe-section">
-      ${sliders.map(slider => `
-        <div class="vibe-item">
-          <div class="vibe-header">
-            <span class="vibe-label">${slider.left}</span>
-            <span class="vibe-label">${slider.right}</span>
-          </div>
-          <input type="range" class="vibe-slider" min="0" max="100" value="${state.sliders[slider.id]}" 
-            data-key="${slider.id}" oninput="updateSlider(this)">
-          <div class="vibe-images">
-            ${vibeImages[slider.id].map((img, idx) => `
-              <div class="vibe-image ${state.visuals[slider.id] === idx ? 'active' : ''}" 
-                   onclick="selectVibeImage('${slider.id}', ${idx})">
-                <img src="${img}" alt="">
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="nextStep()">${t('vibe.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-function renderContact() {
-  return `
-    <h1>${t('contact.title')}</h1>
-    <p class="lead">${t('contact.text')}</p>
-    <input type="email" id="email-input" value="${state.email}" placeholder="${t('contact.placeholder')}" required>
-    <div class="buttons">
-      <button class="primary" onclick="saveEmail()">${t('contact.button')}</button>
-      <button class="secondary" onclick="prevStep()">${t('back')}</button>
-    </div>
-  `;
-}
-
-async function renderReport() {
-  const content = document.getElementById('content');
-  content.innerHTML = `
-    <div class="loading">
-      <div class="spinner"></div>
-      <h2>${t('report.loading')}</h2>
-    </div>
-  `;
-  
-  try {
-    const aiReport = await generateAIBrief();
-    displayReport(aiReport);
-  } catch (error) {
-    console.error('AI failed:', error);
-    displayReport(generateFallback());
-  }
-}
-
-function displayReport(briefText) {
-  const content = document.getElementById('content');
-  const projectName = state.project || 'Your Project';
-  const date = new Date().toLocaleDateString(currentLang, { year: 'numeric', month: 'long', day: 'numeric' });
-  
-  content.innerHTML = `
-    <div class="report-hero">
-      <h1>${projectName}</h1>
-      ${state.name ? `<div class="subtitle">${state.name}</div>` : ''}
-      <div class="date">${date}</div>
-    </div>
-    
-    <div class="report-brief">
-      ${briefText.split('\n\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')}
-    </div>
-    
-    <div class="report-cta">
-      <h3>${t('report.ctaTitle')}</h3>
-      <div class="quote-closing">"${t('report.ctaQuote')}"</div>
-      <p>${t('report.ctaText')}</p>
-      <div class="buttons">
-        <button class="primary" onclick="sendEmail()">${t('report.buttons.email')}</button>
-        <button class="secondary" onclick="downloadPDF()">${t('report.buttons.pdf')}</button>
-        <button class="secondary" onclick="restart()">${t('report.buttons.restart')}</button>
-      </div>
-    </div>
-  `;
-}
-
-function bindEvents() {
-  const options = document.querySelectorAll('.option');
-  options.forEach(opt => {
-    opt.addEventListener('click', function() {
-      const id = this.getAttribute('data-id');
-      if ([3,5,7,8].includes(currentStep)) {
-        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-        this.classList.add('selected');
-        if (currentStep === 3) state.core = id;
-        if (currentStep === 5) state.time = id;
-        if (currentStep === 7) state.location = id;
-        if (currentStep === 8) state.timing = id;
-      } else if ([4,6].includes(currentStep)) {
-        const isSelected = this.classList.contains('selected');
-        if (isSelected) {
-          if (currentStep === 4) state.intent = state.intent.filter(i => i !== id);
-          if (currentStep === 6) state.where = state.where.filter(w => w !== id);
-          this.classList.remove('selected');
+// ═══════════════════════════════════════════════════════
+// EVENT BINDING
+// ═══════════════════════════════════════════════════════
+function bindOpts(){
+  document.querySelectorAll('.opt[data-field]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const id=el.dataset.id, field=el.dataset.field, multi=el.dataset.multi==='true';
+      if(multi){
+        if(el.classList.contains('sel')){
+          S[field]=S[field].filter(x=>x!==id);
+          el.classList.remove('sel');
         } else {
-          if (currentStep === 4 && state.intent.length < 2) {
-            state.intent.push(id);
-            this.classList.add('selected');
-          } else if (currentStep === 6 && state.where.length < 2) {
-            state.where.push(id);
-            this.classList.add('selected');
-          } else {
-            alert(t('pickMax'));
-          }
+          if(S[field].length>=2){alert(t('maxTwo'));return;}
+          S[field].push(id);
+          el.classList.add('sel');
         }
+      } else {
+        document.querySelectorAll(`.opt[data-field="${field}"]`).forEach(x=>x.classList.remove('sel'));
+        S[field]=id;
+        el.classList.add('sel');
       }
     });
   });
 }
-
-function saveName() {
-  state.name = document.getElementById('name-input').value.trim();
-  nextStep();
-}
-
-function saveProject() {
-  state.project = document.getElementById('project-input').value.trim();
-  nextStep();
-}
-
-function validateCore() {
-  if (!state.core) { alert(t('pickOne')); return; }
-  nextStep();
-}
-
-function validateIntent() {
-  if (state.intent.length === 0) { alert(t('pickOne')); return; }
-  nextStep();
-}
-
-function validateTime() {
-  if (!state.time) { alert(t('pickOne')); return; }
-  nextStep();
-}
-
-function validateWhere() {
-  if (state.where.length === 0) { alert(t('pickOne')); return; }
-  nextStep();
-}
-
-function validateLocation() {
-  if (!state.location) { alert(t('pickOne')); return; }
-  nextStep();
-}
-
-function validateTiming() {
-  if (!state.timing) { alert(t('pickOne')); return; }
-  nextStep();
-}
-
-function updateSlider(input) {
-  const key = input.getAttribute('data-key');
-  state.sliders[key] = parseInt(input.value);
-}
-
-function selectVibeImage(sliderId, imageIdx) {
-  state.visuals[sliderId] = imageIdx;
-  render();
-}
-
-function saveEmail() {
-  const email = document.getElementById('email-input').value.trim();
-  if (!email || !email.includes('@')) {
-    alert(t('emailInvalid'));
-    return;
-  }
-  state.email = email;
-  nextStep();
-}
-
-async function generateAIBrief() {
-  const vibeLabels = {
-    calm: ['calme', 'vivant'],
-    present: ['distant', 'proche'],
-    rich: ['épuré', 'texturé']
-  };
-  
-  const selectedVibes = Object.entries(state.sliders).map(([key, val]) => {
-    const idx = val < 50 ? 0 : 1;
-    return vibeLabels[key][idx];
-  }).join(', ');
-  
-  const langMap = { fr: 'français', en: 'English', es: 'español', ca: 'català' };
-  
-  const prompt = `Tu es Marina, photographe professionnelle basée à Sitges (Barcelone).
-
-CLIENT :
-Nom : ${state.name || '—'}
-Projet : ${state.project || 'Sans nom'}
-Type : ${state.core || '—'}
-Priorités : ${state.intent.join(', ')}
-Usage : ${state.time || '—'}
-Canaux : ${state.where.join(', ')}
-Lieu : ${state.location || '—'}
-Timing : ${state.timing || '—'}
-Ambiance visuelle : ${selectedVibes}
-
-Écris un brief photographique en ${langMap[currentLang]}, 180-220 mots max.
-
-TON : Photographe pro, direct, chaleureux. Première personne (je).
-
-STRUCTURE (3 paragraphes sans titres) :
-1. Synthèse du projet (2-3 phrases)
-2. Mon approche photographique concrète - mentionne NATURELLEMENT les ambiances sélectionnées (3-4 phrases)
-3. Prochaine étape avec lieu + timing (2 phrases)
-
-INTERDICTIONS :
-❌ Pas de liste à puces
-❌ Pas de titres
-❌ Pas de nombres d'images
-❌ Pas de prix
-❌ Pas d'enthousiasme excessif
-
-Format : 3 paragraphes simples séparés par un saut de ligne.`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 600,
-      messages: [{ role: 'user', content: prompt }]
-    })
+function initSliders(){
+  document.querySelectorAll('input[type=range]').forEach(el=>{
+    el.style.setProperty('--p',el.value+'%');
   });
-
-  if (!response.ok) throw new Error('API failed');
-  const data = await response.json();
-  return data.content[0].text;
 }
 
-function generateFallback() {
-  const projectName = state.project || (currentLang === 'fr' ? 'Votre projet' : 'Your project');
-  return `${projectName} - un projet de photographie ${state.core || ''} pour ${state.where.join(' et ')}.\n\nJe vais photographier avec une approche ${state.sliders.calm < 50 ? 'calme et posée' : 'vivante et dynamique'}, ${state.sliders.present < 50 ? 'en gardant mes distances' : 'en me rapprochant des détails'}, ${state.sliders.rich < 50 ? 'avec une esthétique épurée' : 'en valorisant les textures'}.\n\nLieu : ${state.location || '—'}. Timing : ${state.timing || '—'}. On en discute pour affiner les détails.`;
+// ═══════════════════════════════════════════════════════
+// SAVE / VALIDATE
+// ═══════════════════════════════════════════════════════
+const esc=s=>(s||'').replace(/"/g,'&quot;');
+function svName(){S.name=document.getElementById('f-name').value.trim();fwd();}
+function svProject(){S.project=document.getElementById('f-proj').value.trim();fwd();}
+function valSingle(f){if(!S[f]){alert(t('mustPick'));return;}fwd();}
+function valMulti(f,max){if(!S[f].length){alert(t('mustPick'));return;}fwd();}
+function svEmail(){
+  const v=document.getElementById('f-email').value.trim();
+  if(!v||!v.includes('@')||!v.includes('.')){alert(t('emailErr'));return;}
+  S.email=v;
+  showReport();
 }
 
-function sendEmail() {
-  const subject = encodeURIComponent(`Brief : ${state.project || 'photo'}`);
-  const body = encodeURIComponent(`Bonjour Marina,\n\nJe viens de compléter le brief pour mon projet.\n\nEmail : ${state.email}\n\nCordialement,\n${state.name || ''}`);
-  window.location.href = `mailto:hello@marinaphoto.es?subject=${subject}&body=${body}`;
+// ═══════════════════════════════════════════════════════
+// RAPPORT — affichage loading + appel AI
+// ═══════════════════════════════════════════════════════
+function showReport(){
+  step=10; upProg();
+  const c=document.getElementById('card');
+  c.innerHTML=`<div class="loading"><div class="spinner"></div><h2>${t('report.loading')}</h2><p>${t('report.loadSub')}</p></div>`;
+  callAI().then(txt=>{S.briefText=txt;renderReport(txt);}).catch(()=>{const fb=fallback();S.briefText=fb;renderReport(fb);});
 }
 
-function downloadPDF() {
-  alert('PDF generation coming soon...');
+// ═══════════════════════════════════════════════════════
+// PROMPT AI — riche, traduit, ancré dans les réponses
+// ═══════════════════════════════════════════════════════
+async function callAI(){
+  // Labels traduits selon la langue choisie
+  const TYPES={
+    place:{fr:'lieu (hôtel, restaurant, architecture)',en:'place (hotel, restaurant, architecture)',es:'lugar (hotel, restaurante, arquitectura)',ca:'lloc (hotel, restaurant, arquitectura)'},
+    story:{fr:'histoire / marque (artisan, projet, entreprise)',en:'story / brand (artisan, project, business)',es:'historia / marca (artesano, proyecto, empresa)',ca:'història / marca (artesà, projecte, empresa)'},
+    moment:{fr:'moment (famille, couple, événement)',en:'moment (family, couple, event)',es:'momento (familia, pareja, evento)',ca:'moment (família, parella, esdeveniment)'}
+  };
+  const PRIOS={
+    auth:{fr:'authenticité',en:'authenticity',es:'autenticidad',ca:'autenticitat'},
+    brand:{fr:'cohérence de marque',en:'brand coherence',es:'coherencia de marca',ca:'coherència de marca'},
+    singular:{fr:'singularité du regard',en:'singularity of vision',es:'singularidad de la mirada',ca:'singularitat de la mirada'},
+    trust:{fr:'crédibilité',en:'credibility',es:'credibilidad',ca:'credibilitat'}
+  };
+  const USAGE={
+    launch:{fr:'lancement ponctuel avec deadline',en:'one-time launch with deadline',es:'lanzamiento puntual con fecha límite',ca:'llançament puntual amb data límit'},
+    base:{fr:'constitution d\'une bibliothèque d\'images durable',en:'building a long-term image library',es:'construcción de una biblioteca de imágenes duradera',ca:'constitució d\'una biblioteca d\'imatges duradora'},
+    series:{fr:'série régulière dans le temps',en:'ongoing series over time',es:'serie regular en el tiempo',ca:'sèrie regular en el temps'}
+  };
+  const CHAN={web:{fr:'site web',en:'website',es:'web',ca:'web'},social:{fr:'réseaux sociaux',en:'social media',es:'redes sociales',ca:'xarxes socials'},press:{fr:'presse/éditorial',en:'press/editorial',es:'prensa/editorial',ca:'premsa/editorial'},print:{fr:'print',en:'print',es:'impresión',ca:'impressió'}};
+  const LOC={sitges:{fr:'Sitges/Garraf',en:'Sitges/Garraf',es:'Sitges/Garraf',ca:'Sitges/Garraf'},bcn:{fr:'Barcelone',en:'Barcelona',es:'Barcelona',ca:'Barcelona'},cat:{fr:'Catalogne',en:'Catalonia',es:'Cataluña',ca:'Catalunya'},other:{fr:'hors Catalogne',en:'outside Catalonia',es:'fuera de Cataluña',ca:'fora de Catalunya'}};
+  const TIM={fixed:{fr:'date fixée',en:'fixed date',es:'fecha fija',ca:'data fixada'},approx:{fr:'période flexible',en:'flexible period',es:'período flexible',ca:'període flexible'},flex:{fr:'sans urgence',en:'no urgency',es:'sin urgencia',ca:'sense urgència'}};
+  const VIBE_LO={calm:{fr:'calme et contemplatif',en:'calm and contemplative',es:'calmo y contemplativo',ca:'calmat i contemplatiu'},present:{fr:'distant avec contexte large',en:'distant with wide context',es:'distante con contexto amplio',ca:'distant amb context ampli'},rich:{fr:'épuré et minimaliste',en:'clean and minimal',es:'limpio y minimalista',ca:'net i minimalista'}};
+  const VIBE_HI={calm:{fr:'vivant et dynamique',en:'lively and dynamic',es:'vivo y dinámico',ca:'viu i dinàmic'},present:{fr:'intime et proche des détails',en:'intimate and close to details',es:'íntimo y cercano a los detalles',ca:'íntim i proper als detalls'},rich:{fr:'riche en textures et matières',en:'rich in textures and materials',es:'rico en texturas y materiales',ca:'ric en textures i materials'}};
+
+  const lv=(map,id)=>map[id]?.[L]||id;
+  const vDesc=(id,val)=>{
+    if(val<35) return lv(VIBE_LO,id);
+    if(val>65) return lv(VIBE_HI,id);
+    return L==='fr'?'équilibré':L==='es'?'equilibrado':L==='ca'?'equilibrat':'balanced';
+  };
+
+  const LANG_NAME={fr:'français',en:'English',es:'español',ca:'català'};
+
+  // Instructions dans la langue cible pour que l'AI réponde naturellement
+  const INSTRUCTIONS={
+    fr:{
+      role:'Tu es Marina, photographe professionnelle basée à Sitges, Barcelone.',
+      infer:'Si le nom du projet évoque un secteur précis (hôtellerie, restauration, viticulture, artisanat, immobilier, événement, famille…), utilise ce contexte pour rendre le brief concret et ancré dans la réalité du projet.',
+      task:`Rédige un brief photographique EN FRANÇAIS, 180–220 mots, en 3 paragraphes (sans titre, sans liste).`,
+      p1:'Paragraphe 1 (2–3 phrases) : Montre que tu as compris le projet. Commence par le nom du projet. Déduis ce que tu peux du nom (ex : "Bodega Garraf" → vignoble/vin, "Can Ros" → mas/hôtel rural, "Terrassa Sud" → commerce local). Mentionne le type, les priorités et l\'usage naturellement.',
+      p2:'Paragraphe 2 (3–4 phrases) : Décris ton approche photographique concrète. Traduis les curseurs en intentions visuelles réelles et spécifiques au secteur déduit : lumière, cadrage, distance, rythme. Ex : pour un restaurant, parle de la lumière sur les assiettes, des gestes en cuisine, de l\'atmosphère du service.',
+      p3:'Paragraphe 3 (2 phrases) : Lieu et planning brièvement. Propose un échange direct.',
+      rules:'INTERDICTIONS : pas de liste, pas de titre, pas de prix, pas de nombre d\'images, pas d\'enthousiasme forcé, pas de "je suis ravie".'
+    },
+    en:{
+      role:'You are Marina, a professional photographer based in Sitges, Barcelona.',
+      infer:'If the project name suggests a specific sector (hospitality, food & beverage, wine, crafts, real estate, events, family…), use that context to make the brief concrete and grounded in the project\'s reality.',
+      task:`Write a photography brief IN ENGLISH, 180–220 words, in 3 paragraphs (no titles, no bullet points).`,
+      p1:'Paragraph 1 (2–3 sentences): Show that you understood the project. Start with the project name. Infer what you can from it (e.g. "Garraf Winery" → vineyard/wine, "Can Ros" → rural hotel/farmhouse, "Terrassa Sud" → local business). Mention the type, priorities and intended use naturally.',
+      p2:'Paragraph 2 (3–4 sentences): Describe your photographic approach concretely. Translate the sliders into real, sector-specific visual intentions: light, framing, distance, rhythm. E.g. for a restaurant, talk about light on the plates, kitchen gestures, the atmosphere of service.',
+      p3:'Paragraph 3 (2 sentences): Location and timeline briefly. Propose a direct next conversation.',
+      rules:'RULES: no bullet points, no titles, no prices, no image counts, no forced enthusiasm, no "I\'m so excited".'
+    },
+    es:{
+      role:'Eres Marina, fotógrafa profesional con base en Sitges, Barcelona.',
+      infer:'Si el nombre del proyecto evoca un sector concreto (hostelería, restauración, viticultura, artesanía, inmobiliaria, eventos, familia…), usa ese contexto para hacer el brief concreto y anclado en la realidad del proyecto.',
+      task:`Redacta un brief fotográfico EN ESPAÑOL, 180–220 palabras, en 3 párrafos (sin títulos, sin listas).`,
+      p1:'Párrafo 1 (2–3 frases): Muestra que entendiste el proyecto. Empieza por el nombre del proyecto. Deduce lo que puedas del nombre (ej: "Bodega Garraf" → viñedo/vino, "Can Ros" → masía/hotel rural). Menciona el tipo, las prioridades y el uso de forma natural.',
+      p2:'Párrafo 2 (3–4 frases): Describe tu enfoque fotográfico de forma concreta. Traduce los cursores en intenciones visuales reales y específicas al sector deducido: luz, encuadre, distancia, ritmo.',
+      p3:'Párrafo 3 (2 frases): Lugar y planificación brevemente. Propón un intercambio directo.',
+      rules:'PROHIBICIONES: sin listas, sin títulos, sin precios, sin número de imágenes, sin entusiasmo forzado.'
+    },
+    ca:{
+      role:'Ets la Marina, fotògrafa professional amb base a Sitges, Barcelona.',
+      infer:'Si el nom del projecte evoca un sector concret (hostaleria, restauració, viticultura, artesania, immobiliària, esdeveniments, família…), fes servir aquest context per fer el brief concret i ancorat en la realitat del projecte.',
+      task:`Redacta un brief fotogràfic EN CATALÀ, 180–220 paraules, en 3 paràgrafs (sense títols, sense llistes).`,
+      p1:'Paràgraf 1 (2–3 frases): Mostra que has entès el projecte. Comença pel nom del projecte. Dedueix el que puguis del nom (ex: "Celler Garraf" → vinya/vi, "Can Ros" → masia/hotel rural). Esmenta el tipus, les prioritats i l\'ús de forma natural.',
+      p2:'Paràgraf 2 (3–4 frases): Descriu el teu enfocament fotogràfic de forma concreta. Tradueix els controls en intencions visuals reals i específiques al sector deduït: llum, enquadrament, distància, ritme.',
+      p3:'Paràgraf 3 (2 frases): Lloc i planificació breument. Proposa un intercanvi directe.',
+      rules:'PROHIBICIONS: sense llistes, sense títols, sense preus, sense nombre d\'imatges, sense entusiasme forçat.'
+    }
+  };
+
+  const I=INSTRUCTIONS[L]||INSTRUCTIONS.en;
+  const prompt=`${I.role}
+
+${I.infer}
+
+QUESTIONNAIRE DATA:
+- Client name: ${S.name||'—'}
+- Project name: ${S.project||'—'}
+- Project type: ${lv(TYPES,S.type)}
+- Visual priorities: ${S.priorities.map(p=>lv(PRIOS,p)).join(', ')||'—'}
+- Intended use: ${lv(USAGE,S.usage)}
+- Distribution channels: ${S.channels.map(c=>lv(CHAN,c)).join(', ')||'—'}
+- Shoot location: ${lv(LOC,S.location)}
+- Timeline: ${lv(TIM,S.timing)}
+- Energy slider (0=calm, 100=lively) value ${S.calm}/100 → ${vDesc('calm',S.calm)}
+- Proximity slider (0=distant, 100=intimate) value ${S.present}/100 → ${vDesc('present',S.present)}
+- Aesthetic slider (0=minimal, 100=textured) value ${S.rich}/100 → ${vDesc('rich',S.rich)}
+
+${I.task}
+
+${I.p1}
+
+${I.p2}
+
+${I.p3}
+
+${I.rules}`;
+
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})
+  });
+  if(!r.ok) throw new Error('API');
+  const d=await r.json();
+  return d.content[0].text;
 }
 
-function restart() {
-  if (confirm('Restart?')) {
-    currentStep = 0;
-    state = {
-      name: '', project: '', core: null, intent: [], time: null,
-      where: [], location: null, timing: null,
-      sliders: { calm: 50, present: 50, rich: 50 },
-      visuals: { calm: 1, present: 1, rich: 1 },
-      email: ''
-    };
-    render();
+// Fallback entièrement traduit avec labels lisibles (jamais d'IDs bruts)
+function fallback(){
+  const proj=S.project;
+  const c=S.calm, p=S.present, r=S.rich;
+
+  // Labels traduits pour chaque valeur
+  const TYPE={
+    fr:{place:'lieu',story:'narration de marque',moment:'moment de vie'},
+    en:{place:'place',story:'brand story',moment:'life moment'},
+    es:{place:'lugar',story:'historia de marca',moment:'momento de vida'},
+    ca:{place:'lloc',story:'història de marca',moment:'moment de vida'}
+  };
+  const PRIO={
+    fr:{auth:'authenticité',brand:'cohérence visuelle',singular:'singularité',trust:'crédibilité'},
+    en:{auth:'authenticity',brand:'visual coherence',singular:'singularity',trust:'credibility'},
+    es:{auth:'autenticidad',brand:'coherencia visual',singular:'singularidad',trust:'credibilidad'},
+    ca:{auth:'autenticitat',brand:'coherència visual',singular:'singularitat',trust:'credibilitat'}
+  };
+  const CHAN={
+    fr:{web:'site web',social:'réseaux sociaux',press:'presse',print:'print'},
+    en:{web:'website',social:'social media',press:'press',print:'print'},
+    es:{web:'web',social:'redes sociales',press:'prensa',print:'impresión'},
+    ca:{web:'web',social:'xarxes socials',press:'premsa',print:'impressió'}
+  };
+  const LOC={
+    fr:{sitges:'à Sitges',bcn:'à Barcelone',cat:'en Catalogne',other:'hors Catalogne'},
+    en:{sitges:'in Sitges',bcn:'in Barcelona',cat:'in Catalonia',other:'outside Catalonia'},
+    es:{sitges:'en Sitges',bcn:'en Barcelona',cat:'en Cataluña',other:'fuera de Cataluña'},
+    ca:{sitges:'a Sitges',bcn:'a Barcelona',cat:'a Catalunya',other:'fora de Catalunya'}
+  };
+  const TIM={
+    fr:{fixed:'à date fixée',approx:'approximatif',flex:'flexible'},
+    en:{fixed:'fixed',approx:'approximate',flex:'flexible'},
+    es:{fixed:'con fecha fija',approx:'aproximado',flex:'flexible'},
+    ca:{fixed:'amb data fixada',approx:'aproximat',flex:'flexible'}
+  };
+
+  const tl=S.type?TYPE[L]?.[S.type]||S.type:'';
+  const prios=S.priorities.map(x=>PRIO[L]?.[x]||x);
+  const chans=S.channels.map(x=>CHAN[L]?.[x]||x);
+  const locStr=LOC[L]?.[S.location]||'';
+  const timStr=TIM[L]?.[S.timing]||'';
+
+  const sep={fr:' et ',en:' and ',es:' y ',ca:' i '}[L]||' & ';
+
+  const FB={
+    fr:`${proj||'Ce projet'} est un projet de photographie ${tl}, destiné à ${chans.join(sep)||'vos supports'}. Je comprends l'essentiel : vous cherchez ${prios.join(sep)||'un résultat authentique'}.\n\nMon approche sera ${c<40?'calme et posée, des images contemplatives qui laissent respirer':c>60?'vivante et rythmée, avec de l\'énergie dans chaque cadre':'équilibrée entre calme et présence'}. Je vais travailler ${p<40?'à distance pour donner du contexte et de la profondeur':p>60?'au plus près, attentive aux détails, aux matières, aux gestes':'en alternant vues d\'ensemble et détails'}. Esthétiquement, je privilégie ${r<40?'l\'épure — des cadrages nets, peu d\'éléments, de l\'espace':r>60?'la richesse des textures et des ambiances, des images denses':'un équilibre entre sobriété et présence visuelle'}.\n\nLa séance est prévue ${locStr}, avec un planning ${timStr}. Discutons ensemble pour affiner la proposition.`,
+    en:`${proj||'This project'} is a ${tl} photography project, intended for ${chans.join(sep)||'your platforms'}. I understand the core: you're after ${prios.join(sep)||'authentic results'}.\n\nMy approach will be ${c<40?'calm and contemplative — images that breathe, that let the eye rest':c>60?'lively and energetic, with rhythm in every frame':'balanced between stillness and presence'}. I'll work ${p<40?'at a distance to convey context and depth':p>60?'up close, attentive to details, textures, gestures':'alternating wide views with intimate details'}. Aesthetically, I'll lean toward ${r<40?'clean, minimal framing — space, light, simplicity':r>60?'rich textures and layered atmosphere, dense and evocative images':'a balance between restraint and visual depth'}.\n\nThe shoot is planned ${locStr}, with a ${timStr} timeline. Let's talk to refine the details.`,
+    es:`${proj||'Este proyecto'} es un proyecto de fotografía ${tl}, destinado a ${chans.join(sep)||'tus plataformas'}. Entiendo lo esencial: buscas ${prios.join(sep)||'resultados auténticos'}.\n\nMi enfoque será ${c<40?'calmo y contemplativo — imágenes que respiran, que dejan reposar la mirada':c>60?'vivo y dinámico, con energía en cada encuadre':'equilibrado entre calma y presencia'}. Trabajaré ${p<40?'con distancia para transmitir contexto y profundidad':p>60?'muy cerca, atenta a los detalles, texturas y gestos':'alternando vistas generales con detalles íntimos'}. Estéticamente, privilegiaré ${r<40?'la limpieza — encuadres netos, pocos elementos, espacio':r>60?'la riqueza de texturas y ambientes, imágenes densas':'un equilibrio entre sobriedad y presencia visual'}.\n\nLa sesión está prevista ${locStr}, con una planificación ${timStr}. Hablemos para afinar la propuesta.`,
+    ca:`${proj||'Aquest projecte'} és un projecte de fotografia ${tl}, destinat a ${chans.join(sep)||'les teves plataformes'}. Entenc l'essencial: busques ${prios.join(sep)||'resultats autèntics'}.\n\nEl meu enfocament serà ${c<40?'calmat i contemplatiu — imatges que respiren, que deixen reposar la mirada':c>60?'viu i dinàmic, amb energia a cada enquadrament':'equilibrat entre calma i presència'}. Treballaré ${p<40?'amb distància per transmetre context i profunditat':p>60?'molt a prop, atenta als detalls, textures i gestos':'alternant vistes generals amb detalls íntims'}. Estèticament, privilegiaré ${r<40?'l\'epuré — enquadraments nets, pocs elements, espai':r>60?'la riquesa de textures i atmosferes, imatges denses':'un equilibri entre sobrietat i presència visual'}.\n\nLa sessió és prevista ${locStr}, amb una planificació ${timStr}. Parlem per afinar la proposta.`
+  };
+  return FB[L]||FB.en;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER RAPPORT
+// ═══════════════════════════════════════════════════════
+function renderReport(txt){
+  const c=document.getElementById('card');
+  const proj=S.project||(L==='fr'?'Votre projet':L==='es'?'Tu proyecto':L==='ca'?'El teu projecte':'Your project');
+  const locale={fr:'fr-FR',en:'en-GB',es:'es-ES',ca:'ca-ES'}[L]||'en-GB';
+  const date=new Date().toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
+  const paras=txt.split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('');
+  c.innerHTML=`
+    <div class="rpt-hero">
+      <h1>${proj}</h1>
+      ${S.name?`<div class="client">${S.name}</div>`:''}
+      <div class="rdate">${date}</div>
+    </div>
+    <div class="rpt-body">${paras}</div>
+    <div class="rpt-cta">
+      <h2>${t('report.ctaTitle')}</h2>
+      <div class="closing-q">"${t('report.ctaQuote')}"</div>
+      <p>${t('report.ctaText')}</p>
+      <div class="cta-btns">
+        <button class="bp" onclick="doEmail()">${t('report.btnEmail')}</button>
+        <button class="bs" onclick="doRdv()">${t('report.btnRdv')}</button>
+        <button class="bs" onclick="doPDF()">${t('report.btnPdf')}</button>
+        <button class="bs" onclick="doRestart()">${t('report.btnRestart')}</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════
+function doEmail(){
+  const NL='\n';
+
+  // Labels lisibles pour les données du formulaire
+  const TYPE_L={fr:{place:'Lieu',story:'Narration / Marque',moment:'Moment'},en:{place:'Place',story:'Brand story',moment:'Moment'},es:{place:'Lugar',story:'Historia / Marca',moment:'Momento'},ca:{place:'Lloc',story:'Història / Marca',moment:'Moment'}};
+  const PRIO_L={fr:{auth:'Authenticité',brand:'Cohérence',singular:'Singularité',trust:'Crédibilité'},en:{auth:'Authenticity',brand:'Coherence',singular:'Singularity',trust:'Credibility'},es:{auth:'Autenticidad',brand:'Coherencia',singular:'Singularidad',trust:'Credibilidad'},ca:{auth:'Autenticitat',brand:'Coherència',singular:'Singularitat',trust:'Credibilitat'}};
+  const CHAN_L={fr:{web:'Site web',social:'Réseaux sociaux',press:'Presse',print:'Print'},en:{web:'Website',social:'Social media',press:'Press',print:'Print'},es:{web:'Web',social:'Redes sociales',press:'Prensa',print:'Print'},ca:{web:'Web',social:'Xarxes socials',press:'Premsa',print:'Print'}};
+  const LOC_L={fr:{sitges:'Sitges / Garraf',bcn:'Barcelone',cat:'Catalogne',other:'Hors Catalogne'},en:{sitges:'Sitges / Garraf',bcn:'Barcelona',cat:'Catalonia',other:'Outside Catalonia'},es:{sitges:'Sitges / Garraf',bcn:'Barcelona',cat:'Cataluña',other:'Fuera de Cataluña'},ca:{sitges:'Sitges / Garraf',bcn:'Barcelona',cat:'Catalunya',other:'Fora de Catalunya'}};
+  const TIM_L={fr:{fixed:'Date fixée',approx:'Période approximative',flex:'Flexible'},en:{fixed:'Fixed date',approx:'Approximate period',flex:'Flexible'},es:{fixed:'Fecha fija',approx:'Período aproximado',flex:'Flexible'},ca:{fixed:'Data fixada',approx:'Període aproximat',flex:'Flexible'}};
+  const VIBE_L={fr:['Calme','Équilibré','Vivant'],en:['Calm','Balanced','Lively'],es:['Calmo','Equilibrado','Vivo'],ca:['Calmat','Equilibrat','Viu']};
+  const vibeWord=(val)=>val<35?VIBE_L[L][0]:val>65?VIBE_L[L][2]:VIBE_L[L][1];
+
+  // Labels des champs selon la langue
+  const FIELDS={
+    fr:{proj:'Projet',type:'Type',prio:'Priorités',usage:'Usage',chan:'Diffusion',loc:'Lieu',tim:'Planning',calm:'Énergie',pres:'Proximité',rich:'Esthétique',email:'Email client'},
+    en:{proj:'Project',type:'Type',prio:'Priorities',usage:'Use',chan:'Distribution',loc:'Location',tim:'Timeline',calm:'Energy',pres:'Proximity',rich:'Aesthetic',email:'Client email'},
+    es:{proj:'Proyecto',type:'Tipo',prio:'Prioridades',usage:'Uso',chan:'Difusión',loc:'Lugar',tim:'Planificación',calm:'Energía',pres:'Proximidad',rich:'Estética',email:'Email cliente'},
+    ca:{proj:'Projecte',type:'Tipus',prio:'Prioritats',usage:'Ús',chan:'Difusió',loc:'Lloc',tim:'Planificació',calm:'Energia',pres:'Proximitat',rich:'Estètica',email:'Email client'}
+  };
+  const F=FIELDS[L]||FIELDS.en;
+
+  const subj=t('emailSubj')+': '+(S.project||'—');
+
+  const formBlock=[
+    `${F.proj} : ${S.project||'—'}`,
+    `${F.type} : ${TYPE_L[L]?.[S.type]||'—'}`,
+    `${F.prio} : ${S.priorities.map(x=>PRIO_L[L]?.[x]||x).join(', ')||'—'}`,
+    `${F.usage} : ${({launch:{fr:'Lancement',en:'Launch',es:'Lanzamiento',ca:'Llançament'},base:{fr:'Base long terme',en:'Long-term library',es:'Biblioteca duradera',ca:'Biblioteca duradora'},series:{fr:'Série continue',en:'Ongoing series',es:'Serie continua',ca:'Sèrie contínua'}}[S.usage]?.[L])||'—'}`,
+    `${F.chan} : ${S.channels.map(x=>CHAN_L[L]?.[x]||x).join(', ')||'—'}`,
+    `${F.loc} : ${LOC_L[L]?.[S.location]||'—'}`,
+    `${F.tim} : ${TIM_L[L]?.[S.timing]||'—'}`,
+    `${F.calm} : ${S.calm}/100 (${vibeWord(S.calm)})`,
+    `${F.pres} : ${S.present}/100 (${vibeWord(S.present)})`,
+    `${F.rich} : ${S.rich}/100 (${vibeWord(S.rich)})`,
+    `${F.email} : ${S.email||'—'}`
+  ].join(NL);
+
+  const body=
+    t('emailHi')+NL+NL+
+    t('emailIntro')+NL+NL+
+    '━━━ BRIEF ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
+    (S.briefText||fallback())+NL+NL+
+    '━━━ FORMULAIRE ━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
+    formBlock+NL+NL+
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
+    t('emailSign')+NL+(S.name||'');
+
+  window.location.href=`mailto:info@marinaphoto.es?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+}
+
+function doRdv(){
+  // Remplacer par l'URL Calendly réelle de Marina
+  window.open('https://calendly.com/marinaphoto/30min','_blank','noopener');
+}
+
+function doPDF(){
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+    const gold=[200,168,130], dark=[44,44,44], white=[254,254,254], cream=[245,241,232];
+    const W=210, margin=18;
+
+    // --- HEADER BAND ---
+    doc.setFillColor(...gold);
+    doc.rect(0,0,W,38,'F');
+    doc.setTextColor(...white);
+    doc.setFontSize(18);doc.setFont('helvetica','bold');
+    doc.text('MARINAPHOTO',margin,16);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');
+    doc.text('Photography Brief',margin,24);
+    const locale={fr:'fr-FR',en:'en-GB',es:'es-ES',ca:'ca-ES'}[L]||'en-GB';
+    const dateStr=new Date().toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
+    doc.text(dateStr,W-margin,24,{align:'right'});
+
+    // --- HERO PROJECT NAME ---
+    doc.setFillColor(...cream);
+    doc.rect(0,38,W,36,'F');
+    doc.setTextColor(...dark);
+    doc.setFontSize(26);doc.setFont('helvetica','bold');
+    const proj=S.project||(L==='fr'?'Votre projet':L==='es'?'Tu proyecto':L==='ca'?'El teu projecte':'Your project');
+    doc.text(proj,margin,58);
+    if(S.name){
+      doc.setFontSize(12);doc.setFont('helvetica','normal');
+      doc.setTextColor(...gold);
+      doc.text(S.name,margin,68);
+    }
+
+    // --- GOLD VERTICAL BAR + BRIEF TEXT ---
+    let y=88;
+    doc.setFillColor(...gold);
+    doc.rect(margin,y,2,140,'F');
+
+    doc.setTextColor(...dark);
+    doc.setFontSize(11);doc.setFont('helvetica','normal');
+    const briefTxt=S.briefText||fallback();
+    const lines=doc.splitTextToSize(briefTxt,W-margin*2-8);
+    lines.forEach(ln=>{
+      if(y>262){doc.addPage();y=20;
+        doc.setFillColor(...gold);doc.rect(margin,y,2,140,'F');
+      }
+      doc.text(ln,margin+6,y);
+      y+=6.2;
+    });
+
+    // --- CLOSING QUOTE BOX ---
+    y+=12;
+    if(y>250){doc.addPage();y=20;}
+    doc.setFillColor(...gold);
+    doc.roundedRect(margin,y,W-margin*2,24,4,4,'F');
+    doc.setTextColor(...white);
+    doc.setFontSize(10);doc.setFont('helvetica','italic');
+    doc.text('"'+t('report.ctaQuote')+'"',W/2,y+10,{align:'center',maxWidth:W-margin*2-8});
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+    doc.text(t('report.ctaText'),W/2,y+18,{align:'center',maxWidth:W-margin*2-8});
+
+    // --- FOOTER ---
+    const FY=285;
+    doc.setFillColor(...dark);
+    doc.rect(0,FY-2,W,14,'F');
+    doc.setTextColor(...white);
+    doc.setFontSize(9);
+    doc.setFont('helvetica','bold');doc.text('MARINAPHOTO',margin,FY+5);
+    doc.setFont('helvetica','normal');doc.text('info@marinaphoto.es',W/2,FY+5,{align:'center'});
+    doc.text('Sitges — Barcelona',W-margin,FY+5,{align:'right'});
+
+    const fn=(t('pdfFilename')+'-'+(S.project||'project').replace(/[^a-z0-9]/gi,'-').toLowerCase()+'.pdf');
+    doc.save(fn);
+  }catch(e){
+    console.error('PDF error:',e);
+    alert('PDF error: '+e.message);
   }
 }
 
-console.log('Marina Photography Brief - Ready!');
-render();
+function doRestart(){
+  if(!confirm(t('restartConfirm')))return;
+  step=0;
+  S.name='';S.project='';S.type=null;S.priorities=[];S.usage=null;
+  S.channels=[];S.location=null;S.timing=null;
+  S.calm=50;S.present=50;S.rich=50;S.email='';S.briefText='';
+  go();
+}
+
+// ═══════════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════════
+go();
 </script>
 </body>
 </html>
