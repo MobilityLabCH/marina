@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marinaphoto — Photography Brief</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --cream: #F5F1E8;
+  --gold: #C8A882;
+  --dark: #2C2C2C;
+  --white: #FEFEFE;
+  --gold-light: #E5D5BC;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 { font-size: clamp(28px, 5vw, 42px); margin-bottom: 16px; }
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.header {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 32px;
+  animation: fadeInDown 0.6s ease;
+}
+
+.brand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.brand small {
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.lang-switcher {
+  display: flex;
+  gap: 4px;
+  background: var(--white);
+  padding: 4px;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.08);
+}
+
+.lang-switcher button {
+  background: transparent;
+  border: none;
+  color: var(--dark);
+  opacity: 0.5;
+  padding: 8px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.lang-switcher button.active {
+  background: var(--gold);
+  color: var(--white);
+  opacity: 1;
+}
+
+.progress-container {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.08);
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--cream);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--dark);
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.time-remaining {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.card {
+  width: 100%;
+  max-width: 900px;
+  background: var(--white);
+  border-radius: 24px;
+  padding: clamp(32px, 5vw, 48px);
+  box-shadow: 0 8px 40px rgba(44, 44, 44, 0.12);
+  animation: fadeInUp 0.6s ease;
+  min-height: 500px;
+}
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.lead {
+  font-size: 18px;
+  opacity: 0.8;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.quote {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-style: italic;
+  color: var(--gold);
+  margin: 32px 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--cream);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  outline: none;
+  margin-top: 16px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--gold);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(200, 168, 130, 0.1);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.option {
+  padding: 20px 24px;
+  background: var(--cream);
+  border: 2px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.option:hover {
+  background: var(--white);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.08);
+}
+
+.option.selected {
+  background: var(--white);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(200, 168, 130, 0.1);
+}
+
+.option.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 28px;
+  height: 28px;
+  background: var(--gold);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.option-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.option-desc {
+  font-size: 14px;
+  opacity: 0.7;
+  line-height: 1.5;
+}
+
+.vibe-section {
+  margin: 32px 0;
+}
+
+.vibe-item {
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.vibe-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.vibe-label {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 8px;
+  -webkit-appearance: none;
+  background: rgba(200, 168, 130, 0.2);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(200, 168, 130, 0.4);
+}
+
+.vibe-images {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.vibe-image {
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.vibe-image.active {
+  opacity: 1;
+  border-color: var(--gold);
+}
+
+.vibe-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 16px 32px;
+  border-radius: 50px;
+  border: 2px solid var(--gold);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+}
+
+button.primary {
+  background: var(--gold);
+  color: var(--white);
+}
+
+button.primary:hover {
+  background: #B89970;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(200, 168, 130, 0.3);
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--gold);
+}
+
+button.secondary:hover {
+  background: var(--gold);
+  color: var(--white);
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--cream);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 24px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.report-hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  margin: -48px -48px 40px -48px;
+  background: linear-gradient(180deg, rgba(200, 168, 130, 0.05) 0%, transparent 100%);
+  border-radius: 24px 24px 0 0;
+}
+
+.report-hero h1 {
+  font-size: clamp(36px, 6vw, 72px);
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--dark) 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.report-hero .subtitle {
+  font-size: 18px;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.report-hero .date {
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+.report-brief {
+  border-left: 4px solid var(--gold);
+  border-radius: 0 20px 20px 0;
+  padding: 40px;
+  margin: 40px 0;
+  line-height: 1.9;
+  font-size: 18px;
+  background: var(--white);
+  box-shadow: 0 4px 24px rgba(44, 44, 44, 0.06);
+}
+
+.report-brief p {
+  margin-bottom: 24px;
+}
+
+.report-cta {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 24px;
+  padding: 48px;
+  margin-top: 48px;
+  text-align: center;
+  color: var(--white);
+}
+
+.report-cta h3 {
+  color: var(--white);
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.report-cta .quote-closing {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-style: italic;
+  margin: 24px 0;
+  opacity: 0.95;
+}
+
+.report-cta p {
+  color: var(--white);
+  font-size: 17px;
+  margin-bottom: 32px;
+  opacity: 0.95;
+  line-height: 1.7;
+}
+
+.report-cta button.primary {
+  background: var(--white);
+  color: var(--gold);
+  border-color: var(--white);
+}
+
+.report-cta button.primary:hover {
+  background: var(--cream);
+}
+
+.report-cta button.secondary {
+  background: transparent;
+  color: var(--white);
+  border-color: var(--white);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .card { padding: 24px 20px; }
+  .buttons { flex-direction: column; }
+  button { width: 100%; }
+  .vibe-images { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand-header">
+      <div class="brand">MARINAPHOTO<small>Photography Brief</small></div>
+      <div class="lang-switcher">
+        <button onclick="setLang('en')" id="btn-en">EN</button>
+        <button onclick="setLang('fr')" id="btn-fr" class="active">FR</button>
+        <button onclick="setLang('es')" id="btn-es">ES</button>
+        <button onclick="setLang('ca')" id="btn-ca">CA</button>
+      </div>
+    </div>
+    <div class="progress-container">
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <div class="progress-info">
+        <span id="step-label">—</span>
+        <span class="time-remaining" id="time-remaining">~3 min</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="content"></div>
+</div>
+<script>
+let currentStep = 0;
+let currentLang = 'fr';
+let state = {
+  name: '', project: '', core: null, intent: [], time: null,
+  where: [], location: null, timing: null,
+  sliders: { calm: 50, present: 50, rich: 50 },
+  visuals: { calm: 1, present: 1, rich: 1 },
+  email: ''
+};
+
+const vibeImages = {
+  calm: [
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400',
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400',
+    'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400'
+  ],
+  present: [
+    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=400',
+    'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=400',
+    'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400'
+  ],
+  rich: [
+    'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400',
+    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400',
+    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400'
+  ]
+};
+
+const translations = {
+  fr: {
+    steps: ['Intro', 'Vous', 'Projet', 'Type', 'Priorités', 'Usage', 'Canaux', 'Lieu', 'Timing', 'Ambiance', 'Contact', 'Brief'],
+    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 sec', '30 sec', '10 sec', 'Terminé'],
+    intro: {
+      quote: 'Je sais ce qu\'une image représente pour vous...',
+      title: '3 minutes pour comprendre votre projet.',
+      text: 'Quelques questions simples, des réponses instinctives. Je transforme ça en un brief clair qui nous guide.',
+      button: 'Commencer'
+    },
+    name: { title: 'Votre prénom', placeholder: 'Ex : Alex', button: 'Continuer' },
+    project: { title: 'Nom du projet', placeholder: 'Ex : Hôtel Casa Marina', button: 'Continuer' },
+    core: {
+      title: 'Votre projet, c\'est plutôt…',
+      options: [
+        { id: 'place', title: '🏠 Un lieu', desc: 'Faire ressentir l\'espace, la lumière, l\'atmosphère' },
+        { id: 'story', title: '📖 Une histoire', desc: 'Des gens, des gestes, une narration' },
+        { id: 'moment', title: '⏳ Un moment', desc: 'Capturer l\'essentiel, l\'instant' }
+      ],
+      button: 'Continuer'
+    },
+    intent: {
+      title: 'Ce qui compte le plus',
+      text: '1 ou 2 priorités',
+      options: [
+        { id: 'auth', title: 'Authenticité', desc: 'Vrai, présent, tangible' },
+        { id: 'brand', title: 'Cohérence', desc: 'Aligné avec votre identité' },
+        { id: 'fresh', title: 'Singularité', desc: 'Un regard unique, reconnaissable' },
+        { id: 'trust', title: 'Crédibilité', desc: 'Professionnel et humain' }
+      ],
+      button: 'Continuer'
+    },
+    time: {
+      title: 'Ces images vont servir…',
+      options: [
+        { id: 'moment', title: '📆 Un événement précis', desc: 'Lancement, campagne' },
+        { id: 'base', title: '🔁 Une base long-terme', desc: 'Réutilisable, durable' },
+        { id: 'series', title: '🌱 Une série continue', desc: 'Évolutif dans le temps' }
+      ],
+      button: 'Continuer'
+    },
+    where: {
+      title: 'Diffusion principale',
+      text: 'Max 2',
+      options: [
+        { id: 'web', title: 'Site web' },
+        { id: 'social', title: 'Réseaux sociaux' },
+        { id: 'editorial', title: 'Presse / éditorial' },
+        { id: 'print', title: 'Print' }
+      ],
+      button: 'Continuer'
+    },
+    location: {
+      title: 'Où se déroule la séance ?',
+      options: [
+        { id: 'sitges', title: '📍 Sitges et environs' },
+        { id: 'barcelona', title: '📍 Barcelone' },
+        { id: 'catalonia', title: '📍 Ailleurs en Catalogne' },
+        { id: 'other', title: '📍 En dehors' }
+      ],
+      button: 'Continuer'
+    },
+    timing: {
+      title: 'Quand avez-vous besoin des images ?',
+      options: [
+        { id: 'fixed', title: '📅 Date fixée' },
+        { id: 'approx', title: '📆 Période approximative' },
+        { id: 'flexible', title: '🌊 Flexible' }
+      ],
+      button: 'Continuer'
+    },
+    vibe: {
+      title: 'Comment je dois photographier',
+      text: 'Ajustez selon l\'ambiance souhaitée. Les images en dessous illustrent chaque extrême.',
+      sliders: [
+        { id: 'calm', left: '😌 Calme', right: '⚡ Vivant' },
+        { id: 'present', left: '👀 Distant', right: '🤍 Proche' },
+        { id: 'rich', left: '✂️ Épuré', right: '🧱 Texturé' }
+      ],
+      button: 'Continuer'
+    },
+    contact: {
+      title: 'Votre email',
+      text: 'Pour recevoir le brief',
+      placeholder: 'votre@email.com',
+      button: 'Voir le rapport'
+    },
+    report: {
+      loading: 'Génération de votre brief personnalisé...',
+      ctaTitle: 'Prochaine étape',
+      ctaQuote: 'Maintenant vous savez ce qu\'une image représente pour moi...',
+      ctaText: 'Discutons de votre projet. Je vous prépare une proposition sur mesure avec planning et tarifs.',
+      buttons: { email: 'Envoyer à Marina', pdf: 'Télécharger PDF', restart: 'Recommencer' }
+    },
+    back: 'Retour',
+    pickOne: 'Choisissez une option',
+    pickMax: 'Maximum 2 choix',
+    emailInvalid: 'Email invalide'
+  },
+  en: {
+    steps: ['Intro', 'You', 'Project', 'Type', 'Priorities', 'Use', 'Channels', 'Location', 'Timing', 'Vibe', 'Contact', 'Brief'],
+    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 sec', '30 sec', '10 sec', 'Done'],
+    intro: {
+      quote: 'I know what an image means to you...',
+      title: '3 minutes to understand your project.',
+      text: 'A few simple questions, instinctive answers. I turn that into a clear brief that guides us.',
+      button: 'Start'
+    },
+    name: { title: 'Your first name', placeholder: 'e.g. Alex', button: 'Continue' },
+    project: { title: 'Project name', placeholder: 'e.g. Casa Marina Hotel', button: 'Continue' },
+    core: {
+      title: 'Your project is mainly…',
+      options: [
+        { id: 'place', title: '🏠 A place', desc: 'Make people feel the space, light, atmosphere' },
+        { id: 'story', title: '📖 A story', desc: 'People, gestures, a narrative' },
+        { id: 'moment', title: '⏳ A moment', desc: 'Capture what matters, the instant' }
+      ],
+      button: 'Continue'
+    },
+    intent: {
+      title: 'What matters most',
+      text: '1 or 2 priorities',
+      options: [
+        { id: 'auth', title: 'Authenticity', desc: 'Real, present, tangible' },
+        { id: 'brand', title: 'Coherence', desc: 'Aligned with your identity' },
+        { id: 'fresh', title: 'Singularity', desc: 'A unique, recognizable eye' },
+        { id: 'trust', title: 'Credibility', desc: 'Professional and human' }
+      ],
+      button: 'Continue'
+    },
+    time: {
+      title: 'These images will serve…',
+      options: [
+        { id: 'moment', title: '📆 A specific event', desc: 'Launch, campaign' },
+        { id: 'base', title: '🔁 Long-term base', desc: 'Reusable, lasting' },
+        { id: 'series', title: '🌱 Ongoing series', desc: 'Evolving over time' }
+      ],
+      button: 'Continue'
+    },
+    where: {
+      title: 'Main distribution',
+      text: 'Max 2',
+      options: [
+        { id: 'web', title: 'Website' },
+        { id: 'social', title: 'Social media' },
+        { id: 'editorial', title: 'Press / editorial' },
+        { id: 'print', title: 'Print' }
+      ],
+      button: 'Continue'
+    },
+    location: {
+      title: 'Where will the shoot take place?',
+      options: [
+        { id: 'sitges', title: '📍 Sitges area' },
+        { id: 'barcelona', title: '📍 Barcelona' },
+        { id: 'catalonia', title: '📍 Elsewhere in Catalonia' },
+        { id: 'other', title: '📍 Outside' }
+      ],
+      button: 'Continue'
+    },
+    timing: {
+      title: 'When do you need the images?',
+      options: [
+        { id: 'fixed', title: '📅 Fixed date' },
+        { id: 'approx', title: '📆 Approximate period' },
+        { id: 'flexible', title: '🌊 Flexible' }
+      ],
+      button: 'Continue'
+    },
+    vibe: {
+      title: 'How should I photograph',
+      text: 'Adjust to match your desired vibe. Images below illustrate each extreme.',
+      sliders: [
+        { id: 'calm', left: '😌 Calm', right: '⚡ Lively' },
+        { id: 'present', left: '👀 Distant', right: '🤍 Close' },
+        { id: 'rich', left: '✂️ Minimal', right: '🧱 Textured' }
+      ],
+      button: 'Continue'
+    },
+    contact: {
+      title: 'Your email',
+      text: 'To receive the brief',
+      placeholder: 'your@email.com',
+      button: 'See report'
+    },
+    report: {
+      loading: 'Creating your personalized brief...',
+      ctaTitle: 'Next step',
+      ctaQuote: 'Now you know what an image means to me...',
+      ctaText: 'Let\'s discuss your project. I\'ll prepare a tailored proposal with timeline and pricing.',
+      buttons: { email: 'Send to Marina', pdf: 'Download PDF', restart: 'Restart' }
+    },
+    back: 'Back',
+    pickOne: 'Pick one',
+    pickMax: 'Maximum 2 choices',
+    emailInvalid: 'Invalid email'
+  },
+  es: {
+    steps: ['Intro', 'Usted', 'Proyecto', 'Tipo', 'Prioridades', 'Uso', 'Canales', 'Lugar', 'Timing', 'Vibra', 'Contacto', 'Brief'],
+    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 seg', '30 seg', '10 seg', 'Listo'],
+    intro: {
+      quote: 'Sé lo que una imagen representa para ti...',
+      title: '3 minutos para entender su proyecto.',
+      text: 'Algunas preguntas simples, respuestas instintivas. Lo transformo en un brief claro que nos guía.',
+      button: 'Empezar'
+    },
+    name: { title: 'Su nombre', placeholder: 'ej. Alex', button: 'Continuar' },
+    project: { title: 'Nombre del proyecto', placeholder: 'ej. Hotel Casa Marina', button: 'Continuar' },
+    core: {
+      title: 'Su proyecto es sobre todo…',
+      options: [
+        { id: 'place', title: '🏠 Un lugar', desc: 'Sentir el espacio, la luz, la atmósfera' },
+        { id: 'story', title: '📖 Una historia', desc: 'Personas, gestos, un relato' },
+        { id: 'moment', title: '⏳ Un momento', desc: 'Capturar lo esencial, el instante' }
+      ],
+      button: 'Continuar'
+    },
+    intent: {
+      title: 'Lo que más importa',
+      text: '1 o 2 prioridades',
+      options: [
+        { id: 'auth', title: 'Autenticidad', desc: 'Real, presente, tangible' },
+        { id: 'brand', title: 'Coherencia', desc: 'Alineado con su identidad' },
+        { id: 'fresh', title: 'Singularidad', desc: 'Una mirada única' },
+        { id: 'trust', title: 'Credibilidad', desc: 'Profesional y humano' }
+      ],
+      button: 'Continuar'
+    },
+    time: {
+      title: 'Estas imágenes servirán para…',
+      options: [
+        { id: 'moment', title: '📆 Un evento preciso', desc: 'Lanzamiento, campaña' },
+        { id: 'base', title: '🔁 Base largo plazo', desc: 'Reutilizable, duradero' },
+        { id: 'series', title: '🌱 Serie continua', desc: 'Evolución en el tiempo' }
+      ],
+      button: 'Continuar'
+    },
+    where: {
+      title: 'Difusión principal',
+      text: 'Máx 2',
+      options: [
+        { id: 'web', title: 'Web' },
+        { id: 'social', title: 'Redes sociales' },
+        { id: 'editorial', title: 'Prensa / editorial' },
+        { id: 'print', title: 'Impresión' }
+      ],
+      button: 'Continuar'
+    },
+    location: {
+      title: '¿Dónde se realiza la sesión?',
+      options: [
+        { id: 'sitges', title: '📍 Sitges y alrededores' },
+        { id: 'barcelona', title: '📍 Barcelona' },
+        { id: 'catalonia', title: '📍 Otra parte de Cataluña' },
+        { id: 'other', title: '📍 Fuera' }
+      ],
+      button: 'Continuar'
+    },
+    timing: {
+      title: '¿Cuándo necesita las imágenes?',
+      options: [
+        { id: 'fixed', title: '📅 Fecha fija' },
+        { id: 'approx', title: '📆 Período aproximado' },
+        { id: 'flexible', title: '🌊 Flexible' }
+      ],
+      button: 'Continuar'
+    },
+    vibe: {
+      title: 'Cómo debo fotografiar',
+      text: 'Ajuste según la vibra deseada. Las imágenes abajo ilustran cada extremo.',
+      sliders: [
+        { id: 'calm', left: '😌 Calmo', right: '⚡ Vivo' },
+        { id: 'present', left: '👀 Distante', right: '🤍 Cercano' },
+        { id: 'rich', left: '✂️ Limpio', right: '🧱 Texturado' }
+      ],
+      button: 'Continuar'
+    },
+    contact: {
+      title: 'Su email',
+      text: 'Para recibir el brief',
+      placeholder: 'su@email.com',
+      button: 'Ver informe'
+    },
+    report: {
+      loading: 'Creando su brief personalizado...',
+      ctaTitle: 'Próximo paso',
+      ctaQuote: 'Ahora sabe lo que una imagen representa para mí...',
+      ctaText: 'Hablemos de su proyecto. Le preparo una propuesta a medida con planificación y tarifas.',
+      buttons: { email: 'Enviar a Marina', pdf: 'Descargar PDF', restart: 'Reiniciar' }
+    },
+    back: 'Atrás',
+    pickOne: 'Elija una',
+    pickMax: 'Máximo 2 opciones',
+    emailInvalid: 'Email inválido'
+  },
+  ca: {
+    steps: ['Intro', 'Vostè', 'Projecte', 'Tipus', 'Prioritats', 'Ús', 'Canals', 'Lloc', 'Timing', 'Vibra', 'Contacte', 'Brief'],
+    timeEstimates: ['3 min', '2 min', '2 min', '2 min', '1 min', '1 min', '1 min', '1 min', '30 seg', '30 seg', '10 seg', 'Fet'],
+    intro: {
+      quote: 'Sé què significa una imatge per a tu...',
+      title: '3 minuts per entendre el teu projecte.',
+      text: 'Unes quantes preguntes senzilles, respostes instintives. Ho transformo en un brief clar que ens guia.',
+      button: 'Començar'
+    },
+    name: { title: 'El teu nom', placeholder: 'ex. Àlex', button: 'Continuar' },
+    project: { title: 'Nom del projecte', placeholder: 'ex. Hotel Casa Marina', button: 'Continuar' },
+    core: {
+      title: 'El teu projecte és sobretot…',
+      options: [
+        { id: 'place', title: '🏠 Un lloc', desc: 'Sentir l\'espai, la llum, l\'atmosfera' },
+        { id: 'story', title: '📖 Una història', desc: 'Persones, gestos, un relat' },
+        { id: 'moment', title: '⏳ Un moment', desc: 'Capturar l\'essencial, l\'instant' }
+      ],
+      button: 'Continuar'
+    },
+    intent: {
+      title: 'El que més importa',
+      text: '1 o 2 prioritats',
+      options: [
+        { id: 'auth', title: 'Autenticitat', desc: 'Real, present, tangible' },
+        { id: 'brand', title: 'Coherència', desc: 'Alineat amb la teva identitat' },
+        { id: 'fresh', title: 'Singularitat', desc: 'Una mirada única' },
+        { id: 'trust', title: 'Credibilitat', desc: 'Professional i humà' }
+      ],
+      button: 'Continuar'
+    },
+    time: {
+      title: 'Aquestes imatges serviran per…',
+      options: [
+        { id: 'moment', title: '📆 Un esdeveniment concret', desc: 'Llançament, campanya' },
+        { id: 'base', title: '🔁 Base llarg termini', desc: 'Reutilitzable, durador' },
+        { id: 'series', title: '🌱 Sèrie contínua', desc: 'Evolució en el temps' }
+      ],
+      button: 'Continuar'
+    },
+    where: {
+      title: 'Difusió principal',
+      text: 'Màx 2',
+      options: [
+        { id: 'web', title: 'Web' },
+        { id: 'social', title: 'Xarxes socials' },
+        { id: 'editorial', title: 'Premsa / editorial' },
+        { id: 'print', title: 'Impressió' }
+      ],
+      button: 'Continuar'
+    },
+    location: {
+      title: 'On es realitza la sessió?',
+      options: [
+        { id: 'sitges', title: '📍 Sitges i rodal' },
+        { id: 'barcelona', title: '📍 Barcelona' },
+        { id: 'catalonia', title: '📍 Altra part de Catalunya' },
+        { id: 'other', title: '📍 Fora' }
+      ],
+      button: 'Continuar'
+    },
+    timing: {
+      title: 'Quan necessites les imatges?',
+      options: [
+        { id: 'fixed', title: '📅 Data fixada' },
+        { id: 'approx', title: '📆 Període aproximat' },
+        { id: 'flexible', title: '🌊 Flexible' }
+      ],
+      button: 'Continuar'
+    },
+    vibe: {
+      title: 'Com he de fotografiar',
+      text: 'Ajusta segons l\'ambient desitjat. Les imatges a sota il·lustren cada extrem.',
+      sliders: [
+        { id: 'calm', left: '😌 Calmat', right: '⚡ Viu' },
+        { id: 'present', left: '👀 Distant', right: '🤍 Proper' },
+        { id: 'rich', left: '✂️ Net', right: '🧱 Texturat' }
+      ],
+      button: 'Continuar'
+    },
+    contact: {
+      title: 'El teu email',
+      text: 'Per rebre el brief',
+      placeholder: 'el_teu@email.cat',
+      button: 'Veure informe'
+    },
+    report: {
+      loading: 'Creant el teu brief personalitzat...',
+      ctaTitle: 'Proper pas',
+      ctaQuote: 'Ara saps què significa una imatge per a mi...',
+      ctaText: 'Parlem del teu projecte. Et preparo una proposta a mida amb planificació i tarifes.',
+      buttons: { email: 'Enviar a Marina', pdf: 'Descarregar PDF', restart: 'Reiniciar' }
+    },
+    back: 'Enrere',
+    pickOne: 'Tria una',
+    pickMax: 'Màxim 2 opcions',
+    emailInvalid: 'Email invàlid'
+  }
+};
+
+const t = (key) => {
+  const keys = key.split('.');
+  let result = translations[currentLang];
+  for (let k of keys) {
+    result = result[k];
+    if (!result) return key;
+  }
+  return result;
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  ['en','fr','es','ca'].forEach(l => document.getElementById('btn-'+l).classList.remove('active'));
+  document.getElementById('btn-'+lang).classList.add('active');
+  render();
+}
+
+function updateProgress() {
+  const progress = ((currentStep + 1) / 12) * 100;
+  document.getElementById('progress').style.width = progress + '%';
+  document.getElementById('step-label').textContent = (currentStep + 1) + '/12 · ' + t('steps')[currentStep];
+  document.getElementById('time-remaining').textContent = '~' + t('timeEstimates')[currentStep];
+}
+
+function nextStep() {
+  if (currentStep < 11) {
+    currentStep++;
+    render();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    render();
+  }
+}
+
+function render() {
+  updateProgress();
+  const content = document.getElementById('content');
+  content.classList.remove('fade-in');
+  setTimeout(() => {
+    renderStep();
+    content.classList.add('fade-in');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 50);
+}
+
+function renderStep() {
+  const content = document.getElementById('content');
+  let html = '';
+  switch(currentStep) {
+    case 0: html = renderIntro(); break;
+    case 1: html = renderName(); break;
+    case 2: html = renderProject(); break;
+    case 3: html = renderCore(); break;
+    case 4: html = renderIntent(); break;
+    case 5: html = renderTime(); break;
+    case 6: html = renderWhere(); break;
+    case 7: html = renderLocation(); break;
+    case 8: html = renderTiming(); break;
+    case 9: html = renderVibe(); break;
+    case 10: html = renderContact(); break;
+    case 11: renderReport(); return;
+  }
+  content.innerHTML = html;
+  bindEvents();
+}
+
+function renderIntro() {
+  return `
+    <div class="quote">"${t('intro.quote')}"</div>
+    <h1>${t('intro.title')}</h1>
+    <p class="lead">${t('intro.text')}</p>
+    <div class="buttons">
+      <button class="primary" onclick="nextStep()">${t('intro.button')}</button>
+    </div>
+  `;
+}
+
+function renderName() {
+  return `
+    <h1>${t('name.title')}</h1>
+    <input type="text" id="name-input" value="${state.name}" placeholder="${t('name.placeholder')}">
+    <div class="buttons">
+      <button class="primary" onclick="saveName()">${t('name.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderProject() {
+  return `
+    <h1>${t('project.title')}</h1>
+    <input type="text" id="project-input" value="${state.project}" placeholder="${t('project.placeholder')}">
+    <div class="buttons">
+      <button class="primary" onclick="saveProject()">${t('project.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderCore() {
+  const options = t('core.options');
+  return `
+    <h1>${t('core.title')}</h1>
+    <div class="options">
+      ${options.map(opt => `
+        <div class="option ${state.core === opt.id ? 'selected' : ''}" data-id="${opt.id}">
+          <div class="option-title">${opt.title}</div>
+          <div class="option-desc">${opt.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="validateCore()">${t('core.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderIntent() {
+  const options = t('intent.options');
+  return `
+    <h1>${t('intent.title')}</h1>
+    <p class="lead">${t('intent.text')}</p>
+    <div class="options">
+      ${options.map(opt => `
+        <div class="option ${state.intent.includes(opt.id) ? 'selected' : ''}" data-id="${opt.id}">
+          <div class="option-title">${opt.title}</div>
+          <div class="option-desc">${opt.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="validateIntent()">${t('intent.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderTime() {
+  const options = t('time.options');
+  return `
+    <h1>${t('time.title')}</h1>
+    <div class="options">
+      ${options.map(opt => `
+        <div class="option ${state.time === opt.id ? 'selected' : ''}" data-id="${opt.id}">
+          <div class="option-title">${opt.title}</div>
+          <div class="option-desc">${opt.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="validateTime()">${t('time.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderWhere() {
+  const options = t('where.options');
+  return `
+    <h1>${t('where.title')}</h1>
+    <p class="lead">${t('where.text')}</p>
+    <div class="options">
+      ${options.map(opt => `
+        <div class="option ${state.where.includes(opt.id) ? 'selected' : ''}" data-id="${opt.id}">
+          <div class="option-title">${opt.title}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="validateWhere()">${t('where.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderLocation() {
+  const options = t('location.options');
+  return `
+    <h1>${t('location.title')}</h1>
+    <div class="options">
+      ${options.map(opt => `
+        <div class="option ${state.location === opt.id ? 'selected' : ''}" data-id="${opt.id}">
+          <div class="option-title">${opt.title}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="validateLocation()">${t('location.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderTiming() {
+  const options = t('timing.options');
+  return `
+    <h1>${t('timing.title')}</h1>
+    <div class="options">
+      ${options.map(opt => `
+        <div class="option ${state.timing === opt.id ? 'selected' : ''}" data-id="${opt.id}">
+          <div class="option-title">${opt.title}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="validateTiming()">${t('timing.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderVibe() {
+  const sliders = t('vibe.sliders');
+  return `
+    <h1>${t('vibe.title')}</h1>
+    <p class="lead">${t('vibe.text')}</p>
+    <div class="vibe-section">
+      ${sliders.map(slider => `
+        <div class="vibe-item">
+          <div class="vibe-header">
+            <span class="vibe-label">${slider.left}</span>
+            <span class="vibe-label">${slider.right}</span>
+          </div>
+          <input type="range" class="vibe-slider" min="0" max="100" value="${state.sliders[slider.id]}" 
+            data-key="${slider.id}" oninput="updateSlider(this)">
+          <div class="vibe-images">
+            ${vibeImages[slider.id].map((img, idx) => `
+              <div class="vibe-image ${state.visuals[slider.id] === idx ? 'active' : ''}" 
+                   onclick="selectVibeImage('${slider.id}', ${idx})">
+                <img src="${img}" alt="">
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="nextStep()">${t('vibe.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+function renderContact() {
+  return `
+    <h1>${t('contact.title')}</h1>
+    <p class="lead">${t('contact.text')}</p>
+    <input type="email" id="email-input" value="${state.email}" placeholder="${t('contact.placeholder')}" required>
+    <div class="buttons">
+      <button class="primary" onclick="saveEmail()">${t('contact.button')}</button>
+      <button class="secondary" onclick="prevStep()">${t('back')}</button>
+    </div>
+  `;
+}
+
+async function renderReport() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <h2>${t('report.loading')}</h2>
+    </div>
+  `;
+  
+  try {
+    const aiReport = await generateAIBrief();
+    displayReport(aiReport);
+  } catch (error) {
+    console.error('AI failed:', error);
+    displayReport(generateFallback());
+  }
+}
+
+function displayReport(briefText) {
+  const content = document.getElementById('content');
+  const projectName = state.project || 'Your Project';
+  const date = new Date().toLocaleDateString(currentLang, { year: 'numeric', month: 'long', day: 'numeric' });
+  
+  content.innerHTML = `
+    <div class="report-hero">
+      <h1>${projectName}</h1>
+      ${state.name ? `<div class="subtitle">${state.name}</div>` : ''}
+      <div class="date">${date}</div>
+    </div>
+    
+    <div class="report-brief">
+      ${briefText.split('\n\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')}
+    </div>
+    
+    <div class="report-cta">
+      <h3>${t('report.ctaTitle')}</h3>
+      <div class="quote-closing">"${t('report.ctaQuote')}"</div>
+      <p>${t('report.ctaText')}</p>
+      <div class="buttons">
+        <button class="primary" onclick="sendEmail()">${t('report.buttons.email')}</button>
+        <button class="secondary" onclick="downloadPDF()">${t('report.buttons.pdf')}</button>
+        <button class="secondary" onclick="restart()">${t('report.buttons.restart')}</button>
+      </div>
+    </div>
+  `;
+}
+
+function bindEvents() {
+  const options = document.querySelectorAll('.option');
+  options.forEach(opt => {
+    opt.addEventListener('click', function() {
+      const id = this.getAttribute('data-id');
+      if ([3,5,7,8].includes(currentStep)) {
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        if (currentStep === 3) state.core = id;
+        if (currentStep === 5) state.time = id;
+        if (currentStep === 7) state.location = id;
+        if (currentStep === 8) state.timing = id;
+      } else if ([4,6].includes(currentStep)) {
+        const isSelected = this.classList.contains('selected');
+        if (isSelected) {
+          if (currentStep === 4) state.intent = state.intent.filter(i => i !== id);
+          if (currentStep === 6) state.where = state.where.filter(w => w !== id);
+          this.classList.remove('selected');
+        } else {
+          if (currentStep === 4 && state.intent.length < 2) {
+            state.intent.push(id);
+            this.classList.add('selected');
+          } else if (currentStep === 6 && state.where.length < 2) {
+            state.where.push(id);
+            this.classList.add('selected');
+          } else {
+            alert(t('pickMax'));
+          }
+        }
+      }
+    });
+  });
+}
+
+function saveName() {
+  state.name = document.getElementById('name-input').value.trim();
+  nextStep();
+}
+
+function saveProject() {
+  state.project = document.getElementById('project-input').value.trim();
+  nextStep();
+}
+
+function validateCore() {
+  if (!state.core) { alert(t('pickOne')); return; }
+  nextStep();
+}
+
+function validateIntent() {
+  if (state.intent.length === 0) { alert(t('pickOne')); return; }
+  nextStep();
+}
+
+function validateTime() {
+  if (!state.time) { alert(t('pickOne')); return; }
+  nextStep();
+}
+
+function validateWhere() {
+  if (state.where.length === 0) { alert(t('pickOne')); return; }
+  nextStep();
+}
+
+function validateLocation() {
+  if (!state.location) { alert(t('pickOne')); return; }
+  nextStep();
+}
+
+function validateTiming() {
+  if (!state.timing) { alert(t('pickOne')); return; }
+  nextStep();
+}
+
+function updateSlider(input) {
+  const key = input.getAttribute('data-key');
+  state.sliders[key] = parseInt(input.value);
+}
+
+function selectVibeImage(sliderId, imageIdx) {
+  state.visuals[sliderId] = imageIdx;
+  render();
+}
+
+function saveEmail() {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email || !email.includes('@')) {
+    alert(t('emailInvalid'));
+    return;
+  }
+  state.email = email;
+  nextStep();
+}
+
+async function generateAIBrief() {
+  const vibeLabels = {
+    calm: ['calme', 'vivant'],
+    present: ['distant', 'proche'],
+    rich: ['épuré', 'texturé']
+  };
+  
+  const selectedVibes = Object.entries(state.sliders).map(([key, val]) => {
+    const idx = val < 50 ? 0 : 1;
+    return vibeLabels[key][idx];
+  }).join(', ');
+  
+  const langMap = { fr: 'français', en: 'English', es: 'español', ca: 'català' };
+  
+  const prompt = `Tu es Marina, photographe professionnelle basée à Sitges (Barcelone).
+
+CLIENT :
+Nom : ${state.name || '—'}
+Projet : ${state.project || 'Sans nom'}
+Type : ${state.core || '—'}
+Priorités : ${state.intent.join(', ')}
+Usage : ${state.time || '—'}
+Canaux : ${state.where.join(', ')}
+Lieu : ${state.location || '—'}
+Timing : ${state.timing || '—'}
+Ambiance visuelle : ${selectedVibes}
+
+Écris un brief photographique en ${langMap[currentLang]}, 180-220 mots max.
+
+TON : Photographe pro, direct, chaleureux. Première personne (je).
+
+STRUCTURE (3 paragraphes sans titres) :
+1. Synthèse du projet (2-3 phrases)
+2. Mon approche photographique concrète - mentionne NATURELLEMENT les ambiances sélectionnées (3-4 phrases)
+3. Prochaine étape avec lieu + timing (2 phrases)
+
+INTERDICTIONS :
+❌ Pas de liste à puces
+❌ Pas de titres
+❌ Pas de nombres d'images
+❌ Pas de prix
+❌ Pas d'enthousiasme excessif
+
+Format : 3 paragraphes simples séparés par un saut de ligne.`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 600,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!response.ok) throw new Error('API failed');
+  const data = await response.json();
+  return data.content[0].text;
+}
+
+function generateFallback() {
+  const projectName = state.project || (currentLang === 'fr' ? 'Votre projet' : 'Your project');
+  return `${projectName} - un projet de photographie ${state.core || ''} pour ${state.where.join(' et ')}.\n\nJe vais photographier avec une approche ${state.sliders.calm < 50 ? 'calme et posée' : 'vivante et dynamique'}, ${state.sliders.present < 50 ? 'en gardant mes distances' : 'en me rapprochant des détails'}, ${state.sliders.rich < 50 ? 'avec une esthétique épurée' : 'en valorisant les textures'}.\n\nLieu : ${state.location || '—'}. Timing : ${state.timing || '—'}. On en discute pour affiner les détails.`;
+}
+
+function sendEmail() {
+  const subject = encodeURIComponent(`Brief : ${state.project || 'photo'}`);
+  const body = encodeURIComponent(`Bonjour Marina,\n\nJe viens de compléter le brief pour mon projet.\n\nEmail : ${state.email}\n\nCordialement,\n${state.name || ''}`);
+  window.location.href = `mailto:hello@marinaphoto.es?subject=${subject}&body=${body}`;
+}
+
+function downloadPDF() {
+  alert('PDF generation coming soon...');
+}
+
+function restart() {
+  if (confirm('Restart?')) {
+    currentStep = 0;
+    state = {
+      name: '', project: '', core: null, intent: [], time: null,
+      where: [], location: null, timing: null,
+      sliders: { calm: 50, present: 50, rich: 50 },
+      visuals: { calm: 1, present: 1, rich: 1 },
+      email: ''
+    };
+    render();
+  }
+}
+
+console.log('Marina Photography Brief - Ready!');
+render();
+</script>
+</body>
+</html>
