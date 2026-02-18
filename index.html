@@ -544,7 +544,7 @@ function initSliders(){
 // ═══════════════════════════════════════════════════════
 // SAVE / VALIDATE
 // ═══════════════════════════════════════════════════════
-const esc=s=>(s||'').replace(/"/g,'&quot;');
+const esc = (s) => (s || '')   .replace(/&/g,'&amp;')   .replace(/</g,'&lt;')   .replace(/>/g,'&gt;')   .replace(/"/g,'&quot;')   .replace(/'/g,'&#39;');
 function svName(){S.name=document.getElementById('f-name').value.trim();fwd();}
 function svProject(){S.project=document.getElementById('f-proj').value.trim();fwd();}
 function valSingle(f){if(!S[f]){alert(t('mustPick'));return;}fwd();}
