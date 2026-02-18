@@ -557,14 +557,14 @@ function svEmail(){
 }
 
 // ═══════════════════════════════════════════════════════
-// RAPPORT — génération du brief (Hugging Face AI + fallback)
+// RAPPORT — génération du brief (Hugging Face AI optimisé)
 // ═══════════════════════════════════════════════════════
 function showReport(){
   step=10; upProg();
   const c=document.getElementById('card');
   c.innerHTML=`<div class="loading"><div class="spinner"></div><h2>${t('report.loading')}</h2><p>${t('report.loadSub')}</p></div>`;
   
-  // Tentative avec Hugging Face AI (gratuit, rapide)
+  // Générer avec Hugging Face AI
   generateBriefWithAI()
     .then(brief=>{
       S.briefText=brief;
@@ -572,51 +572,154 @@ function showReport(){
     })
     .catch(err=>{
       console.warn('AI failed, using fallback:',err);
-      // Fallback immédiat si AI échoue
       const brief=fallback();
       S.briefText=brief;
       renderReport(brief);
     });
 }
 
-// Génération avec Hugging Face AI (modèle gratuit de qualité)
+// Génération avec Hugging Face AI - prompt optimisé pour être naturel
 async function generateBriefWithAI(){
   const HF_TOKEN='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';
   
-  // Construire le prompt en langue cible
+  // Détecter le secteur pour le contexte
+  const inferSector=(name)=>{
+    const n=name.toLowerCase();
+    if(/hotel|hostal|apart|boutique.*hotel|casa.*rural|mas\b|can\s/i.test(n)) return 'hôtellerie';
+    if(/beach.*club|club.*playa|platja|chiringuito/i.test(n)) return 'club de plage';
+    if(/restaura|gastro|cuina|cocina|kitchen|bistro|tavern/i.test(n)) return 'restaurant';
+    if(/bode?ga|celler|vi[nñ]|wine|vi\b/i.test(n)) return 'vignoble';
+    if(/caf[eé]|coffee|barista/i.test(n)) return 'café';
+    if(/bar\b|tapas|vermut/i.test(n)) return 'bar';
+    if(/dent|odonto/i.test(n)) return 'cabinet dentaire';
+    if(/m[eé]dic|clinic|doctor|salud|health/i.test(n)) return 'médical';
+    if(/est[eé]tic|beauty|spa|wellness/i.test(n)) return 'esthétique & spa';
+    if(/fisio|physio/i.test(n)) return 'physiothérapie';
+    if(/yoga|pilates|fitness|gym/i.test(n)) return 'fitness';
+    if(/inmobil|real.*estate|propied/i.test(n)) return 'immobilier';
+    if(/architect|arquitec/i.test(n)) return 'architecture';
+    if(/construc|obra|reform/i.test(n)) return 'construction';
+    if(/taller|atelier|artesa|craft/i.test(n)) return 'artisanat';
+    if(/botiga|tienda|shop|store|boutique/i.test(n)) return 'commerce';
+    if(/florist|flor/i.test(n)) return 'fleuriste';
+    if(/design|gràfic|graphic/i.test(n)) return 'design';
+    if(/fotograf|photo.*studio/i.test(n)) return 'studio photo';
+    if(/galer[ií]|art.*space/i.test(n)) return 'galerie';
+    if(/wedding|boda|casament/i.test(n)) return 'mariage';
+    if(/event|celebra|festes/i.test(n)) return 'événementiel';
+    if(/formaci[oó]|training|cours/i.test(n)) return 'formation';
+    if(/fiduci|asesor|consult|gestori/i.test(n)) return 'services professionnels';
+    if(/bureau|oficin|cowork/i.test(n)) return 'espace de travail';
+    if(/indust|f[aà]bric/i.test(n)) return 'industrie';
+    return null;
+  };
+  
+  const detectedSector=inferSector(S.project||'');
+  
   const promptLang={
-    fr:`Tu es Marina, photographe professionnelle à Sitges. Rédige un brief photo personnalisé et chaleureux (180-220 mots, 3 paragraphes) pour ${S.name||'ce client'}.
+    fr:`Tu es Marina, photographe à Sitges. Rédige un brief chaleureux et professionnel (200-250 mots, 3 paragraphes) pour ${S.name||'ce client'}.
 
-PROJET: ${S.project||'projet photo'} - Type: ${S.type||'—'} - Secteur détecté: ${fallback().split('(')[1]?.split(')')[0]||'général'}
-Priorités: ${S.priorities.join(', ')||'—'} | Usage: ${S.usage||'—'} | Canaux: ${S.channels.join(', ')||'—'}
-Lieu: ${S.location||'—'} | Timing: ${S.timing||'—'}
-Style: Énergie ${S.calm}/100, Proximité ${S.present}/100, Esthétique ${S.rich}/100
+CONTEXTE DU PROJET:
+- Nom: ${S.project||'sans titre'}${detectedSector?' (je pense qu\'il s\'agit de '+detectedSector+')':''}
+- Type: ${S.type==='place'?'lieu à faire ressentir':S.type==='story'?'histoire de marque':S.type==='moment'?'moment à capturer':'photo'}
+- Priorités visuelles: ${S.priorities.join(', ')||'authenticité'}
+- Usage: ${S.usage==='launch'?'lancement/événement':S.usage==='base'?'bibliothèque d\'images':S.usage==='series'?'série continue':'communication'}
+- Diffusion: ${S.channels.join(', ')||'web'}
+- Lieu: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Catalogne':'à définir'}
+- Timing: ${S.timing==='fixed'?'date précise':S.timing==='approx'?'prochains mois':'flexible'}
 
-Ton: professionnel mais chaleureux, tutoiement, une touche d'humour subtil si le secteur s'y prête. Utilise le prénom du client. Pas de liste, pas de prix.`,
-    en:`You're Marina, professional photographer in Sitges. Write a personalized, warm photo brief (180-220 words, 3 paragraphs) for ${S.name||'this client'}.
+STYLE SOUHAITÉ (curseurs 0-100):
+- Énergie: ${S.calm}/100 ${S.calm<35?'(calme/contemplatif)':S.calm>65?'(vivant/dynamique)':'(équilibré)'}
+- Proximité: ${S.present}/100 ${S.present<35?'(vues larges/contexte)':S.present>65?'(intime/détails)':'(mixte)'}
+- Esthétique: ${S.rich}/100 ${S.rich<35?'(épuré/minimal)':S.rich>65?'(textures/riche)':'(équilibré)'}
 
-PROJECT: ${S.project||'photo project'} - Type: ${S.type||'—'} - Detected sector: ${fallback().split('(')[1]?.split(')')[0]||'general'}
-Priorities: ${S.priorities.join(', ')||'—'} | Use: ${S.usage||'—'} | Channels: ${S.channels.join(', ')||'—'}
-Location: ${S.location||'—'} | Timeline: ${S.timing||'—'}
-Style: Energy ${S.calm}/100, Proximity ${S.present}/100, Aesthetic ${S.rich}/100
+CONSIGNES:
+- Paragraphe 1: Si secteur détecté, commence naturellement par "Je vois que ${S.project} est [secteur]..." puis montre que tu comprends le projet
+- Paragraphe 2: Décris concrètement ton approche photo en fonction des curseurs ET du secteur
+- Paragraphe 3: Logistique (lieu/timing) + invitation à échanger
+- Ton: tutoyant, pro mais chaleureux, une touche d'humour si approprié
+- Utilise le prénom ${S.name||''} naturellement
+- JAMAIS de listes à puces, JAMAIS de prix
 
-Tone: professional but warm, use client's first name, subtle humor if appropriate. No lists, no pricing.`,
-    es:`Eres Marina, fotógrafa profesional en Sitges. Escribe un brief fotográfico personalizado y cálido (180-220 palabras, 3 párrafos) para ${S.name||'este cliente'}.
+Écris en français naturel, comme si tu parlais directement à ${S.name||'ton client'}.`,
 
-PROYECTO: ${S.project||'proyecto foto'} - Tipo: ${S.type||'—'} - Sector detectado: ${fallback().split('(')[1]?.split(')')[0]||'general'}
-Prioridades: ${S.priorities.join(', ')||'—'} | Uso: ${S.usage||'—'} | Canales: ${S.channels.join(', ')||'—'}
-Lugar: ${S.location||'—'} | Planificación: ${S.timing||'—'}
-Estilo: Energía ${S.calm}/100, Proximidad ${S.present}/100, Estética ${S.rich}/100
+    en:`You're Marina, photographer in Sitges. Write a warm, professional brief (200-250 words, 3 paragraphs) for ${S.name||'this client'}.
 
-Tono: profesional pero cálido, usa el nombre del cliente, humor sutil si procede. Sin listas, sin precios.`,
-    ca:`Ets la Marina, fotògrafa professional a Sitges. Escriu un brief fotogràfic personalitzat i càlid (180-220 paraules, 3 paràgrafs) per ${S.name||'aquest client'}.
+PROJECT CONTEXT:
+- Name: ${S.project||'untitled'}${detectedSector?' (I think this is '+detectedSector+')':''}
+- Type: ${S.type==='place'?'place to convey':S.type==='story'?'brand story':S.type==='moment'?'moment to capture':'photo'}
+- Visual priorities: ${S.priorities.join(', ')||'authenticity'}
+- Use: ${S.usage==='launch'?'launch/event':S.usage==='base'?'image library':S.usage==='series'?'ongoing series':'communication'}
+- Distribution: ${S.channels.join(', ')||'web'}
+- Location: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Catalonia':'TBD'}
+- Timeline: ${S.timing==='fixed'?'specific date':S.timing==='approx'?'next few months':'flexible'}
 
-PROJECTE: ${S.project||'projecte foto'} - Tipus: ${S.type||'—'} - Sector detectat: ${fallback().split('(')[1]?.split(')')[0]||'general'}
-Prioritats: ${S.priorities.join(', ')||'—'} | Ús: ${S.usage||'—'} | Canals: ${S.channels.join(', ')||'—'}
-Lloc: ${S.location||'—'} | Planificació: ${S.timing||'—'}
-Estil: Energia ${S.calm}/100, Proximitat ${S.present}/100, Estètica ${S.rich}/100
+DESIRED STYLE (sliders 0-100):
+- Energy: ${S.calm}/100 ${S.calm<35?'(calm/contemplative)':S.calm>65?'(lively/dynamic)':'(balanced)'}
+- Proximity: ${S.present}/100 ${S.present<35?'(wide views/context)':S.present>65?'(intimate/details)':'(mixed)'}
+- Aesthetic: ${S.rich}/100 ${S.rich<35?'(clean/minimal)':S.rich>65?'(textured/rich)':'(balanced)'}
 
-To: professional però càlid, fes servir el nom del client, humor subtil si escau. Sense llistes, sense preus.`
+GUIDELINES:
+- Paragraph 1: If sector detected, naturally start with "I see that ${S.project} is [sector]..." then show you understand the project
+- Paragraph 2: Concretely describe your photo approach based on sliders AND sector
+- Paragraph 3: Logistics (location/timing) + invitation to talk
+- Tone: professional but warm, touch of humor if appropriate
+- Use first name ${S.name||''} naturally
+- NEVER bullet points, NEVER pricing
+
+Write naturally in English, as if speaking directly to ${S.name||'your client'}.`,
+
+    es:`Eres Marina, fotógrafa en Sitges. Escribe un brief cálido y profesional (200-250 palabras, 3 párrafos) para ${S.name||'este cliente'}.
+
+CONTEXTO DEL PROYECTO:
+- Nombre: ${S.project||'sin título'}${detectedSector?' (creo que es '+detectedSector+')':''}
+- Tipo: ${S.type==='place'?'lugar para sentir':S.type==='story'?'historia de marca':S.type==='moment'?'momento a capturar':'foto'}
+- Prioridades: ${S.priorities.join(', ')||'autenticidad'}
+- Uso: ${S.usage==='launch'?'lanzamiento/evento':S.usage==='base'?'biblioteca de imágenes':S.usage==='series'?'serie continua':'comunicación'}
+- Difusión: ${S.channels.join(', ')||'web'}
+- Lugar: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Cataluña':'a definir'}
+- Timing: ${S.timing==='fixed'?'fecha precisa':S.timing==='approx'?'próximos meses':'flexible'}
+
+ESTILO DESEADO (controles 0-100):
+- Energía: ${S.calm}/100 ${S.calm<35?'(calmo/contemplativo)':S.calm>65?'(vivo/dinámico)':'(equilibrado)'}
+- Proximidad: ${S.present}/100 ${S.present<35?'(vistas amplias/contexto)':S.present>65?'(íntimo/detalles)':'(mixto)'}
+- Estética: ${S.rich}/100 ${S.rich<35?'(limpio/minimal)':S.rich>65?'(texturas/rico)':'(equilibrado)'}
+
+INSTRUCCIONES:
+- Párrafo 1: Si sector detectado, empieza naturalmente con "Veo que ${S.project} es [sector]..." luego muestra que entiendes el proyecto
+- Párrafo 2: Describe concretamente tu enfoque fotográfico según los controles Y el sector
+- Párrafo 3: Logística (lugar/timing) + invitación a hablar
+- Tono: profesional pero cálido, toque de humor si apropiado
+- Usa el nombre ${S.name||''} naturalmente
+- NUNCA listas, NUNCA precios
+
+Escribe en español natural, como si hablaras directamente con ${S.name||'tu cliente'}.`,
+
+    ca:`Ets la Marina, fotògrafa a Sitges. Escriu un brief càlid i professional (200-250 paraules, 3 paràgrafs) per ${S.name||'aquest client'}.
+
+CONTEXT DEL PROJECTE:
+- Nom: ${S.project||'sense títol'}${detectedSector?' (crec que és '+detectedSector+')':''}
+- Tipus: ${S.type==='place'?'lloc per sentir':S.type==='story'?'història de marca':S.type==='moment'?'moment a capturar':'foto'}
+- Prioritats: ${S.priorities.join(', ')||'autenticitat'}
+- Ús: ${S.usage==='launch'?'llançament/esdeveniment':S.usage==='base'?'biblioteca d\'imatges':S.usage==='series'?'sèrie contínua':'comunicació'}
+- Difusió: ${S.channels.join(', ')||'web'}
+- Lloc: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Catalunya':'a definir'}
+- Timing: ${S.timing==='fixed'?'data precisa':S.timing==='approx'?'propers mesos':'flexible'}
+
+ESTIL DESITJAT (controls 0-100):
+- Energia: ${S.calm}/100 ${S.calm<35?'(calmat/contemplatiu)':S.calm>65?'(viu/dinàmic)':'(equilibrat)'}
+- Proximitat: ${S.present}/100 ${S.present<35?'(vistes àmplies/context)':S.present>65?'(íntim/detalls)':'(mixt)'}
+- Estètica: ${S.rich}/100 ${S.rich<35?'(net/minimal)':S.rich>65?'(textures/ric)':'(equilibrat)'}
+
+INSTRUCCIONS:
+- Paràgraf 1: Si sector detectat, comença naturalment amb "Veig que ${S.project} és [sector]..." després mostra que entens el projecte
+- Paràgraf 2: Descriu concretament el teu enfocament fotogràfic segons els controls I el sector
+- Paràgraf 3: Logística (lloc/timing) + invitació a parlar
+- To: professional però càlid, toc d'humor si apropiat
+- Fes servir el nom ${S.name||''} naturalment
+- MAI llistes, MAI preus
+
+Escriu en català natural, com si parlessis directament amb ${S.name||'el teu client'}.`
   };
 
   try{
@@ -629,9 +732,10 @@ To: professional però càlid, fes servir el nom del client, humor subtil si esc
       body:JSON.stringify({
         inputs:promptLang[L]||promptLang.en,
         parameters:{
-          max_new_tokens:400,
-          temperature:0.7,
-          top_p:0.9,
+          max_new_tokens:500,
+          temperature:0.8,
+          top_p:0.92,
+          do_sample:true,
           return_full_text:false
         }
       })
@@ -644,14 +748,20 @@ To: professional però càlid, fes servir el nom del client, humor subtil si esc
     
     // Nettoyer le texte
     text=text.trim();
+    
+    // Enlever les éventuels préfixes du modèle
+    text=text.replace(/^(Voici le brief|Here's the brief|Aquí está el brief|Aquí el brief)[:\s]*/i,'');
+    
     if(!text || text.length<100) throw new Error('Response too short');
     
     return text;
   }catch(err){
     console.warn('Hugging Face AI error:',err);
-    throw err; // Déclenche le fallback
+    throw err;
   }
 }
+
+// Génération avec Hugging Face AI (modèle gratuit de qualité)
 
 // Fallback ultra-riche — VOIX DU CLIENT qui décrit ce qu'il veut
 function fallback(){
@@ -989,10 +1099,10 @@ function fallback(){
   const sectorName=sector && SECTOR_NAMES[L] && SECTOR_NAMES[L][sector] ? SECTOR_NAMES[L][sector] : '';
   
   const INTRO={
-    fr:`${proj?proj+' — ':''}photographier ${tl}${sectorName?' ('+sectorName+')':''}, destiné ${chans.length?'à '+chans.join(sep):'à vos supports'}. ${prios.length?'Vos priorités : '+prios.join(sep)+'.':''}`,
-    en:`${proj?proj+' — ':''}photographing ${tl}${sectorName?' ('+sectorName+')':''}, for ${chans.length?chans.join(sep):'your channels'}. ${prios.length?'Your priorities: '+prios.join(sep)+'.':''}`,
-    es:`${proj?proj+' — ':''}fotografiar ${tl}${sectorName?' ('+sectorName+')':''}, destinado ${chans.length?'a '+chans.join(sep):'a tus plataformas'}. ${prios.length?'Tus prioridades: '+prios.join(sep)+'.':''}`,
-    ca:`${proj?proj+' — ':''}fotografiar ${tl}${sectorName?' ('+sectorName+')':''}, destinat ${chans.length?'a '+chans.join(sep):'a les teves plataformes'}. ${prios.length?'Les teves prioritats: '+prios.join(sep)+'.':''}`
+    fr:`${sectorName?`Je vois que ${proj||'votre projet'} relève ${sectorName.startsWith('h')||sectorName.startsWith('é')||sectorName.startsWith('i')||sectorName.startsWith('a')||sectorName.startsWith('o')||sectorName.startsWith('u')?'de l\'':'du secteur '}${sectorName}. `:proj?`${proj} — `:''}Photographier ${tl}, destiné ${chans.length?'à '+chans.join(sep):'à vos supports'}. ${prios.length?'Vos priorités : '+prios.join(sep)+'.':''}`,
+    en:`${sectorName?`I see that ${proj||'your project'} is in the ${sectorName} sector. `:proj?`${proj} — `:''}Photographing ${tl}, for ${chans.length?chans.join(sep):'your channels'}. ${prios.length?'Your priorities: '+prios.join(sep)+'.':''}`,
+    es:`${sectorName?`Veo que ${proj||'tu proyecto'} es del sector ${sectorName}. `:proj?`${proj} — `:''}Fotografiar ${tl}, destinado ${chans.length?'a '+chans.join(sep):'a tus plataformas'}. ${prios.length?'Tus prioridades: '+prios.join(sep)+'.':''}`,
+    ca:`${sectorName?`Veig que ${proj||'el teu projecte'} és del sector ${sectorName}. `:proj?`${proj} — `:''}Fotografiar ${tl}, destinat ${chans.length?'a '+chans.join(sep):'a les teves plataformes'}. ${prios.length?'Les teves prioritats: '+prios.join(sep)+'.':''}`
   };
 
   // PARAGRAPHE 2 : Direction photographique - PERSONNALISÉ avec humour subtil
