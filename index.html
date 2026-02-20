@@ -51,14 +51,13 @@ input::placeholder{opacity:.4;}
 .opt-t{font-size:16px;font-weight:700;margin-bottom:3px;padding-right:36px;}
 .opt-d{font-size:13px;opacity:.6;line-height:1.4;padding-right:36px;}
 
-/* VIBE SLIDERS — images illustratives seulement */
+/* VIBE SLIDERS */
 .vibe-block{background:var(--cream);border-radius:20px;padding:22px;margin-bottom:18px;}
 .vibe-label-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px;opacity:.75;}
 .vibe-cat{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.45;margin-bottom:10px;}
 input[type=range]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--gold) var(--p,50%),rgba(200,168,130,.2) var(--p,50%));border-radius:10px;outline:none;cursor:pointer;margin:10px 0 16px;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--white);border:3px solid var(--gold);border-radius:50%;box-shadow:0 2px 8px rgba(200,168,130,.4);}
 input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--white);border:3px solid var(--gold);border-radius:50%;}
-/* Deux images illustrant les deux extrêmes — LECTURE SEULE */
 .vibe-illus{display:grid;grid-template-columns:1fr 1fr;gap:8px;pointer-events:none;}
 .vibe-img{border-radius:12px;overflow:hidden;aspect-ratio:3/2;position:relative;}
 .vibe-img img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -86,6 +85,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--whit
 .rpt-body{border-left:3px solid var(--gold);padding:4px 0 4px 32px;margin:0 0 44px;}
 .rpt-body p{font-size:18px;line-height:1.9;color:var(--dark);margin-bottom:22px;}
 .rpt-body p:last-child{margin-bottom:0;}
+
+/* Badge source IA */
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,168,130,.12);border:1px solid rgba(200,168,130,.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:20px;letter-spacing:.5px;}
+.ai-badge::before{content:'✦';font-size:10px;}
 
 /* CTA FINALE */
 .rpt-cta{background:linear-gradient(135deg,var(--gold) 0%,#b8916a 100%);border-radius:24px;padding:48px;text-align:center;}
@@ -129,7 +132,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--whit
 // ═══════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════
-// Détection automatique de la langue du navigateur
 const detectLang=()=>{
   try{
     const nav=navigator.language||navigator.userLanguage;
@@ -139,9 +141,7 @@ const detectLang=()=>{
     if(code==='es') return 'es';
     if(code==='ca') return 'ca';
     return 'en';
-  }catch(e){
-    return 'en'; // Fallback si erreur
-  }
+  }catch(e){ return 'en'; }
 };
 
 let L = detectLang(), step = 0;
@@ -151,7 +151,7 @@ const S = {
   priorities:[], usage:null, channels:[],
   location:null, timing:null,
   calm:50, present:50, rich:50,
-  email:'', briefText:''
+  email:'', briefText:'', briefSource:'ai'
 };
 
 // ═══════════════════════════════════════════════════════
@@ -162,6 +162,8 @@ fr:{
   steps:['Intro','Prénom','Projet','Type','Priorités','Usage','Canaux','Lieu','Timing','Ambiance','Contact'],
   times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 sec','30 sec','20 sec'],
   back:'Retour', maxTwo:'Maximum 2 choix', mustPick:'Veuillez choisir une option', emailErr:'Email invalide',
+  aiBadge:'Rédigé par IA · Cloudflare Workers AI',
+  fallbackBadge:'Brief généré automatiquement',
   intro:{kicker:'Commençons',quote:'Je sais ce qu\'une image représente pour vous…',title:'3 minutes pour comprendre votre projet.',sub:'Quelques questions simples. Je transforme vos réponses en un brief personnalisé qui nous guide.',btn:'Commencer'},
   name:{kicker:'À propos de vous',title:'Votre prénom',ph:'Ex : Sophie',btn:'Continuer'},
   project:{kicker:'Le projet',title:'Comment s\'appelle votre projet ?',sub:'Un nom, même provisoire.',ph:'Ex : Hôtel Can Ros / Bodega Garraf',btn:'Continuer'},
@@ -209,7 +211,7 @@ fr:{
               {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Texturé'}]}
     ],btn:'Voir le brief'},
   contact:{kicker:'Dernière étape',title:'Votre adresse email',sub:'Pour recevoir ce brief et commencer à échanger.',ph:'vous@email.com',btn:'Générer le brief'},
-  report:{loading:'Rédaction de votre brief…',loadSub:'L\'IA analyse vos réponses et compose votre brief personnalisé.',
+  report:{loading:'Rédaction de votre brief…',loadSub:'L\'IA Cloudflare analyse vos réponses et compose votre brief personnalisé.',
     ctaTitle:'La suite',ctaQuote:'…Et maintenant vous savez ce qu\'une image représente pour moi.',
     ctaText:'Discutons de votre projet. Je vous prépare une proposition personnalisée — approche, planning et budget.',
     btnEmail:'Envoyer le brief à Marina',btnRdv:'Prendre rendez-vous',btnPdf:'Télécharger en PDF',btnRestart:'Nouveau brief'},
@@ -221,6 +223,8 @@ en:{
   steps:['Intro','Name','Project','Type','Priorities','Use','Channels','Location','Timing','Vibe','Contact'],
   times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 sec','30 sec','20 sec'],
   back:'Back', maxTwo:'Maximum 2 choices', mustPick:'Please choose an option', emailErr:'Invalid email',
+  aiBadge:'Written by AI · Cloudflare Workers AI',
+  fallbackBadge:'Auto-generated brief',
   intro:{kicker:'Let\'s start',quote:'I know what an image means to you…',title:'3 minutes to understand your project.',sub:'A few simple questions. I turn your answers into a personalised brief that guides our work.',btn:'Start'},
   name:{kicker:'About you',title:'Your first name',ph:'e.g. Sophie',btn:'Continue'},
   project:{kicker:'The project',title:'What is your project called?',sub:'A name, even a working one.',ph:'e.g. Hotel Can Ros / Garraf Winery',btn:'Continue'},
@@ -268,7 +272,7 @@ en:{
               {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Textured'}]}
     ],btn:'See brief'},
   contact:{kicker:'Last step',title:'Your email address',sub:'To send you this brief and start the conversation.',ph:'you@email.com',btn:'Generate brief'},
-  report:{loading:'Writing your brief…',loadSub:'AI is analysing your answers and composing your personalised brief.',
+  report:{loading:'Writing your brief…',loadSub:'Cloudflare AI is analysing your answers and composing your personalised brief.',
     ctaTitle:'Next step',ctaQuote:'…And now you know what an image means to me.',
     ctaText:'Let\'s talk about your project. I\'ll prepare a personalised proposal — approach, timeline and budget.',
     btnEmail:'Send brief to Marina',btnRdv:'Book a call',btnPdf:'Download PDF',btnRestart:'New brief'},
@@ -280,6 +284,8 @@ es:{
   steps:['Intro','Nombre','Proyecto','Tipo','Prioridades','Uso','Canales','Lugar','Timing','Vibra','Contacto'],
   times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 seg','30 seg','20 seg'],
   back:'Atrás', maxTwo:'Máximo 2 opciones', mustPick:'Por favor elija una opción', emailErr:'Email inválido',
+  aiBadge:'Redactado por IA · Cloudflare Workers AI',
+  fallbackBadge:'Brief generado automáticamente',
   intro:{kicker:'Empecemos',quote:'Sé lo que una imagen significa para ti…',title:'3 minutos para entender tu proyecto.',sub:'Algunas preguntas simples. Transformo tus respuestas en un brief personalizado que guía nuestra colaboración.',btn:'Empezar'},
   name:{kicker:'Sobre ti',title:'Tu nombre',ph:'ej. Sofía',btn:'Continuar'},
   project:{kicker:'El proyecto',title:'¿Cómo se llama tu proyecto?',sub:'Un nombre, aunque sea provisional.',ph:'ej. Hotel Can Ros / Bodega Garraf',btn:'Continuar'},
@@ -327,7 +333,7 @@ es:{
               {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Texturado'}]}
     ],btn:'Ver brief'},
   contact:{kicker:'Último paso',title:'Tu dirección de email',sub:'Para enviarte este brief y empezar a hablar.',ph:'tu@email.com',btn:'Generar brief'},
-  report:{loading:'Redactando tu brief…',loadSub:'La IA analiza tus respuestas y compone tu brief personalizado.',
+  report:{loading:'Redactando tu brief…',loadSub:'La IA de Cloudflare analiza tus respuestas y compone tu brief personalizado.',
     ctaTitle:'El próximo paso',ctaQuote:'…Y ahora sabes lo que una imagen significa para mí.',
     ctaText:'Hablemos de tu proyecto. Te preparo una propuesta personalizada — enfoque, planificación y presupuesto.',
     btnEmail:'Enviar brief a Marina',btnRdv:'Reservar una llamada',btnPdf:'Descargar PDF',btnRestart:'Nuevo brief'},
@@ -339,6 +345,8 @@ ca:{
   steps:['Intro','Nom','Projecte','Tipus','Prioritats','Ús','Canals','Lloc','Timing','Vibra','Contacte'],
   times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 seg','30 seg','20 seg'],
   back:'Enrere', maxTwo:'Màxim 2 opcions', mustPick:'Si us plau, tria una opció', emailErr:'Email invàlid',
+  aiBadge:'Redactat per IA · Cloudflare Workers AI',
+  fallbackBadge:'Brief generat automàticament',
   intro:{kicker:'Comencem',quote:'Sé el que una imatge significa per a tu…',title:'3 minuts per entendre el teu projecte.',sub:'Unes quantes preguntes simples. Transformo les teves respostes en un brief personalitzat que guia la nostra col·laboració.',btn:'Començar'},
   name:{kicker:'Sobre tu',title:'El teu nom',ph:'ex. Núria',btn:'Continuar'},
   project:{kicker:'El projecte',title:'Com s\'anomena el teu projecte?',sub:'Un nom, encara que sigui provisional.',ph:'ex. Hotel Can Ros / Celler Garraf',btn:'Continuar'},
@@ -386,7 +394,7 @@ ca:{
               {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Texturat'}]}
     ],btn:'Veure brief'},
   contact:{kicker:'Darrer pas',title:'El teu email',sub:'Per enviar-te aquest brief i començar a parlar.',ph:'tu@email.cat',btn:'Generar brief'},
-  report:{loading:'Redactant el teu brief…',loadSub:'La IA analitza les teves respostes i compon el teu brief personalitzat.',
+  report:{loading:'Redactant el teu brief…',loadSub:'La IA de Cloudflare analitza les teves respostes i compon el teu brief personalitzat.',
     ctaTitle:'El proper pas',ctaQuote:'…I ara saps el que una imatge significa per a mi.',
     ctaText:'Parlem del teu projecte. Et preparo una proposta personalitzada — enfocament, planificació i pressupost.',
     btnEmail:'Enviar brief a Marina',btnRdv:'Reservar una trucada',btnPdf:'Descarregar PDF',btnRestart:'Nou brief'},
@@ -557,32 +565,11 @@ function svEmail(){
 }
 
 // ═══════════════════════════════════════════════════════
-// RAPPORT — génération du brief (Hugging Face AI optimisé)
+// BUILD AI PROMPT
 // ═══════════════════════════════════════════════════════
-function showReport(){
-  step=10; upProg();
-  const c=document.getElementById('card');
-  c.innerHTML=`<div class="loading"><div class="spinner"></div><h2>${t('report.loading')}</h2><p>${t('report.loadSub')}</p></div>`;
-  
-  // Générer avec Hugging Face AI
-  generateBriefWithAI()
-    .then(brief=>{
-      S.briefText=brief;
-      renderReport(brief);
-    })
-    .catch(err=>{
-      console.warn('AI failed, using fallback:',err);
-      const brief=fallback();
-      S.briefText=brief;
-      renderReport(brief);
-    });
-}
-
-// Génération avec Hugging Face AI via Cloudflare Worker (sécurisé)
-async function generateBriefWithAI(){
-  // Détecter le secteur pour le contexte
+function buildPrompt(){
   const inferSector=(name)=>{
-    const n=name.toLowerCase();
+    const n=(name||'').toLowerCase();
     if(/hotel|hostal|apart|boutique.*hotel|casa.*rural|mas\b|can\s/i.test(n)) return 'hôtellerie';
     if(/beach.*club|club.*playa|platja|chiringuito/i.test(n)) return 'club de plage';
     if(/restaura|gastro|cuina|cocina|kitchen|bistro|tavern/i.test(n)) return 'restaurant';
@@ -601,562 +588,229 @@ async function generateBriefWithAI(){
     if(/botiga|tienda|shop|store|boutique/i.test(n)) return 'commerce';
     if(/florist|flor/i.test(n)) return 'fleuriste';
     if(/design|gràfic|graphic/i.test(n)) return 'design';
-    if(/fotograf|photo.*studio/i.test(n)) return 'studio photo';
     if(/galer[ií]|art.*space/i.test(n)) return 'galerie';
     if(/wedding|boda|casament/i.test(n)) return 'mariage';
     if(/event|celebra|festes/i.test(n)) return 'événementiel';
     if(/formaci[oó]|training|cours/i.test(n)) return 'formation';
     if(/fiduci|asesor|consult|gestori/i.test(n)) return 'services professionnels';
-    if(/bureau|oficin|cowork/i.test(n)) return 'espace de travail';
     if(/indust|f[aà]bric/i.test(n)) return 'industrie';
     return null;
   };
-  
-  const detectedSector=inferSector(S.project||'');
-  
-  const promptLang={
-    fr:`Tu es Marina, photographe à Sitges. Rédige un brief chaleureux et professionnel (200-250 mots, 3 paragraphes) pour ${S.name||'ce client'}.
 
-CONTEXTE DU PROJET:
-- Nom: ${S.project||'sans titre'}${detectedSector?' (je pense qu\'il s\'agit de '+detectedSector+')':''}
-- Type: ${S.type==='place'?'lieu à faire ressentir':S.type==='story'?'histoire de marque':S.type==='moment'?'moment à capturer':'photo'}
-- Priorités visuelles: ${S.priorities.join(', ')||'authenticité'}
-- Usage: ${S.usage==='launch'?'lancement/événement':S.usage==='base'?'bibliothèque d\'images':S.usage==='series'?'série continue':'communication'}
-- Diffusion: ${S.channels.join(', ')||'web'}
-- Lieu: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Catalogne':'à définir'}
-- Timing: ${S.timing==='fixed'?'date précise':S.timing==='approx'?'prochains mois':'flexible'}
-
-STYLE SOUHAITÉ (curseurs 0-100):
-- Énergie: ${S.calm}/100 ${S.calm<35?'(calme/contemplatif)':S.calm>65?'(vivant/dynamique)':'(équilibré)'}
-- Proximité: ${S.present}/100 ${S.present<35?'(vues larges/contexte)':S.present>65?'(intime/détails)':'(mixte)'}
-- Esthétique: ${S.rich}/100 ${S.rich<35?'(épuré/minimal)':S.rich>65?'(textures/riche)':'(équilibré)'}
-
-CONSIGNES:
-- Paragraphe 1: Si secteur détecté, commence naturellement par "Je vois que ${S.project} est [secteur]..." puis montre que tu comprends le projet
-- Paragraphe 2: Décris concrètement ton approche photo en fonction des curseurs ET du secteur
-- Paragraphe 3: Logistique (lieu/timing) + invitation à échanger
-- Ton: tutoyant, pro mais chaleureux, une touche d'humour si approprié
-- Utilise le prénom ${S.name||''} naturellement
-- JAMAIS de listes à puces, JAMAIS de prix
-
-Écris en français naturel, comme si tu parlais directement à ${S.name||'ton client'}.`,
-
-    en:`You're Marina, photographer in Sitges. Write a warm, professional brief (200-250 words, 3 paragraphs) for ${S.name||'this client'}.
-
-PROJECT CONTEXT:
-- Name: ${S.project||'untitled'}${detectedSector?' (I think this is '+detectedSector+')':''}
-- Type: ${S.type==='place'?'place to convey':S.type==='story'?'brand story':S.type==='moment'?'moment to capture':'photo'}
-- Visual priorities: ${S.priorities.join(', ')||'authenticity'}
-- Use: ${S.usage==='launch'?'launch/event':S.usage==='base'?'image library':S.usage==='series'?'ongoing series':'communication'}
-- Distribution: ${S.channels.join(', ')||'web'}
-- Location: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Catalonia':'TBD'}
-- Timeline: ${S.timing==='fixed'?'specific date':S.timing==='approx'?'next few months':'flexible'}
-
-DESIRED STYLE (sliders 0-100):
-- Energy: ${S.calm}/100 ${S.calm<35?'(calm/contemplative)':S.calm>65?'(lively/dynamic)':'(balanced)'}
-- Proximity: ${S.present}/100 ${S.present<35?'(wide views/context)':S.present>65?'(intimate/details)':'(mixed)'}
-- Aesthetic: ${S.rich}/100 ${S.rich<35?'(clean/minimal)':S.rich>65?'(textured/rich)':'(balanced)'}
-
-GUIDELINES:
-- Paragraph 1: If sector detected, naturally start with "I see that ${S.project} is [sector]..." then show you understand the project
-- Paragraph 2: Concretely describe your photo approach based on sliders AND sector
-- Paragraph 3: Logistics (location/timing) + invitation to talk
-- Tone: professional but warm, touch of humor if appropriate
-- Use first name ${S.name||''} naturally
-- NEVER bullet points, NEVER pricing
-
-Write naturally in English, as if speaking directly to ${S.name||'your client'}.`,
-
-    es:`Eres Marina, fotógrafa en Sitges. Escribe un brief cálido y profesional (200-250 palabras, 3 párrafos) para ${S.name||'este cliente'}.
-
-CONTEXTO DEL PROYECTO:
-- Nombre: ${S.project||'sin título'}${detectedSector?' (creo que es '+detectedSector+')':''}
-- Tipo: ${S.type==='place'?'lugar para sentir':S.type==='story'?'historia de marca':S.type==='moment'?'momento a capturar':'foto'}
-- Prioridades: ${S.priorities.join(', ')||'autenticidad'}
-- Uso: ${S.usage==='launch'?'lanzamiento/evento':S.usage==='base'?'biblioteca de imágenes':S.usage==='series'?'serie continua':'comunicación'}
-- Difusión: ${S.channels.join(', ')||'web'}
-- Lugar: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Cataluña':'a definir'}
-- Timing: ${S.timing==='fixed'?'fecha precisa':S.timing==='approx'?'próximos meses':'flexible'}
-
-ESTILO DESEADO (controles 0-100):
-- Energía: ${S.calm}/100 ${S.calm<35?'(calmo/contemplativo)':S.calm>65?'(vivo/dinámico)':'(equilibrado)'}
-- Proximidad: ${S.present}/100 ${S.present<35?'(vistas amplias/contexto)':S.present>65?'(íntimo/detalles)':'(mixto)'}
-- Estética: ${S.rich}/100 ${S.rich<35?'(limpio/minimal)':S.rich>65?'(texturas/rico)':'(equilibrado)'}
-
-INSTRUCCIONES:
-- Párrafo 1: Si sector detectado, empieza naturalmente con "Veo que ${S.project} es [sector]..." luego muestra que entiendes el proyecto
-- Párrafo 2: Describe concretamente tu enfoque fotográfico según los controles Y el sector
-- Párrafo 3: Logística (lugar/timing) + invitación a hablar
-- Tono: profesional pero cálido, toque de humor si apropiado
-- Usa el nombre ${S.name||''} naturalmente
-- NUNCA listas, NUNCA precios
-
-Escribe en español natural, como si hablaras directamente con ${S.name||'tu cliente'}.`,
-
-    ca:`Ets la Marina, fotògrafa a Sitges. Escriu un brief càlid i professional (200-250 paraules, 3 paràgrafs) per ${S.name||'aquest client'}.
-
-CONTEXT DEL PROJECTE:
-- Nom: ${S.project||'sense títol'}${detectedSector?' (crec que és '+detectedSector+')':''}
-- Tipus: ${S.type==='place'?'lloc per sentir':S.type==='story'?'història de marca':S.type==='moment'?'moment a capturar':'foto'}
-- Prioritats: ${S.priorities.join(', ')||'autenticitat'}
-- Ús: ${S.usage==='launch'?'llançament/esdeveniment':S.usage==='base'?'biblioteca d\'imatges':S.usage==='series'?'sèrie contínua':'comunicació'}
-- Difusió: ${S.channels.join(', ')||'web'}
-- Lloc: ${S.location==='sitges'?'Sitges/Garraf':S.location==='bcn'?'Barcelona':S.location==='cat'?'Catalunya':'a definir'}
-- Timing: ${S.timing==='fixed'?'data precisa':S.timing==='approx'?'propers mesos':'flexible'}
-
-ESTIL DESITJAT (controls 0-100):
-- Energia: ${S.calm}/100 ${S.calm<35?'(calmat/contemplatiu)':S.calm>65?'(viu/dinàmic)':'(equilibrat)'}
-- Proximitat: ${S.present}/100 ${S.present<35?'(vistes àmplies/context)':S.present>65?'(íntim/detalls)':'(mixt)'}
-- Estètica: ${S.rich}/100 ${S.rich<35?'(net/minimal)':S.rich>65?'(textures/ric)':'(equilibrat)'}
-
-INSTRUCCIONS:
-- Paràgraf 1: Si sector detectat, comença naturalment amb "Veig que ${S.project} és [sector]..." després mostra que entens el projecte
-- Paràgraf 2: Descriu concretament el teu enfocament fotogràfic segons els controls I el sector
-- Paràgraf 3: Logística (lloc/timing) + invitació a parlar
-- To: professional però càlid, toc d'humor si apropiat
-- Fes servir el nom ${S.name||''} naturalment
-- MAI llistes, MAI preus
-
-Escriu en català natural, com si parlessis directament amb ${S.name||'el teu client'}.`
-  };
-
-const url='/api/rewrite';
-
-...
-body: JSON.stringify({
-  text: (promptLang[L] || promptLang.en),
-  mode: "rewrite" text: `Rédige un brief chaleureux et professionnel en 3 paragraphes (200–250 mots). Pas de listes. Pas de prix.\n\n${(promptLang[L] || promptLang.en)}`
-})
-
-  const response=await fetch(url,{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify({
-      prompt:(promptLang[L]||promptLang.en)
-    })
-  });
-
-  console.log('[AI] Worker response status:', response.status);
-
-  const raw=await response.text();
-  console.log('[AI] Worker raw response:', raw.substring(0, 200));
-  
-  let data;
-  try{data=JSON.parse(raw);}catch{data=raw;}
-
-  if(!response.ok){
-    console.error('[AI] Worker HTTP error:', response.status, raw);
-    throw new Error(`Worker HTTP ${response.status}: ${raw}`);
-  }
-
-  // Worker renvoie une erreur sous forme d'objet {error: ...}
-  if(data && typeof data==='object' && data.error){
-    console.error('[AI] Worker returned error:', data.error);
-    throw new Error(`Worker error: ${data.error}`);
-  }
-
-  // LE WORKER RENVOIE: { generated_text: "..." }
- let text = '';
-if (data && typeof data === 'object' && data.result) {
-  text = data.result;
-} else if (typeof data === 'string') {
-  text = data;
-}
-
-  text=(text||'').trim();
-  
-  // Enlever les éventuels préfixes du modèle
-  text=text.replace(/^(Voici le brief|Here's the brief|Aquí está el brief|Aquí el brief)[:\s]*/i,'');
-  
-  if(text.length<100){
-    console.error('[AI] Response too short:', text.length, 'chars');
-    throw new Error(`Response too short/empty: ${raw}`);
-  }
-  
-  console.log('[AI] Success! Final text length:', text.length);
-  return text;
-}
-
-// Génération avec Hugging Face AI (modèle gratuit de qualité)
-
-// Fallback ultra-riche — VOIX DU CLIENT qui décrit ce qu'il veut
-function fallback(){
-  const proj=S.project||'';
+  const sector = inferSector(S.project);
   const c=S.calm, p=S.present, r=S.rich;
 
-  // Déduire le secteur du nom du projet - TOP 30 secteurs Sitges/Barcelona
-  const inferSector=(name)=>{
-    const n=name.toLowerCase();
-    
-    // Hôtellerie & Tourisme (très courant à Sitges)
-    if(/hotel|hostal|apart|boutique.*hotel|casa.*rural|mas\b|can\s/i.test(n)) return 'hotel';
-    if(/beach.*club|club.*playa|platja|chiringuito/i.test(n)) return 'beach-club';
-    if(/experi[eè]ncia|experien|tour|excurs|activit.*tour/i.test(n)) return 'tourism-exp';
-    if(/transport|transfer|taxi|vtc|shuttle/i.test(n)) return 'transport';
-    
-    // Gastronomie
-    if(/restaura|gastro|cuina|cocina|kitchen|bistro|tavern/i.test(n)) return 'restaurant';
-    if(/bode?ga|celler|vi[nñ]|wine|vi\b/i.test(n)) return 'wine';
-    if(/caf[eé]|coffee|barista/i.test(n)) return 'cafe';
-    if(/bar\b|tapas|vermut/i.test(n)) return 'bar';
-    
-    // Santé & Bien-être (très présent à Sitges)
-    if(/dent|odonto|clinic.*dent/i.test(n)) return 'dental';
-    if(/m[eé]dic|clinic|doctor|salud|health/i.test(n)) return 'medical';
-    if(/est[eé]tic|beauty|spa|wellness|massage/i.test(n)) return 'beauty';
-    if(/fisio|physio|quirop/i.test(n)) return 'physio';
-    if(/yoga|pilates|fitness|gym/i.test(n)) return 'fitness';
-    
-    // Immobilier & Construction
-    if(/inmobil|real.*estate|propied|viviend|pis.*venta|venta.*casa/i.test(n)) return 'realestate';
-    if(/architect|arquitec|estudi.*disseny|interio/i.test(n)) return 'architecture';
-    if(/construc|obra|reform|rehabilit/i.test(n)) return 'construction';
-    
-    // Commerce & Services locaux
-    if(/taller|atelier|artesa|craft|joier|bijou/i.test(n)) return 'craft';
-    if(/botiga|tienda|shop|store|boutique/i.test(n)) return 'retail';
-    if(/florist|flor|garden/i.test(n)) return 'florist';
-    if(/vie.*locale|comer.*local|mercat|market/i.test(n)) return 'local-life';
-    
-    // Créatif & Design
-    if(/estudi|studio|design|gràfic|graphic/i.test(n)) return 'design';
-    if(/fotograf|photo.*studio/i.test(n)) return 'photo-studio';
-    if(/galer[ií]|art.*space|sala.*exposi/i.test(n)) return 'gallery';
-    
-    // Événementiel (détaillé)
-    if(/event|celebra|festes|party/i.test(n)) return 'events';
-    if(/wedding|boda|casament|nuvi/i.test(n)) return 'wedding';
-    if(/congr[eè]s|congress|confer[eè]n|seminar/i.test(n)) return 'corporate-events';
-    
-    // Formation & Éducation
-    if(/formaci[oó]|training|cours|clase|enseñ|school|academi/i.test(n)) return 'training';
-    if(/escuela|escola|college|universit/i.test(n)) return 'education';
-    
-    // Services professionnels
-    if(/fiduci|asesor|consult|gestori|comptab|accounta/i.test(n)) return 'fiduciary';
-    if(/bureau|oficin|cowork|espacio.*trabajo|workspace/i.test(n)) return 'office-services';
-    if(/administra|ayuntami|ajuntam|gobierno|govern|public/i.test(n)) return 'administration';
-    
-    // Industrie
-    if(/indust|f[aà]bric|manufact|producció|production/i.test(n)) return 'industry';
-    
-    return null;
-  };
-  const sector=inferSector(proj);
+  const TYPE_L={fr:{place:'lieu à faire ressentir',story:'histoire de marque',moment:'moment à capturer'},en:{place:'place to convey',story:'brand story',moment:'moment to capture'},es:{place:'lugar para sentir',story:'historia de marca',moment:'momento a capturar'},ca:{place:'lloc per sentir',story:'història de marca',moment:'moment a capturar'}};
+  const PRIO_L={fr:{auth:'authenticité',brand:'cohérence',singular:'singularité',trust:'crédibilité'},en:{auth:'authenticity',brand:'coherence',singular:'singularity',trust:'credibility'},es:{auth:'autenticidad',brand:'coherencia',singular:'singularidad',trust:'credibilidad'},ca:{auth:'autenticitat',brand:'coherència',singular:'singularitat',trust:'credibilitat'}};
+  const CHAN_L={fr:{web:'site web',social:'réseaux sociaux',press:'presse',print:'print'},en:{web:'website',social:'social media',press:'press',print:'print'},es:{web:'web',social:'redes sociales',press:'prensa',print:'impresión'},ca:{web:'web',social:'xarxes socials',press:'premsa',print:'impressió'}};
+  const LOC_L={fr:{sitges:'Sitges et environs (Garraf, Vilanova...)',bcn:'Barcelone',cat:'Catalogne',other:'en dehors de Catalogne'},en:{sitges:'Sitges area (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Catalonia',other:'outside Catalonia'},es:{sitges:'Sitges y alrededores (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Cataluña',other:'fuera de Cataluña'},ca:{sitges:'Sitges i rodal (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Catalunya',other:'fora de Catalunya'}};
+  const TIM_L={fr:{fixed:'avec une date précise',approx:'dans les prochains mois',flex:'flexible, sans urgence'},en:{fixed:'with a specific date',approx:'within the next few months',flex:'flexible, no rush'},es:{fixed:'con fecha precisa',approx:'en los próximos meses',flex:'flexible, sin urgencia'},ca:{fixed:'amb data precisa',approx:'en els propers mesos',flex:'flexible, sense urgència'}};
 
-  // Labels traduits
-  const TYPE_L={
-    fr:{place:'un lieu',story:'une histoire de marque',moment:'un moment de vie'},
-    en:{place:'a place',story:'a brand story',moment:'a life moment'},
-    es:{place:'un lugar',story:'una historia de marca',moment:'un momento de vida'},
-    ca:{place:'un lloc',story:'una història de marca',moment:'un moment de vida'}
-  };
-  const PRIO_L={
-    fr:{auth:'authenticité',brand:'cohérence',singular:'singularité',trust:'crédibilité'},
-    en:{auth:'authenticity',brand:'coherence',singular:'singularity',trust:'credibility'},
-    es:{auth:'autenticidad',brand:'coherencia',singular:'singularidad',trust:'credibilidad'},
-    ca:{auth:'autenticitat',brand:'coherència',singular:'singularitat',trust:'credibilitat'}
-  };
-  const CHAN_L={
-    fr:{web:'site web',social:'réseaux sociaux',press:'presse',print:'print'},
-    en:{web:'website',social:'social media',press:'press',print:'print'},
-    es:{web:'web',social:'redes sociales',press:'prensa',print:'impresión'},
-    ca:{web:'web',social:'xarxes socials',press:'premsa',print:'impressió'}
-  };
-  const LOC_L={
-    fr:{sitges:'Sitges et environs (Garraf, Vilanova...)',bcn:'Barcelone',cat:'Catalogne',other:'en dehors de la Catalogne'},
-    en:{sitges:'Sitges area (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Catalonia',other:'outside Catalonia'},
-    es:{sitges:'Sitges y alrededores (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Cataluña',other:'fuera de Cataluña'},
-    ca:{sitges:'Sitges i rodal (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Catalunya',other:'fora de Catalunya'}
-  };
-  const TIM_L={
-    fr:{fixed:'avec une date précise',approx:'dans les prochains mois',flex:'sans urgence, on peut planifier ensemble'},
-    en:{fixed:'with a specific date',approx:'within the next few months',flex:'no rush, we can plan together'},
-    es:{fixed:'con una fecha específica',approx:'en los próximos meses',flex:'sin prisa, podemos planificar juntos'},
-    ca:{fixed:'amb una data específica',approx:'en els propers mesos',flex:'sense pressa, podem planificar junts'}
-  };
+  const tl = S.type && TYPE_L[L] ? (TYPE_L[L][S.type]||'') : '';
+  const prios = S.priorities.map(x=>PRIO_L[L]?.[x]).filter(Boolean);
+  const chans = S.channels.map(x=>CHAN_L[L]?.[x]).filter(Boolean);
+  const locStr = LOC_L[L]?.[S.location] || '';
+  const timStr = TIM_L[L]?.[S.timing] || '';
 
-  const tl=S.type && TYPE_L[L] && TYPE_L[L][S.type] ? TYPE_L[L][S.type] : '';
-  const prios=S.priorities.map(x=>PRIO_L[L] && PRIO_L[L][x] ? PRIO_L[L][x] : null).filter(x=>x);
-  const chans=S.channels.map(x=>CHAN_L[L] && CHAN_L[L][x] ? CHAN_L[L][x] : null).filter(x=>x);
-  const locStr=LOC_L[L] && LOC_L[L][S.location] ? LOC_L[L][S.location] : '';
-  const timStr=TIM_L[L] && TIM_L[L][S.timing] ? TIM_L[L][S.timing] : '';
-  const sep={fr:' et ',en:' and ',es:' y ',ca:' i '}[L];
+  const calmDesc = c<35 ? (L==='fr'?'très calme et contemplatif':L==='es'?'muy calmo y contemplativo':L==='ca'?'molt calmat i contemplatiu':'very calm and contemplative') : c>65 ? (L==='fr'?'vivant et dynamique, plein d\'énergie':L==='es'?'vivo y dinámico, lleno de energía':L==='ca'?'viu i dinàmic, ple d\'energia':'lively and dynamic, full of energy') : (L==='fr'?'équilibré entre calme et dynamisme':L==='es'?'equilibrado entre calma y dinamismo':L==='ca'?'equilibrat entre calma i dinamisme':'balanced between calm and dynamic');
+  const preDesc = p<35 ? (L==='fr'?'avec des vues larges qui donnent du contexte':L==='es'?'con vistas amplias que dan contexto':L==='ca'?'amb vistes àmplies que donen context':'with wide views providing context') : p>65 ? (L==='fr'?'intime et proche, valorisant les détails et les textures':L==='es'?'íntimo y cercano, valorando detalles y texturas':L==='ca'?'íntim i proper, valorant detalls i textures':'intimate and close, highlighting details and textures') : (L==='fr'?'mixte entre vues d\'ensemble et détails':L==='es'?'mixto entre vistas generales y detalles':L==='ca'?'mixt entre vistes generals i detalls':'a mix of wide shots and close details');
+  const richDesc = r<35 ? (L==='fr'?'épuré et minimaliste, beaucoup d\'espace et de lumière':L==='es'?'limpio y minimalista, mucho espacio y luz':L==='ca'?'net i minimalista, molt espai i llum':'clean and minimalist, lots of space and light') : r>65 ? (L==='fr'?'riche en textures et en matières, atmosphères denses':L==='es'?'rico en texturas y materiales, atmósferas densas':L==='ca'?'ric en textures i materials, atmosferes denses':'rich in textures and materials, dense atmospheres') : (L==='fr'?'équilibré entre épuré et richesse visuelle':L==='es'?'equilibrado entre limpieza y riqueza visual':L==='ca'?'equilibrat entre neteja i riquesa visual':'balanced between clean and visually rich');
 
-  // Descriptions visuelles ancrées dans les curseurs
-  const VIBE={
-    fr:{
-      calm:[
-        'des images posées, contemplatives, qui laissent le temps au regard de se poser',
-        'un équilibre entre calme et mouvement, sans excès',
-        'de l\'énergie, du rythme, de la vie capturée en mouvement'
-      ],
-      present:[
-        'des vues d\'ensemble qui donnent le contexte, de la profondeur de champ',
-        'un équilibre entre contexte et détails, selon les moments',
-        'de l\'intimité : les matières, les textures, les détails, les gestes de près'
-      ],
-      rich:[
-        'une esthétique épurée — cadrages nets, peu d\'éléments, beaucoup d\'espace et de lumière',
-        'un équilibre entre sobriété et présence visuelle',
-        'une richesse de textures, des ambiances denses, des images qui racontent par les matières'
-      ]
-    },
-    en:{
-      calm:[
-        'still, contemplative images that give the eye time to rest',
-        'a balance between calm and movement, no extremes',
-        'energy, rhythm, life captured in motion'
-      ],
-      present:[
-        'wide shots that provide context, depth of field',
-        'a balance between context and details, depending on the moment',
-        'intimacy: materials, textures, details, gestures up close'
-      ],
-      rich:[
-        'a clean aesthetic — sharp framing, few elements, lots of space and light',
-        'a balance between restraint and visual presence',
-        'rich textures, dense atmosphere, images that tell through materials'
-      ]
-    },
-    es:{
-      calm:[
-        'imágenes serenas, contemplativas, que dan tiempo a la mirada para detenerse',
-        'un equilibrio entre calma y movimiento, sin excesos',
-        'energía, ritmo, vida capturada en movimiento'
-      ],
-      present:[
-        'vistas generales que dan contexto, profundidad de campo',
-        'un equilibrio entre contexto y detalles, según los momentos',
-        'intimidad: materiales, texturas, detalles, gestos de cerca'
-      ],
-      rich:[
-        'una estética limpia — encuadres netos, pocos elementos, mucho espacio y luz',
-        'un equilibrio entre sobriedad y presencia visual',
-        'riqueza de texturas, ambientes densos, imágenes que cuentan a través de los materiales'
-      ]
-    },
-    ca:{
-      calm:[
-        'imatges serenes, contemplatives, que donen temps a la mirada per aturar-se',
-        'un equilibri entre calma i moviment, sense excessos',
-        'energia, ritme, vida capturada en moviment'
-      ],
-      present:[
-        'vistes generals que donen context, profunditat de camp',
-        'un equilibri entre context i detalls, segons els moments',
-        'intimitat: materials, textures, detalls, gestos de prop'
-      ],
-      rich:[
-        'una estètica neta — enquadraments nets, pocs elements, molt espai i llum',
-        'un equilibri entre sobrietat i presència visual',
-        'riquesa de textures, atmosferes denses, imatges que expliquen a través dels materials'
-      ]
-    }
+  const prompts = {
+    fr: `Rédige un brief photographique chaleureux et professionnel en français, composé de 3 paragraphes séparés par une ligne vide (200 à 250 mots au total).
+
+INFORMATIONS SUR LE PROJET :
+- Prénom du client : ${S.name||'(non précisé)'}
+- Nom du projet : ${S.project||'(non précisé)'}${sector ? '\n- Secteur identifié : '+sector : ''}
+- Nature : ${tl}
+- Priorités visuelles : ${prios.join(', ')||'authenticité'}
+- Usage : ${S.usage==='launch'?'lancement / événement avec deadline':S.usage==='base'?'bibliothèque d\'images réutilisables':S.usage==='series'?'série de contenu continu':'communication générale'}
+- Diffusion : ${chans.join(', ')||'web'}
+- Lieu de la séance : ${locStr}
+- Planning : ${timStr}
+
+DIRECTION ARTISTIQUE SOUHAITÉE :
+- Énergie : ${calmDesc}
+- Proximité / cadrage : ${preDesc}
+- Esthétique : ${richDesc}
+
+STRUCTURE DES 3 PARAGRAPHES :
+1. Montrer que tu comprends bien le projet et le contexte du client (cite le nom du projet et le secteur si identifié)
+2. Décrire concrètement ton approche photographique en lien direct avec la direction artistique
+3. Logistique (lieu, planning) + invitation chaleureuse à se rencontrer pour affiner le projet
+
+RÈGLES ABSOLUES :
+- Tutoyer le client, ton chaleureux mais professionnel
+- Utiliser le prénom naturellement
+- 3 paragraphes séparés par une ligne vide, AUCUNE liste, AUCUN prix
+- 200 à 250 mots maximum`,
+
+    en: `Write a warm, professional photography brief in English, in 3 paragraphs separated by a blank line (200–250 words total).
+
+PROJECT INFORMATION:
+- Client first name: ${S.name||'(not specified)'}
+- Project name: ${S.project||'(not specified)'}${sector ? '\n- Detected sector: '+sector : ''}
+- Type: ${tl}
+- Visual priorities: ${prios.join(', ')||'authenticity'}
+- Use: ${S.usage==='launch'?'launch / event with deadline':S.usage==='base'?'reusable image library':S.usage==='series'?'ongoing content series':'general communication'}
+- Distribution: ${chans.join(', ')||'web'}
+- Shoot location: ${locStr}
+- Timeline: ${timStr}
+
+DESIRED ARTISTIC DIRECTION:
+- Energy: ${calmDesc}
+- Proximity / framing: ${preDesc}
+- Aesthetic: ${richDesc}
+
+PARAGRAPH STRUCTURE:
+1. Show you understand the project and the client's context (mention the project name and sector if identified)
+2. Concretely describe your photographic approach in direct relation to the artistic direction
+3. Logistics (location, timeline) + warm invitation to meet and refine the project
+
+ABSOLUTE RULES:
+- Use informal "you", warm but professional tone
+- Use the first name naturally
+- 3 paragraphs separated by a blank line, NO lists, NO pricing
+- 200–250 words maximum`,
+
+    es: `Redacta un brief fotográfico cálido y profesional en español, en 3 párrafos separados por una línea en blanco (200–250 palabras en total).
+
+INFORMACIÓN DEL PROYECTO:
+- Nombre del cliente: ${S.name||'(no especificado)'}
+- Nombre del proyecto: ${S.project||'(no especificado)'}${sector ? '\n- Sector identificado: '+sector : ''}
+- Tipo: ${tl}
+- Prioridades visuales: ${prios.join(', ')||'autenticidad'}
+- Uso: ${S.usage==='launch'?'lanzamiento / evento con fecha límite':S.usage==='base'?'biblioteca de imágenes reutilizables':S.usage==='series'?'serie de contenido continuo':'comunicación general'}
+- Difusión: ${chans.join(', ')||'web'}
+- Lugar de la sesión: ${locStr}
+- Planificación: ${timStr}
+
+DIRECCIÓN ARTÍSTICA DESEADA:
+- Energía: ${calmDesc}
+- Proximidad / encuadre: ${preDesc}
+- Estética: ${richDesc}
+
+ESTRUCTURA DE LOS 3 PÁRRAFOS:
+1. Mostrar que entiendes bien el proyecto y el contexto del cliente (menciona el nombre del proyecto y el sector si identificado)
+2. Describir concretamente tu enfoque fotográfico en relación directa con la dirección artística
+3. Logística (lugar, planificación) + invitación cálida a reunirse para afinar el proyecto
+
+REGLAS ABSOLUTAS:
+- Tutear al cliente, tono cálido pero profesional
+- Usar el nombre naturalmente
+- 3 párrafos separados por línea en blanco, NINGUNA lista, NINGÚN precio
+- 200–250 palabras máximo`,
+
+    ca: `Redacta un brief fotogràfic càlid i professional en català, en 3 paràgrafs separats per una línia en blanc (200–250 paraules en total).
+
+INFORMACIÓ DEL PROJECTE:
+- Nom del client: ${S.name||'(no especificat)'}
+- Nom del projecte: ${S.project||'(no especificat)'}${sector ? '\n- Sector identificat: '+sector : ''}
+- Tipus: ${tl}
+- Prioritats visuals: ${prios.join(', ')||'autenticitat'}
+- Ús: ${S.usage==='launch'?'llançament / esdeveniment amb data límit':S.usage==='base'?'biblioteca d\'imatges reutilitzables':S.usage==='series'?'sèrie de contingut continu':'comunicació general'}
+- Difusió: ${chans.join(', ')||'web'}
+- Lloc de la sessió: ${locStr}
+- Planificació: ${timStr}
+
+DIRECCIÓ ARTÍSTICA DESITJADA:
+- Energia: ${calmDesc}
+- Proximitat / enquadrament: ${preDesc}
+- Estètica: ${richDesc}
+
+ESTRUCTURA DELS 3 PARÀGRAFS:
+1. Mostrar que entens bé el projecte i el context del client (menciona el nom del projecte i el sector si identificat)
+2. Descriure concretament el teu enfocament fotogràfic en relació directa amb la direcció artística
+3. Logística (lloc, planificació) + invitació càlida a trobar-se per afinar el projecte
+
+REGLES ABSOLUTES:
+- Tutear el client, to càlid però professional
+- Usar el nom naturalment
+- 3 paràgrafs separats per línia en blanc, CAP llista, CAP preu
+- 200–250 paraules màxim`
   };
 
-  const vCal=c<35?0:c>65?2:1;
-  const vPre=p<35?0:p>65?2:1;
-  const vRic=r<35?0:r>65?2:1;
-
-  const calmTxt=VIBE[L] && VIBE[L].calm && VIBE[L].calm[vCal] ? VIBE[L].calm[vCal] : '';
-  const preTxt=VIBE[L] && VIBE[L].present && VIBE[L].present[vPre] ? VIBE[L].present[vPre] : '';
-  const ricTxt=VIBE[L] && VIBE[L].rich && VIBE[L].rich[vRic] ? VIBE[L].rich[vRic] : '';
-
-  // Contexte sectoriel si identifié - TOP 30 secteurs
-  const SECTOR_HINT={
-    fr:{
-      hotel:'l\'atmosphère de l\'espace, la lumière dans les chambres, les détails du lieu',
-      'beach-club':'l\'ambiance estivale, la lumière en terrasse, les moments de détente au bord de mer',
-      'tourism-exp':'les moments d\'expérience, les participants en action, l\'émotion de la découverte',
-      transport:'les véhicules, l\'environnement professionnel, le confort et la modernité',
-      restaurant:'la lumière sur les assiettes, les gestes en cuisine, l\'atmosphère du service',
-      wine:'les vignes, la lumière sur les barriques, les gestes de la vinification',
-      cafe:'la lumière du matin, les tasses, les moments du quotidien, l\'ambiance chaleureuse',
-      bar:'l\'ambiance du soir, les verres, les moments de convivialité',
-      dental:'l\'environnement moderne et rassurant, les gestes précis, la lumière technique et douce',
-      medical:'la confiance, l\'environnement professionnel, les gestes attentifs',
-      beauty:'la lumière douce, les gestes, l\'atmosphère relaxante et soignée',
-      physio:'les mains au travail, le mouvement, l\'espace thérapeutique',
-      fitness:'le mouvement, l\'énergie, la lumière naturelle dans l\'espace',
-      realestate:'les volumes, la lumière naturelle, les espaces de vie, les détails architecturaux',
-      architecture:'les lignes, les volumes, la matière et la façon dont la lumière les révèle',
-      construction:'les chantiers, les matériaux, le travail en cours, l\'environnement professionnel',
-      craft:'les mains au travail, les matières premières, la lumière de l\'atelier',
-      retail:'les produits, l\'agencement, l\'ambiance du lieu',
-      florist:'les fleurs, les textures, la lumière naturelle, les compositions',
-      'local-life':'les moments du quotidien, les gens, l\'authenticité du lieu',
-      design:'les lignes, les volumes, la matière et comment la lumière interagit',
-      'photo-studio':'l\'espace de travail, la lumière technique, l\'environnement créatif',
-      gallery:'les œuvres, l\'espace d\'exposition, la lumière sur les murs',
-      events:'les moments, les émotions, l\'ambiance, les détails qui racontent',
-      wedding:'l\'émotion, les détails, la lumière du jour, les moments intimes',
-      'corporate-events':'le professionnalisme, les interactions, l\'espace de conférence',
-      training:'les participants en action, les interactions, l\'environnement d\'apprentissage',
-      education:'les étudiants, l\'environnement pédagogique, les moments d\'apprentissage',
-      fiduciary:'le professionnalisme, la confiance, l\'environnement de bureau moderne',
-      'office-services':'l\'espace de travail, la modernité, les équipes en action',
-      administration:'les espaces publics, l\'architecture, l\'environnement institutionnel',
-      industry:'les machines, le processus de production, les travailleurs en action, la lumière industrielle'
-    },
-    en:{
-      hotel:'the atmosphere of the space, light in the rooms, details of the place',
-      'beach-club':'summer vibes, light on the terrace, relaxed moments by the sea',
-      'tourism-exp':'experience moments, participants in action, the emotion of discovery',
-      transport:'vehicles, professional environment, comfort and modernity',
-      restaurant:'light on the plates, gestures in the kitchen, the atmosphere of service',
-      wine:'the vines, light on the barrels, gestures of winemaking',
-      cafe:'morning light, cups, everyday moments, warm atmosphere',
-      bar:'evening ambiance, glasses, convivial moments',
-      dental:'modern and reassuring environment, precise gestures, soft yet technical lighting',
-      medical:'trust, professional environment, attentive gestures',
-      beauty:'soft light, gestures, relaxing and refined atmosphere',
-      physio:'hands at work, movement, therapeutic space',
-      fitness:'movement, energy, natural light in the space',
-      realestate:'volumes, natural light, living spaces, architectural details',
-      architecture:'lines, volumes, materials and how light reveals them',
-      construction:'construction sites, materials, work in progress, professional environment',
-      craft:'hands at work, raw materials, workshop light',
-      retail:'products, layout, atmosphere of the place',
-      florist:'flowers, textures, natural light, compositions',
-      'local-life':'everyday moments, people, authenticity of the place',
-      design:'lines, volumes, materials and how light interacts',
-      'photo-studio':'workspace, technical lighting, creative environment',
-      gallery:'artworks, exhibition space, light on the walls',
-      events:'moments, emotions, atmosphere, storytelling details',
-      wedding:'emotion, details, daylight, intimate moments',
-      'corporate-events':'professionalism, interactions, conference space',
-      training:'participants in action, interactions, learning environment',
-      education:'students, educational environment, learning moments',
-      fiduciary:'professionalism, trust, modern office environment',
-      'office-services':'workspace, modernity, teams in action',
-      administration:'public spaces, architecture, institutional environment',
-      industry:'machines, production process, workers in action, industrial lighting'
-    },
-    es:{
-      hotel:'la atmósfera del espacio, la luz en las habitaciones, los detalles del lugar',
-      'beach-club':'ambiente veraniego, luz en la terraza, momentos de relax junto al mar',
-      'tourism-exp':'momentos de experiencia, participantes en acción, la emoción del descubrimiento',
-      transport:'los vehículos, el ambiente profesional, el confort y la modernidad',
-      restaurant:'la luz sobre los platos, los gestos en la cocina, la atmósfera del servicio',
-      wine:'las viñas, la luz sobre las barricas, los gestos de la vinificación',
-      cafe:'la luz de la mañana, las tazas, los momentos cotidianos, el ambiente acogedor',
-      bar:'el ambiente nocturno, las copas, los momentos de convivencia',
-      dental:'entorno moderno y tranquilizador, gestos precisos, iluminación técnica y suave',
-      medical:'confianza, entorno profesional, gestos atentos',
-      beauty:'luz suave, gestos, atmósfera relajante y cuidada',
-      physio:'manos trabajando, movimiento, espacio terapéutico',
-      fitness:'movimiento, energía, luz natural en el espacio',
-      realestate:'volúmenes, luz natural, espacios de vida, detalles arquitectónicos',
-      architecture:'líneas, volúmenes, materiales y cómo la luz los revela',
-      construction:'obras, materiales, trabajo en curso, ambiente profesional',
-      craft:'manos trabajando, materias primas, luz del taller',
-      retail:'productos, disposición, ambiente del lugar',
-      florist:'flores, texturas, luz natural, composiciones',
-      'local-life':'momentos cotidianos, personas, autenticidad del lugar',
-      design:'líneas, volúmenes, materiales y cómo interactúa la luz',
-      'photo-studio':'espacio de trabajo, iluminación técnica, ambiente creativo',
-      gallery:'obras, espacio expositivo, luz sobre las paredes',
-      events:'momentos, emociones, ambiente, detalles que cuentan historias',
-      wedding:'emoción, detalles, luz del día, momentos íntimos',
-      'corporate-events':'profesionalismo, interacciones, espacio de conferencia',
-      training:'participantes en acción, interacciones, ambiente de aprendizaje',
-      education:'estudiantes, ambiente educativo, momentos de aprendizaje',
-      fiduciary:'profesionalismo, confianza, ambiente de oficina moderna',
-      'office-services':'espacio de trabajo, modernidad, equipos en acción',
-      administration:'espacios públicos, arquitectura, ambiente institucional',
-      industry:'máquinas, proceso de producción, trabajadores en acción, iluminación industrial'
-    },
-    ca:{
-      hotel:'l\'atmosfera de l\'espai, la llum a les habitacions, els detalls del lloc',
-      'beach-club':'ambient estiuenc, llum a la terrassa, moments de relax vora el mar',
-      'tourism-exp':'moments d\'experiència, participants en acció, l\'emoció del descobriment',
-      transport:'els vehicles, l\'ambient professional, el confort i la modernitat',
-      restaurant:'la llum sobre els plats, els gestos a la cuina, l\'atmosfera del servei',
-      wine:'les vinyes, la llum sobre les barriques, els gestos de la vinificació',
-      cafe:'la llum del matí, les tasses, els moments quotidians, l\'ambient acollidor',
-      bar:'l\'ambient nocturn, les copes, els moments de convivència',
-      dental:'entorn modern i tranquil·litzador, gestos precisos, il·luminació tècnica i suau',
-      medical:'confiança, entorn professional, gestos atents',
-      beauty:'llum suau, gestos, atmosfera relaxant i acurada',
-      physio:'mans treballant, moviment, espai terapèutic',
-      fitness:'moviment, energia, llum natural a l\'espai',
-      realestate:'volums, llum natural, espais de vida, detalls arquitectònics',
-      architecture:'línies, volums, materials i com la llum els revela',
-      construction:'obres, materials, treball en curs, ambient professional',
-      craft:'mans treballant, matèries primeres, llum del taller',
-      retail:'productes, disposició, ambient del lloc',
-      florist:'flors, textures, llum natural, composicions',
-      'local-life':'moments quotidians, persones, autenticitat del lloc',
-      design:'línies, volums, materials i com interactua la llum',
-      'photo-studio':'espai de treball, il·luminació tècnica, ambient creatiu',
-      gallery:'obres, espai expositiu, llum sobre les parets',
-      events:'moments, emocions, ambient, detalls que expliquen històries',
-      wedding:'emoció, detalls, llum del dia, moments íntims',
-      'corporate-events':'professionalitat, interaccions, espai de conferència',
-      training:'participants en acció, interaccions, ambient d\'aprenentatge',
-      education:'estudiants, ambient educatiu, moments d\'aprenentatge',
-      fiduciary:'professionalitat, confiança, ambient d\'oficina moderna',
-      'office-services':'espai de treball, modernitat, equips en acció',
-      administration:'espais públics, arquitectura, ambient institucional',
-      industry:'màquines, procés de producció, treballadors en acció, il·luminació industrial'
-    }
-  };
-  const sectorHint=sector && SECTOR_HINT[L] && SECTOR_HINT[L][sector] ? SECTOR_HINT[L][sector] : '';
-
-  // PARAGRAPHE 1 : Projet + besoin - TOUS les secteurs
-  const SECTOR_NAMES={
-    fr:{hotel:'hôtellerie','beach-club':'club de plage','tourism-exp':'expériences touristiques',transport:'transport',restaurant:'gastronomie',wine:'vignoble',cafe:'café',bar:'bar',dental:'cabinet dentaire',medical:'médical',beauty:'esthétique & spa',physio:'physiothérapie',fitness:'fitness & sport',realestate:'immobilier',architecture:'architecture',construction:'construction',craft:'artisanat',retail:'commerce',florist:'fleuriste','local-life':'vie locale',design:'design','photo-studio':'studio photo',gallery:'galerie d\'art',events:'événementiel',wedding:'mariage','corporate-events':'événements corporate',training:'formation',education:'éducation',fiduciary:'fiduciaire','office-services':'services de bureau',administration:'administration',industry:'industrie'},
-    en:{hotel:'hospitality','beach-club':'beach club','tourism-exp':'tourism experiences',transport:'transport',restaurant:'gastronomy',wine:'winery',cafe:'café',bar:'bar',dental:'dental clinic',medical:'medical',beauty:'beauty & spa',physio:'physiotherapy',fitness:'fitness & sports',realestate:'real estate',architecture:'architecture',construction:'construction',craft:'craft',retail:'retail',florist:'florist','local-life':'local life',design:'design','photo-studio':'photo studio',gallery:'art gallery',events:'events',wedding:'wedding','corporate-events':'corporate events',training:'training',education:'education',fiduciary:'fiduciary','office-services':'office services',administration:'administration',industry:'industry'},
-    es:{hotel:'hostelería','beach-club':'club de playa','tourism-exp':'experiencias turísticas',transport:'transporte',restaurant:'gastronomía',wine:'viñedo',cafe:'café',bar:'bar',dental:'clínica dental',medical:'médico',beauty:'estética & spa',physio:'fisioterapia',fitness:'fitness & deporte',realestate:'inmobiliaria',architecture:'arquitectura',construction:'construcción',craft:'artesanía',retail:'comercio',florist:'floristería','local-life':'vida local',design:'diseño','photo-studio':'estudio fotográfico',gallery:'galería de arte',events:'eventos',wedding:'boda','corporate-events':'eventos corporativos',training:'formación',education:'educación',fiduciary:'fiduciario','office-services':'servicios de oficina',administration:'administración',industry:'industria'},
-    ca:{hotel:'hostaleria','beach-club':'club de platja','tourism-exp':'experiències turístiques',transport:'transport',restaurant:'gastronomia',wine:'vinya',cafe:'cafè',bar:'bar',dental:'clínica dental',medical:'mèdic',beauty:'estètica & spa',physio:'fisioteràpia',fitness:'fitness & esport',realestate:'immobiliària',architecture:'arquitectura',construction:'construcció',craft:'artesania',retail:'comerç',florist:'floristeria','local-life':'vida local',design:'disseny','photo-studio':'estudi fotogràfic',gallery:'galeria d\'art',events:'esdeveniments',wedding:'casament','corporate-events':'esdeveniments corporatius',training:'formació',education:'educació',fiduciary:'fiduciari','office-services':'serveis d\'oficina',administration:'administració',industry:'indústria'}
-  };
-  
-  const sectorName=sector && SECTOR_NAMES[L] && SECTOR_NAMES[L][sector] ? SECTOR_NAMES[L][sector] : '';
-  
-  const INTRO={
-    fr:`${sectorName?`Je vois que ${proj||'votre projet'} relève ${sectorName.startsWith('h')||sectorName.startsWith('é')||sectorName.startsWith('i')||sectorName.startsWith('a')||sectorName.startsWith('o')||sectorName.startsWith('u')?'de l\'':'du secteur '}${sectorName}. `:proj?`${proj} — `:''}Photographier ${tl}, destiné ${chans.length?'à '+chans.join(sep):'à vos supports'}. ${prios.length?'Vos priorités : '+prios.join(sep)+'.':''}`,
-    en:`${sectorName?`I see that ${proj||'your project'} is in the ${sectorName} sector. `:proj?`${proj} — `:''}Photographing ${tl}, for ${chans.length?chans.join(sep):'your channels'}. ${prios.length?'Your priorities: '+prios.join(sep)+'.':''}`,
-    es:`${sectorName?`Veo que ${proj||'tu proyecto'} es del sector ${sectorName}. `:proj?`${proj} — `:''}Fotografiar ${tl}, destinado ${chans.length?'a '+chans.join(sep):'a tus plataformas'}. ${prios.length?'Tus prioridades: '+prios.join(sep)+'.':''}`,
-    ca:`${sectorName?`Veig que ${proj||'el teu projecte'} és del sector ${sectorName}. `:proj?`${proj} — `:''}Fotografiar ${tl}, destinat ${chans.length?'a '+chans.join(sep):'a les teves plataformes'}. ${prios.length?'Les teves prioritats: '+prios.join(sep)+'.':''}`
-  };
-
-  // PARAGRAPHE 2 : Direction photographique - PERSONNALISÉ avec humour subtil
-  const DIRECTION={
-    fr:`${S.name?S.name+', vous':'Vous'} souhaitez ${calmTxt}${sectorHint?', en valorisant '+sectorHint:''}. Visuellement : ${preTxt}. ${ricTxt.charAt(0).toUpperCase()+ricTxt.slice(1)}. ${sector==='wine'?'(Et oui, on va faire briller ces barriques !)':sector==='restaurant'?'(Promis, on donnera faim aux gens.)':sector==='wedding'?'(Les mouchoirs ne seront pas de trop.)':sector==='fitness'?'(On captera l\'énergie, pas la transpiration.)':''}`,
-    en:`${S.name?S.name+', you':'You'} want ${calmTxt}${sectorHint?', highlighting '+sectorHint:''}. Visually: ${preTxt}. ${ricTxt.charAt(0).toUpperCase()+ricTxt.slice(1)}. ${sector==='wine'?'(Yes, we\'ll make those barrels shine!)':sector==='restaurant'?'(Promise, we\'ll make people hungry.)':sector==='wedding'?'(Tissues recommended.)':sector==='fitness'?'(We\'ll capture the energy, not the sweat.)':''}`,
-    es:`${S.name?S.name+', quieres':'Quieres'} ${calmTxt}${sectorHint?', valorando '+sectorHint:''}. Visualmente: ${preTxt}. ${ricTxt.charAt(0).toUpperCase()+ricTxt.slice(1)}. ${sector==='wine'?'(¡Sí, haremos brillar esas barricas!)':sector==='restaurant'?'(Promesa: daremos hambre a la gente.)':sector==='wedding'?'(Los pañuelos no sobrarán.)':sector==='fitness'?'(Capturaremos la energía, no el sudor.)':''}`,
-    ca:`${S.name?S.name+', vols':'Vols'} ${calmTxt}${sectorHint?', valorant '+sectorHint:''}. Visualment: ${preTxt}. ${ricTxt.charAt(0).toUpperCase()+ricTxt.slice(1)}. ${sector==='wine'?'(Sí, farem brillar aquestes barriques!)':sector==='restaurant'?'(Promès: farem venir gana.)':sector==='wedding'?'(Els mocadors no sobren.)':sector==='fitness'?'(Capturarem l\'energia, no la suor.)':''}`
-  };
-
-  // PARAGRAPHE 3 : Logistique - PERSONNALISÉ
-  const LOGISTICS={
-    fr:`Lieu : ${locStr}. Planning : ${timStr}. ${S.name?S.name+', ':''}discutons ensemble pour affiner ce brief et organiser la séance. ${S.email?'Je vous contacte vite à '+S.email+' !':'À très bientôt !'}`,
-    en:`Location: ${locStr}. Timeline: ${timStr}. ${S.name?S.name+', ':''}let's talk to refine this brief and organize the shoot. ${S.email?'I\'ll reach out soon at '+S.email+'!':'Talk soon!'}`,
-    es:`Lugar: ${locStr}. Planificación: ${timStr}. ${S.name?S.name+', ':''}hablemos para afinar este brief y organizar la sesión. ${S.email?'Te contacto pronto a '+S.email+'!':'¡Hasta pronto!'}`,
-    ca:`Lloc: ${locStr}. Planificació: ${timStr}. ${S.name?S.name+', ':''}parlem per afinar aquest brief i organitzar la sessió. ${S.email?'Et contacto aviat a '+S.email+'!':'Fins aviat!'}`
-  };
-
-  return (INTRO[L]||INTRO.en)+'\n\n'+(DIRECTION[L]||DIRECTION.en)+'\n\n'+(LOGISTICS[L]||LOGISTICS.en);
+  return prompts[L] || prompts.en;
 }
 
 // ═══════════════════════════════════════════════════════
-// RENDER RAPPORT
+// GENERATE BRIEF WITH CLOUDFLARE AI
+// ═══════════════════════════════════════════════════════
+async function generateBriefWithAI(){
+  const prompt = buildPrompt();
+
+  const response = await fetch('/api/rewrite', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: prompt })
+  });
+
+  if(!response.ok){
+    const errText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errText}`);
+  }
+
+  const data = await response.json();
+
+  if(data && data.error){
+    throw new Error(`Worker error: ${data.error}`);
+  }
+
+  const text = (data?.result || '').trim();
+
+  if(text.length < 80){
+    throw new Error(`Response too short (${text.length} chars)`);
+  }
+
+  S.briefSource = 'ai';
+  return text;
+}
+
+// ═══════════════════════════════════════════════════════
+// SHOW REPORT — calls AI then renders
+// ═══════════════════════════════════════════════════════
+function showReport(){
+  step=10; upProg();
+  const c=document.getElementById('card');
+  c.innerHTML=`<div class="loading">
+    <div class="spinner"></div>
+    <h2>${t('report.loading')}</h2>
+    <p>${t('report.loadSub')}</p>
+  </div>`;
+
+  generateBriefWithAI()
+    .then(brief=>{
+      S.briefText=brief;
+      S.briefSource='ai';
+      renderReport(brief);
+    })
+    .catch(err=>{
+      console.warn('Cloudflare AI failed, using fallback:', err);
+      const brief=fallback();
+      S.briefText=brief;
+      S.briefSource='fallback';
+      renderReport(brief);
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER REPORT
 // ═══════════════════════════════════════════════════════
 function renderReport(txt){
   const c=document.getElementById('card');
   const proj=S.project||(L==='fr'?'Votre projet':L==='es'?'Tu proyecto':L==='ca'?'El teu projecte':'Your project');
   const locale={fr:'fr-FR',en:'en-GB',es:'es-ES',ca:'ca-ES'}[L]||'en-GB';
   const date=new Date().toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
-  const paras=txt.split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('');
+  const paras=txt.split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim().replace(/\n/g,'<br>')}</p>`).join('');
+  const badgeLabel = S.briefSource==='ai' ? t('aiBadge') : t('fallbackBadge');
+
   c.innerHTML=`
     <div class="rpt-hero">
       <h1>${proj}</h1>
       ${S.name?`<div class="client">${S.name}</div>`:''}
       <div class="rdate">${date}</div>
     </div>
+    <div class="ai-badge">${badgeLabel}</div>
     <div class="rpt-body">${paras}</div>
     <div class="rpt-cta">
       <h2>${t('report.ctaTitle')}</h2>
@@ -1172,12 +826,118 @@ function renderReport(txt){
 }
 
 // ═══════════════════════════════════════════════════════
+// FALLBACK — rich text generation without AI
+// ═══════════════════════════════════════════════════════
+function fallback(){
+  const proj=S.project||'';
+  const c=S.calm, p=S.present, r=S.rich;
+
+  const inferSector=(name)=>{
+    const n=(name||'').toLowerCase();
+    if(/hotel|hostal|apart|boutique.*hotel|casa.*rural|mas\b|can\s/i.test(n)) return 'hotel';
+    if(/beach.*club|club.*playa|platja|chiringuito/i.test(n)) return 'beach-club';
+    if(/restaura|gastro|cuina|cocina|kitchen|bistro|tavern/i.test(n)) return 'restaurant';
+    if(/bode?ga|celler|vi[nñ]|wine|vi\b/i.test(n)) return 'wine';
+    if(/caf[eé]|coffee|barista/i.test(n)) return 'cafe';
+    if(/bar\b|tapas|vermut/i.test(n)) return 'bar';
+    if(/dent|odonto/i.test(n)) return 'dental';
+    if(/m[eé]dic|clinic|doctor|salud|health/i.test(n)) return 'medical';
+    if(/est[eé]tic|beauty|spa|wellness/i.test(n)) return 'beauty';
+    if(/fisio|physio/i.test(n)) return 'physio';
+    if(/yoga|pilates|fitness|gym/i.test(n)) return 'fitness';
+    if(/inmobil|real.*estate|propied/i.test(n)) return 'realestate';
+    if(/architect|arquitec/i.test(n)) return 'architecture';
+    if(/taller|atelier|artesa|craft/i.test(n)) return 'craft';
+    if(/botiga|tienda|shop|store|boutique/i.test(n)) return 'retail';
+    if(/florist|flor/i.test(n)) return 'florist';
+    if(/design|gràfic|graphic/i.test(n)) return 'design';
+    if(/galer[ií]|art.*space/i.test(n)) return 'gallery';
+    if(/wedding|boda|casament/i.test(n)) return 'wedding';
+    if(/event|celebra|festes/i.test(n)) return 'events';
+    return null;
+  };
+  const sector=inferSector(proj);
+
+  const TYPE_L={fr:{place:'un lieu',story:'une histoire de marque',moment:'un moment de vie'},en:{place:'a place',story:'a brand story',moment:'a life moment'},es:{place:'un lugar',story:'una historia de marca',moment:'un momento de vida'},ca:{place:'un lloc',story:'una història de marca',moment:'un moment de vida'}};
+  const PRIO_L={fr:{auth:'authenticité',brand:'cohérence',singular:'singularité',trust:'crédibilité'},en:{auth:'authenticity',brand:'coherence',singular:'singularity',trust:'credibility'},es:{auth:'autenticidad',brand:'coherencia',singular:'singularidad',trust:'credibilidad'},ca:{auth:'autenticitat',brand:'coherència',singular:'singularitat',trust:'credibilitat'}};
+  const CHAN_L={fr:{web:'site web',social:'réseaux sociaux',press:'presse',print:'print'},en:{web:'website',social:'social media',press:'press',print:'print'},es:{web:'web',social:'redes sociales',press:'prensa',print:'impresión'},ca:{web:'web',social:'xarxes socials',press:'premsa',print:'impressió'}};
+  const LOC_L={fr:{sitges:'Sitges et environs',bcn:'Barcelone',cat:'Catalogne',other:'en dehors de la Catalogne'},en:{sitges:'Sitges area',bcn:'Barcelona',cat:'Catalonia',other:'outside Catalonia'},es:{sitges:'Sitges y alrededores',bcn:'Barcelona',cat:'Cataluña',other:'fuera de Cataluña'},ca:{sitges:'Sitges i rodal',bcn:'Barcelona',cat:'Catalunya',other:'fora de Catalunya'}};
+  const TIM_L={fr:{fixed:'avec une date précise',approx:'dans les prochains mois',flex:'sans urgence'},en:{fixed:'with a specific date',approx:'within the next few months',flex:'no rush'},es:{fixed:'con fecha precisa',approx:'en los próximos meses',flex:'sin prisa'},ca:{fixed:'amb data precisa',approx:'en els propers mesos',flex:'sense pressa'}};
+
+  const tl=S.type&&TYPE_L[L]?.[S.type]||'';
+  const prios=S.priorities.map(x=>PRIO_L[L]?.[x]).filter(Boolean);
+  const chans=S.channels.map(x=>CHAN_L[L]?.[x]).filter(Boolean);
+  const locStr=LOC_L[L]?.[S.location]||'';
+  const timStr=TIM_L[L]?.[S.timing]||'';
+  const sep={fr:' et ',en:' and ',es:' y ',ca:' i '}[L];
+
+  const SECTOR_NAMES={
+    fr:{hotel:'hôtellerie','beach-club':'club de plage',restaurant:'restaurant',wine:'vignoble',cafe:'café',bar:'bar',dental:'cabinet dentaire',medical:'médical',beauty:'esthétique & spa',physio:'physiothérapie',fitness:'fitness',realestate:'immobilier',architecture:'architecture',craft:'artisanat',retail:'commerce',florist:'fleuriste',design:'design',gallery:'galerie d\'art',events:'événementiel',wedding:'mariage'},
+    en:{hotel:'hospitality','beach-club':'beach club',restaurant:'gastronomy',wine:'winery',cafe:'café',bar:'bar',dental:'dental clinic',medical:'medical',beauty:'beauty & spa',physio:'physiotherapy',fitness:'fitness',realestate:'real estate',architecture:'architecture',craft:'craft',retail:'retail',florist:'florist',design:'design',gallery:'art gallery',events:'events',wedding:'wedding'},
+    es:{hotel:'hostelería','beach-club':'club de playa',restaurant:'gastronomía',wine:'viñedo',cafe:'café',bar:'bar',dental:'clínica dental',medical:'médico',beauty:'estética & spa',physio:'fisioterapia',fitness:'fitness',realestate:'inmobiliaria',architecture:'arquitectura',craft:'artesanía',retail:'comercio',florist:'floristería',design:'diseño',gallery:'galería de arte',events:'eventos',wedding:'boda'},
+    ca:{hotel:'hostaleria','beach-club':'club de platja',restaurant:'gastronomia',wine:'vinya',cafe:'cafè',bar:'bar',dental:'clínica dental',medical:'mèdic',beauty:'estètica & spa',physio:'fisioteràpia',fitness:'fitness',realestate:'immobiliària',architecture:'arquitectura',craft:'artesania',retail:'comerç',florist:'floristeria',design:'disseny',gallery:'galeria d\'art',events:'esdeveniments',wedding:'casament'}
+  };
+  const sectorName=sector&&SECTOR_NAMES[L]?.[sector]||'';
+
+  const VIBE={
+    fr:{
+      calm:[['des images posées, contemplatives','un rythme calme qui laisse respirer'],['un équilibre entre calme et énergie','du mouvement sans agitation'],['de l\'énergie et du mouvement','des images vivantes, pleines de vie']],
+      present:[['des vues larges qui donnent du contexte','de la profondeur, de l\'espace'],['un équilibre entre vues d\'ensemble et détails','alterner les angles'],['de la proximité et de l\'intimité','les textures, les détails, les gestes de près']],
+      rich:[['une esthétique épurée','des cadrages nets, de l\'espace, de la lumière'],['un équilibre entre sobriété et présence visuelle','propre sans être vide'],['des images riches en textures','des atmosphères denses et sensuelles']]
+    },
+    en:{
+      calm:[['still, contemplative images','a calm rhythm that lets images breathe'],['a balance of calm and energy','movement without agitation'],['energy and movement','lively images full of life']],
+      present:[['wide shots giving context','depth and space'],['a mix of wide and close shots','alternating perspectives'],['intimacy and proximity','textures, details, gestures up close']],
+      rich:[['a clean aesthetic','sharp framing, space and light'],['a balance of restraint and visual presence','clean but not empty'],['rich textured images','dense, sensorial atmospheres']]
+    },
+    es:{
+      calm:[['imágenes serenas y contemplativas','un ritmo calmo que deja respirar'],['un equilibrio entre calma y energía','movimiento sin agitación'],['energía y movimiento','imágenes vivas y llenas de vida']],
+      present:[['vistas amplias que dan contexto','profundidad y espacio'],['un mix de vistas generales y detalles','alternar perspectivas'],['intimidad y proximidad','texturas, detalles, gestos de cerca']],
+      rich:[['estética limpia','encuadres netos, espacio y luz'],['equilibrio entre sobriedad y presencia visual','limpio pero no vacío'],['imágenes ricas en texturas','atmósferas densas y sensoriales']]
+    },
+    ca:{
+      calm:[['imatges serenes i contemplatives','un ritme calmat que deixa respirar'],['un equilibri entre calma i energia','moviment sense agitació'],['energia i moviment','imatges vives i plenes de vida']],
+      present:[['vistes àmplies que donen context','profunditat i espai'],['un mix de vistes generals i detalls','alternar perspectives'],['intimitat i proximitat','textures, detalls, gestos de prop']],
+      rich:[['estètica neta','enquadraments nets, espai i llum'],['equilibri entre sobrietat i presència visual','net però no buit'],['imatges riques en textures','atmosferes denses i sensorials']]
+    }
+  };
+
+  const vi=c<35?0:c>65?2:1;
+  const vp=p<35?0:p>65?2:1;
+  const vr=r<35?0:r>65?2:1;
+  const vC=VIBE[L]?.calm?.[vi]||['',''];
+  const vP=VIBE[L]?.present?.[vp]||['',''];
+  const vR=VIBE[L]?.rich?.[vr]||['',''];
+
+  const INTRO={
+    fr:`${sectorName?`Je vois que ${proj||'votre projet'} est dans le secteur ${sectorName} — `:proj?`${proj} — `:''}${S.name?`${S.name}, votre projet `:'Ce projet '}porte sur ${tl}, destiné ${chans.length?'à '+chans.join(sep):'à vos supports de communication'}. ${prios.length?'Les priorités visuelles que vous avez identifiées — '+prios.join(sep)+' — seront au cœur de mon approche.':'L\'authenticité et la singularité guideront mon regard.'}`,
+    en:`${sectorName?`I can see that ${proj||'your project'} is in the ${sectorName} sector — `:proj?`${proj} — `:''}${S.name?`${S.name}, your project `:'This project '}is about ${tl}, for ${chans.length?chans.join(sep):'your communication channels'}. ${prios.length?'The visual priorities you\'ve identified — '+prios.join(sep)+' — will be at the heart of my approach.':'Authenticity and singularity will guide my eye.'}`,
+    es:`${sectorName?`Veo que ${proj||'tu proyecto'} está en el sector ${sectorName} — `:proj?`${proj} — `:''}${S.name?`${S.name}, tu proyecto `:'Este proyecto '}es sobre ${tl}, destinado ${chans.length?'a '+chans.join(sep):'a tus soportes de comunicación'}. ${prios.length?'Las prioridades visuales que has identificado — '+prios.join(sep)+' — estarán en el centro de mi enfoque.':'La autenticidad y la singularidad guiarán mi mirada.'}`,
+    ca:`${sectorName?`Veig que ${proj||'el teu projecte'} és al sector ${sectorName} — `:proj?`${proj} — `:''}${S.name?`${S.name}, el teu projecte `:'Aquest projecte '}és sobre ${tl}, destinat ${chans.length?'a '+chans.join(sep):'als teus suports de comunicació'}. ${prios.length?'Les prioritats visuals que has identificat — '+prios.join(sep)+' — seran al cor del meu enfocament.':'L\'autenticitat i la singularitat guiaran la meva mirada.'}`
+  };
+
+  const DIRECTION={
+    fr:`Mon approche : ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, avec ${vP[1]}.`,
+    en:`My approach: ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, with ${vP[1]}.`,
+    es:`Mi enfoque: ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, con ${vP[1]}.`,
+    ca:`El meu enfocament: ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, amb ${vP[1]}.`
+  };
+
+  const LOGISTICS={
+    fr:`Lieu : ${locStr||'à définir'}. Planning : ${timStr||'à caler ensemble'}. ${S.name?S.name+', d':'D'}iscutons pour affiner ce brief et organiser la séance. ${S.email?'Je vous contacte très vite !':'À très bientôt !'}`,
+    en:`Location: ${locStr||'to be defined'}. Timeline: ${timStr||'to plan together'}. ${S.name?S.name+', let\'s':'Let\'s'} talk to refine this brief and organise the shoot. ${S.email?'I\'ll be in touch soon!':'Talk soon!'}`,
+    es:`Lugar: ${locStr||'a definir'}. Planificación: ${timStr||'a decidir juntos'}. ${S.name?S.name+', h':'H'}ablemos para afinar este brief y organizar la sesión. ${S.email?'¡Te contacto pronto!':'¡Hasta pronto!'}`,
+    ca:`Lloc: ${locStr||'a definir'}. Planificació: ${timStr||'a decidir junts'}. ${S.name?S.name+', p':'P'}arlem per afinar aquest brief i organitzar la sessió. ${S.email?'Et contacto aviat!':'Fins aviat!'}`
+  };
+
+  return (INTRO[L]||INTRO.en)+'\n\n'+(DIRECTION[L]||DIRECTION.en)+'\n\n'+(LOGISTICS[L]||LOGISTICS.en);
+}
+
+// ═══════════════════════════════════════════════════════
 // ACTIONS
 // ═══════════════════════════════════════════════════════
 async function doEmail(){
   const NL='\n';
-
-  // Labels lisibles
   const TYPE_L={fr:{place:'Lieu',story:'Narration / Marque',moment:'Moment'},en:{place:'Place',story:'Brand story',moment:'Moment'},es:{place:'Lugar',story:'Historia / Marca',moment:'Momento'},ca:{place:'Lloc',story:'Història / Marca',moment:'Moment'}};
   const PRIO_L={fr:{auth:'Authenticité',brand:'Cohérence',singular:'Singularité',trust:'Crédibilité'},en:{auth:'Authenticity',brand:'Coherence',singular:'Singularity',trust:'Credibility'},es:{auth:'Autenticidad',brand:'Coherencia',singular:'Singularidad',trust:'Credibilidad'},ca:{auth:'Autenticitat',brand:'Coherència',singular:'Singularitat',trust:'Credibilitat'}};
   const CHAN_L={fr:{web:'Site web',social:'Réseaux sociaux',press:'Presse',print:'Print'},en:{web:'Website',social:'Social media',press:'Press',print:'Print'},es:{web:'Web',social:'Redes sociales',press:'Prensa',print:'Print'},ca:{web:'Web',social:'Xarxes socials',press:'Premsa',print:'Print'}};
@@ -1185,87 +945,56 @@ async function doEmail(){
   const TIM_L={fr:{fixed:'Date fixée',approx:'Période approximative',flex:'Flexible'},en:{fixed:'Fixed date',approx:'Approximate period',flex:'Flexible'},es:{fixed:'Fecha fija',approx:'Período aproximado',flex:'Flexible'},ca:{fixed:'Data fixada',approx:'Període aproximat',flex:'Flexible'}};
   const VIBE_L={fr:['Calme','Équilibré','Vivant'],en:['Calm','Balanced','Lively'],es:['Calmo','Equilibrado','Vivo'],ca:['Calmat','Equilibrat','Viu']};
   const vibeWord=(val)=>val<35?VIBE_L[L][0]:val>65?VIBE_L[L][2]:VIBE_L[L][1];
-
-  const FIELDS={
-    fr:{proj:'Projet',type:'Type',prio:'Priorités',usage:'Usage',chan:'Diffusion',loc:'Lieu',tim:'Planning',calm:'Énergie',pres:'Proximité',rich:'Esthétique',email:'Email'},
-    en:{proj:'Project',type:'Type',prio:'Priorities',usage:'Use',chan:'Distribution',loc:'Location',tim:'Timeline',calm:'Energy',pres:'Proximity',rich:'Aesthetic',email:'Email'},
-    es:{proj:'Proyecto',type:'Tipo',prio:'Prioridades',usage:'Uso',chan:'Difusión',loc:'Lugar',tim:'Planificación',calm:'Energía',pres:'Proximidad',rich:'Estética',email:'Email'},
-    ca:{proj:'Projecte',type:'Tipus',prio:'Prioritats',usage:'Ús',chan:'Difusió',loc:'Lloc',tim:'Planificació',calm:'Energia',pres:'Proximitat',rich:'Estètica',email:'Email'}
-  };
+  const FIELDS={fr:{proj:'Projet',type:'Type',prio:'Priorités',usage:'Usage',chan:'Diffusion',loc:'Lieu',tim:'Planning',calm:'Énergie',pres:'Proximité',rich:'Esthétique',email:'Email'},en:{proj:'Project',type:'Type',prio:'Priorities',usage:'Use',chan:'Distribution',loc:'Location',tim:'Timeline',calm:'Energy',pres:'Proximity',rich:'Aesthetic',email:'Email'},es:{proj:'Proyecto',type:'Tipo',prio:'Prioridades',usage:'Uso',chan:'Difusión',loc:'Lugar',tim:'Planificación',calm:'Energía',pres:'Proximidad',rich:'Estética',email:'Email'},ca:{proj:'Projecte',type:'Tipus',prio:'Prioritats',usage:'Ús',chan:'Difusió',loc:'Lloc',tim:'Planificació',calm:'Energia',pres:'Proximitat',rich:'Estètica',email:'Email'}};
   const F=FIELDS[L]||FIELDS.en;
-
   const subj=t('emailSubj')+': '+(S.project||'—');
-
   const formBlock=[
     `${F.proj}: ${S.project||'—'}`,
-    `${F.type}: ${TYPE_L[L] && TYPE_L[L][S.type] ? TYPE_L[L][S.type] : '—'}`,
-    `${F.prio}: ${S.priorities.map(x=>PRIO_L[L] && PRIO_L[L][x] ? PRIO_L[L][x] : null).filter(x=>x).join(', ')||'—'}`,
-    `${F.usage}: ${(function(){const u={launch:{fr:'Lancement',en:'Launch',es:'Lanzamiento',ca:'Llançament'},base:{fr:'Bibliothèque',en:'Library',es:'Biblioteca',ca:'Biblioteca'},series:{fr:'Série',en:'Series',es:'Serie',ca:'Sèrie'}};return u[S.usage] && u[S.usage][L] ? u[S.usage][L] : '—';})()}`,
-    `${F.chan}: ${S.channels.map(x=>CHAN_L[L] && CHAN_L[L][x] ? CHAN_L[L][x] : null).filter(x=>x).join(', ')||'—'}`,
-    `${F.loc}: ${LOC_L[L] && LOC_L[L][S.location] ? LOC_L[L][S.location] : '—'}`,
-    `${F.tim}: ${TIM_L[L] && TIM_L[L][S.timing] ? TIM_L[L][S.timing] : '—'}`,
+    `${F.type}: ${TYPE_L[L]?.[S.type]||'—'}`,
+    `${F.prio}: ${S.priorities.map(x=>PRIO_L[L]?.[x]).filter(Boolean).join(', ')||'—'}`,
+    `${F.usage}: ${({launch:{fr:'Lancement',en:'Launch',es:'Lanzamiento',ca:'Llançament'},base:{fr:'Bibliothèque',en:'Library',es:'Biblioteca',ca:'Biblioteca'},series:{fr:'Série',en:'Series',es:'Serie',ca:'Sèrie'}}[S.usage]?.[L])||'—'}`,
+    `${F.chan}: ${S.channels.map(x=>CHAN_L[L]?.[x]).filter(Boolean).join(', ')||'—'}`,
+    `${F.loc}: ${LOC_L[L]?.[S.location]||'—'}`,
+    `${F.tim}: ${TIM_L[L]?.[S.timing]||'—'}`,
     `${F.calm}: ${S.calm}/100 (${vibeWord(S.calm)})`,
     `${F.pres}: ${S.present}/100 (${vibeWord(S.present)})`,
     `${F.rich}: ${S.rich}/100 (${vibeWord(S.rich)})`,
     `${F.email}: ${S.email||'—'}`
   ].join(NL);
 
+  const sourceNote = S.briefSource==='ai' ? '\n[Brief généré par Cloudflare Workers AI · Llama 3.1]' : '\n[Brief généré automatiquement]';
   const emailBody=
     t('emailHi')+NL+NL+
     t('emailIntro')+NL+NL+
     '━━━ BRIEF ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
-    (S.briefText||fallback())+NL+NL+
+    (S.briefText||fallback())+sourceNote+NL+NL+
     '━━━ FORMULAIRE ━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
     formBlock+NL+NL+
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
     t('emailSign')+NL+(S.name||'');
 
-  const sendMsg={
-    fr:{sending:'Envoi...',success:'✅ Brief envoyé!',error:'Erreur. Redirection vers votre client mail...'},
-    en:{sending:'Sending...',success:'✅ Brief sent!',error:'Error. Redirecting to your mail client...'},
-    es:{sending:'Enviando...',success:'✅ Brief enviado!',error:'Error. Redirigiendo a tu cliente de correo...'},
-    ca:{sending:'Enviant...',success:'✅ Brief enviat!',error:'Error. Redirigint al teu client de correu...'}
-  };
+  const sendMsg={fr:{sending:'Envoi...',success:'✅ Brief envoyé!',error:'Erreur. Redirection vers votre client mail...'},en:{sending:'Sending...',success:'✅ Brief sent!',error:'Error. Redirecting to your mail client...'},es:{sending:'Enviando...',success:'✅ Brief enviado!',error:'Error. Redirigiendo a tu cliente de correo...'},ca:{sending:'Enviant...',success:'✅ Brief enviat!',error:'Error. Redirigint al teu client de correu...'}};
   const msg=sendMsg[L]||sendMsg.en;
-
-  // Trouver le bouton qui a déclenché l'action
   const btn=document.querySelector('.cta-btns .bp');
   if(btn){
     const origTxt=btn.textContent;
     btn.textContent=msg.sending;
     btn.disabled=true;
-
     try{
-      // Envoi direct via Web3Forms
-      const res=await fetch('https://api.web3forms.com/submit',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          access_key: '31469485-cf3b-405a-832e-c6b18c9911ea',
-          subject: subj,
-          from_name: S.name||'Questionnaire Marinaphoto',
-          email: S.email,
-          message: emailBody,
-          to: 'info@marinaphoto.es'
-        })
-      });
-
+      const res=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({access_key:'31469485-cf3b-405a-832e-c6b18c9911ea',subject:subj,from_name:S.name||'Questionnaire Marinaphoto',email:S.email,message:emailBody,to:'info@marinaphoto.es'})});
       if(!res.ok) throw new Error('Web3Forms failed');
       const data=await res.json();
       if(!data.success) throw new Error(data.message||'Send failed');
-      
       alert(msg.success);
     }catch(err){
       console.warn('Direct send failed, using mailto fallback:',err);
       alert(msg.error);
-      // Fallback mailto si Web3Forms échoue
       window.location.href=`mailto:info@marinaphoto.es?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(emailBody)}`;
     }finally{
       btn.textContent=origTxt;
       btn.disabled=false;
     }
   }else{
-    // Si le bouton n'est pas trouvé, utiliser directement mailto
     window.location.href=`mailto:info@marinaphoto.es?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(emailBody)}`;
   }
 }
@@ -1275,107 +1004,66 @@ function doRdv(){
 }
 
 function doPDF(){
-  // Vérifier que jsPDF est chargé
-  if(typeof window.jspdf==='undefined' || !window.jspdf.jsPDF){
-    alert({
-      fr:'Erreur : le module PDF n\'est pas chargé. Veuillez recharger la page.',
-      en:'Error: PDF module not loaded. Please reload the page.',
-      es:'Error: módulo PDF no cargado. Por favor recargue la página.',
-      ca:'Error: mòdul PDF no carregat. Si us plau, recarrega la pàgina.'
-    }[L]||'PDF module error');
+  if(typeof window.jspdf==='undefined'||!window.jspdf.jsPDF){
+    alert({fr:'Module PDF non chargé. Rechargez la page.',en:'PDF module not loaded. Please reload.',es:'Módulo PDF no cargado. Recarga la página.',ca:'Mòdul PDF no carregat. Recarrega la pàgina.'}[L]||'PDF error');
     return;
   }
-
   try{
     const {jsPDF}=window.jspdf;
     const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
-    const gold=[200,168,130], dark=[44,44,44], white=[254,254,254], cream=[245,241,232];
-    const W=210, margin=18;
-
-    // --- HEADER BAND ---
-    doc.setFillColor(...gold);
-    doc.rect(0,0,W,38,'F');
-    doc.setTextColor(...white);
-    doc.setFontSize(18);doc.setFont('helvetica','bold');
+    const gold=[200,168,130],dark=[44,44,44],white=[254,254,254],cream=[245,241,232];
+    const W=210,margin=18;
+    doc.setFillColor(...gold);doc.rect(0,0,W,38,'F');
+    doc.setTextColor(...white);doc.setFontSize(18);doc.setFont('helvetica','bold');
     doc.text('MARINAPHOTO',margin,16);
     doc.setFontSize(9);doc.setFont('helvetica','normal');
     doc.text('Photography Brief',margin,24);
     const locale={fr:'fr-FR',en:'en-GB',es:'es-ES',ca:'ca-ES'}[L]||'en-GB';
     const dateStr=new Date().toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
     doc.text(dateStr,W-margin,24,{align:'right'});
-
-    // --- HERO PROJECT NAME ---
-    doc.setFillColor(...cream);
-    doc.rect(0,38,W,36,'F');
-    doc.setTextColor(...dark);
-    doc.setFontSize(26);doc.setFont('helvetica','bold');
+    doc.setFillColor(...cream);doc.rect(0,38,W,36,'F');
+    doc.setTextColor(...dark);doc.setFontSize(26);doc.setFont('helvetica','bold');
     const proj=S.project||(L==='fr'?'Votre projet':L==='es'?'Tu proyecto':L==='ca'?'El teu projecte':'Your project');
     doc.text(proj,margin,58);
-    if(S.name){
-      doc.setFontSize(12);doc.setFont('helvetica','normal');
-      doc.setTextColor(...gold);
-      doc.text(S.name,margin,68);
-    }
-
-    // --- GOLD VERTICAL BAR + BRIEF TEXT ---
-    let y=88;
-    doc.setFillColor(...gold);
-    doc.rect(margin,y,2,140,'F');
-
-    doc.setTextColor(...dark);
-    doc.setFontSize(11);doc.setFont('helvetica','normal');
+    if(S.name){doc.setFontSize(12);doc.setFont('helvetica','normal');doc.setTextColor(...gold);doc.text(S.name,margin,68);}
+    // AI badge in PDF
+    doc.setFontSize(8);doc.setFont('helvetica','italic');doc.setTextColor(...gold);
+    const badgeTxt = S.briefSource==='ai' ? '✦ '+t('aiBadge') : '✦ '+t('fallbackBadge');
+    doc.text(badgeTxt,margin,80);
+    let y=92;
+    doc.setFillColor(...gold);doc.rect(margin,y,2,120,'F');
+    doc.setTextColor(...dark);doc.setFontSize(11);doc.setFont('helvetica','normal');
     const briefTxt=S.briefText||fallback();
     const lines=doc.splitTextToSize(briefTxt,W-margin*2-8);
     lines.forEach(ln=>{
-      if(y>262){doc.addPage();y=20;
-        doc.setFillColor(...gold);doc.rect(margin,y,2,140,'F');
-      }
-      doc.text(ln,margin+6,y);
-      y+=6.2;
+      if(y>262){doc.addPage();y=20;doc.setFillColor(...gold);doc.rect(margin,y,2,120,'F');}
+      doc.text(ln,margin+6,y);y+=6.2;
     });
-
-    // --- CLOSING QUOTE BOX ---
     y+=12;
     if(y>250){doc.addPage();y=20;}
-    doc.setFillColor(...gold);
-    doc.roundedRect(margin,y,W-margin*2,26,4,4,'F');
-    doc.setTextColor(...white);
-    doc.setFontSize(10);doc.setFont('helvetica','italic');
-    const cq=t('report.ctaQuote');
-    doc.text('"'+cq+'"',W/2,y+10,{align:'center',maxWidth:W-margin*2-8});
+    doc.setFillColor(...gold);doc.roundedRect(margin,y,W-margin*2,26,4,4,'F');
+    doc.setTextColor(...white);doc.setFontSize(10);doc.setFont('helvetica','italic');
+    doc.text('"'+t('report.ctaQuote')+'"',W/2,y+10,{align:'center',maxWidth:W-margin*2-8});
     doc.setFont('helvetica','normal');doc.setFontSize(9);
-    const ct=t('report.ctaText');
-    doc.text(ct,W/2,y+18,{align:'center',maxWidth:W-margin*2-8});
-
-    // --- FOOTER ---
+    doc.text(t('report.ctaText'),W/2,y+18,{align:'center',maxWidth:W-margin*2-8});
     const FY=285;
-    doc.setFillColor(...dark);
-    doc.rect(0,FY-2,W,14,'F');
-    doc.setTextColor(...white);
-    doc.setFontSize(9);
+    doc.setFillColor(...dark);doc.rect(0,FY-2,W,14,'F');
+    doc.setTextColor(...white);doc.setFontSize(9);
     doc.setFont('helvetica','bold');doc.text('MARINAPHOTO',margin,FY+5);
     doc.setFont('helvetica','normal');doc.text('info@marinaphoto.es',W/2,FY+5,{align:'center'});
     doc.text('Sitges — Barcelona',W-margin,FY+5,{align:'right'});
-
     const fn=(t('pdfFilename')+'-'+(S.project||'project').replace(/[^a-z0-9]/gi,'-').toLowerCase()+'.pdf');
     doc.save(fn);
   }catch(e){
-    console.error('PDF generation error:',e);
-    alert({
-      fr:'Erreur lors de la génération du PDF : '+e.message,
-      en:'PDF generation error: '+e.message,
-      es:'Error al generar el PDF: '+e.message,
-      ca:'Error en generar el PDF: '+e.message
-    }[L]||('PDF error: '+e.message));
+    console.error('PDF error:',e);
+    alert('PDF error: '+e.message);
   }
 }
 
 function doRestart(){
   if(!confirm(t('restartConfirm')))return;
   step=0;
-  S.name='';S.project='';S.type=null;S.priorities=[];S.usage=null;
-  S.channels=[];S.location=null;S.timing=null;
-  S.calm=50;S.present=50;S.rich=50;S.email='';S.briefText='';
+  Object.assign(S,{name:'',project:'',type:null,priorities:[],usage:null,channels:[],location:null,timing:null,calm:50,present:50,rich:50,email:'',briefText:'',briefSource:'ai'});
   go();
 }
 
