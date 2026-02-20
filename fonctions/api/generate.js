@@ -1,49 +1,26 @@
-export async function onRequestPost({ request, env }) {
-  try {
-    const { prompt } = await request.json();
-    if (!prompt || typeof prompt !== "string") {
-      return new Response(JSON.stringify({ error: "Missing prompt" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+export async function onRequestPost(context) {
+  const { text, mode = "shorten" } = await context.request.json();
 
-    const hfRes = await fetch(
-      `https://api-inference.huggingface.co/models/${env.HF_MODEL}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${env.HF_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: { max_new_tokens: 260, temperature: 0.7, return_full_text: false },
-        }),
-      }
-    );
+  const instruction = {
+    shorten: "Raccourcis en gardant le sens. 1 seule version.",
+    rewrite: "Reformule en français pro et fluide. 1 seule version.",
+    fix: "Corrige grammaire et ponctuation. 1 seule version."
+  }[mode] || "Raccourcis en gardant le sens. 1 seule version.";
 
-    const data = await hfRes.json().catch(() => null);
+  // Modèle rapide et très correct pour de la réécriture
+  const model = "@cf/meta/llama-3.1-8b-instruct-fast";
 
-    if (!hfRes.ok) {
-      return new Response(JSON.stringify({ error: "HF error", details: data }), {
-        status: 502,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+  const messages = [
+    { role: "system", content: "Tu es un assistant de réécriture. Réponds uniquement avec le texte final, sans explications." },
+    { role: "user", content: `${instruction}\n\nTEXTE:\n${text}` }
+  ];
 
-    const text =
-      (Array.isArray(data) && data[0]?.generated_text) ||
-      (data && data.generated_text) ||
-      "";
+  const result = await context.env.AI.run(model, { messages });
 
-    return new Response(JSON.stringify({ generated_text: (text || "").trim() }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (e) {
-    return new Response(JSON.stringify({ error: e.message || String(e) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+  // Selon les modèles, Cloudflare renvoie souvent un champ "response"
+  const output = result?.response ?? JSON.stringify(result);
+
+  return new Response(JSON.stringify({ result: output }), {
+    headers: { "Content-Type": "application/json" }
+  });
 }
