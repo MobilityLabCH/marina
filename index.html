@@ -616,120 +616,64 @@ function buildPrompt(){
   const preDesc = p<35 ? (L==='fr'?'avec des vues larges qui donnent du contexte':L==='es'?'con vistas amplias que dan contexto':L==='ca'?'amb vistes àmplies que donen context':'with wide views providing context') : p>65 ? (L==='fr'?'intime et proche, valorisant les détails et les textures':L==='es'?'íntimo y cercano, valorando detalles y texturas':L==='ca'?'íntim i proper, valorant detalls i textures':'intimate and close, highlighting details and textures') : (L==='fr'?'mixte entre vues d\'ensemble et détails':L==='es'?'mixto entre vistas generales y detalles':L==='ca'?'mixt entre vistes generals i detalls':'a mix of wide shots and close details');
   const richDesc = r<35 ? (L==='fr'?'épuré et minimaliste, beaucoup d\'espace et de lumière':L==='es'?'limpio y minimalista, mucho espacio y luz':L==='ca'?'net i minimalista, molt espai i llum':'clean and minimalist, lots of space and light') : r>65 ? (L==='fr'?'riche en textures et en matières, atmosphères denses':L==='es'?'rico en texturas y materiales, atmósferas densas':L==='ca'?'ric en textures i materials, atmosferes denses':'rich in textures and materials, dense atmospheres') : (L==='fr'?'équilibré entre épuré et richesse visuelle':L==='es'?'equilibrado entre limpieza y riqueza visual':L==='ca'?'equilibrat entre neteja i riquesa visual':'balanced between clean and visually rich');
 
-  const prompts = {
-    fr: `Rédige un brief photographique chaleureux et professionnel en français, composé de 3 paragraphes séparés par une ligne vide (200 à 250 mots au total).
-
-INFORMATIONS SUR LE PROJET :
-- Prénom du client : ${S.name||'(non précisé)'}
-- Nom du projet : ${S.project||'(non précisé)'}${sector ? '\n- Secteur identifié : '+sector : ''}
-- Nature : ${tl}
-- Priorités visuelles : ${prios.join(', ')||'authenticité'}
-- Usage : ${S.usage==='launch'?'lancement / événement avec deadline':S.usage==='base'?'bibliothèque d\'images réutilisables':S.usage==='series'?'série de contenu continu':'communication générale'}
-- Diffusion : ${chans.join(', ')||'web'}
-- Lieu de la séance : ${locStr}
-- Planning : ${timStr}
-
-DIRECTION ARTISTIQUE SOUHAITÉE :
-- Énergie : ${calmDesc}
-- Proximité / cadrage : ${preDesc}
-- Esthétique : ${richDesc}
-
-STRUCTURE DES 3 PARAGRAPHES :
-1. Montrer que tu comprends bien le projet et le contexte du client (cite le nom du projet et le secteur si identifié)
-2. Décrire concrètement ton approche photographique en lien direct avec la direction artistique
-3. Logistique (lieu, planning) + invitation chaleureuse à se rencontrer pour affiner le projet
-
-RÈGLES ABSOLUES :
-- Tutoyer le client, ton chaleureux mais professionnel
-- Utiliser le prénom naturellement
-- 3 paragraphes séparés par une ligne vide, AUCUNE liste, AUCUN prix
-- 200 à 250 mots maximum`,
-
-    en: `Write a warm, professional photography brief in English, in 3 paragraphs separated by a blank line (200–250 words total).
-
-PROJECT INFORMATION:
-- Client first name: ${S.name||'(not specified)'}
-- Project name: ${S.project||'(not specified)'}${sector ? '\n- Detected sector: '+sector : ''}
-- Type: ${tl}
-- Visual priorities: ${prios.join(', ')||'authenticity'}
-- Use: ${S.usage==='launch'?'launch / event with deadline':S.usage==='base'?'reusable image library':S.usage==='series'?'ongoing content series':'general communication'}
-- Distribution: ${chans.join(', ')||'web'}
-- Shoot location: ${locStr}
-- Timeline: ${timStr}
-
-DESIRED ARTISTIC DIRECTION:
-- Energy: ${calmDesc}
-- Proximity / framing: ${preDesc}
-- Aesthetic: ${richDesc}
-
-PARAGRAPH STRUCTURE:
-1. Show you understand the project and the client's context (mention the project name and sector if identified)
-2. Concretely describe your photographic approach in direct relation to the artistic direction
-3. Logistics (location, timeline) + warm invitation to meet and refine the project
-
-ABSOLUTE RULES:
-- Use informal "you", warm but professional tone
-- Use the first name naturally
-- 3 paragraphs separated by a blank line, NO lists, NO pricing
-- 200–250 words maximum`,
-
-    es: `Redacta un brief fotográfico cálido y profesional en español, en 3 párrafos separados por una línea en blanco (200–250 palabras en total).
-
-INFORMACIÓN DEL PROYECTO:
-- Nombre del cliente: ${S.name||'(no especificado)'}
-- Nombre del proyecto: ${S.project||'(no especificado)'}${sector ? '\n- Sector identificado: '+sector : ''}
-- Tipo: ${tl}
-- Prioridades visuales: ${prios.join(', ')||'autenticidad'}
-- Uso: ${S.usage==='launch'?'lanzamiento / evento con fecha límite':S.usage==='base'?'biblioteca de imágenes reutilizables':S.usage==='series'?'serie de contenido continuo':'comunicación general'}
-- Difusión: ${chans.join(', ')||'web'}
-- Lugar de la sesión: ${locStr}
-- Planificación: ${timStr}
-
-DIRECCIÓN ARTÍSTICA DESEADA:
-- Energía: ${calmDesc}
-- Proximidad / encuadre: ${preDesc}
-- Estética: ${richDesc}
-
-ESTRUCTURA DE LOS 3 PÁRRAFOS:
-1. Mostrar que entiendes bien el proyecto y el contexto del cliente (menciona el nombre del proyecto y el sector si identificado)
-2. Describir concretamente tu enfoque fotográfico en relación directa con la dirección artística
-3. Logística (lugar, planificación) + invitación cálida a reunirse para afinar el proyecto
-
-REGLAS ABSOLUTAS:
-- Tutear al cliente, tono cálido pero profesional
-- Usar el nombre naturalmente
-- 3 párrafos separados por línea en blanco, NINGUNA lista, NINGÚN precio
-- 200–250 palabras máximo`,
-
-    ca: `Redacta un brief fotogràfic càlid i professional en català, en 3 paràgrafs separats per una línia en blanc (200–250 paraules en total).
-
-INFORMACIÓ DEL PROJECTE:
-- Nom del client: ${S.name||'(no especificat)'}
-- Nom del projecte: ${S.project||'(no especificat)'}${sector ? '\n- Sector identificat: '+sector : ''}
-- Tipus: ${tl}
-- Prioritats visuals: ${prios.join(', ')||'autenticitat'}
-- Ús: ${S.usage==='launch'?'llançament / esdeveniment amb data límit':S.usage==='base'?'biblioteca d\'imatges reutilitzables':S.usage==='series'?'sèrie de contingut continu':'comunicació general'}
-- Difusió: ${chans.join(', ')||'web'}
-- Lloc de la sessió: ${locStr}
-- Planificació: ${timStr}
-
-DIRECCIÓ ARTÍSTICA DESITJADA:
-- Energia: ${calmDesc}
-- Proximitat / enquadrament: ${preDesc}
-- Estètica: ${richDesc}
-
-ESTRUCTURA DELS 3 PARÀGRAFS:
-1. Mostrar que entens bé el projecte i el context del client (menciona el nom del projecte i el sector si identificat)
-2. Descriure concretament el teu enfocament fotogràfic en relació directa amb la direcció artística
-3. Logística (lloc, planificació) + invitació càlida a trobar-se per afinar el projecte
-
-REGLES ABSOLUTES:
-- Tutear el client, to càlid però professional
-- Usar el nom naturalment
-- 3 paràgrafs separats per línia en blanc, CAP llista, CAP preu
-- 200–250 paraules màxim`
+  // Usage lisible
+  const usageMap = {
+    fr: {launch:'un lancement ou événement avec date butoir',base:'constituer une banque d\'images durables',series:'alimenter un flux de contenu régulier'},
+    en: {launch:'a launch or event with a deadline',base:'building a lasting image bank',series:'feeding a regular content flow'},
+    es: {launch:'un lanzamiento o evento con fecha límite',base:'crear un banco de imágenes duraderas',series:'alimentar un flujo de contenido regular'},
+    ca: {launch:'un llançament o esdeveniment amb data límit',base:'crear un banc d\'imatges duradores',series:'alimentar un flux de contingut regular'}
   };
+  const usageText = (usageMap[L]||usageMap.en)[S.usage] || '';
 
+  const prompts = {
+    fr: `Voici ce que ${S.name||'le client'} a répondu sur son projet.
+
+Projet : "${S.project||'sans titre'}"${sector ? ' — secteur détecté : '+sector : ''}
+Nature : ${tl}
+Objectif : ${usageText}
+Où ces images vivront : ${chans.join(', ')||'web'}
+Lieu : ${locStr||'à confirmer'}
+Planning : ${timStr||'flexible'}
+Ce qui compte le plus pour lui : ${prios.join(', ')||'authenticité'}
+
+Ses préférences visuelles révèlent : une esthétique ${richDesc}, un rythme ${calmDesc}, et une approche ${preDesc}.`,
+
+    en: `Here is what ${S.name||'the client'} answered about their project.
+
+Project: "${S.project||'untitled'}"${sector ? ' — detected sector: '+sector : ''}
+Type: ${tl}
+Goal: ${usageText}
+Where these images will live: ${chans.join(', ')||'web'}
+Location: ${locStr||'to confirm'}
+Timeline: ${timStr||'flexible'}
+What matters most: ${prios.join(', ')||'authenticity'}
+
+Their visual preferences reveal: ${richDesc} aesthetic, ${calmDesc} energy, ${preDesc} framing.`,
+
+    es: `Esto es lo que ${S.name||'el cliente'} respondió sobre su proyecto.
+
+Proyecto: "${S.project||'sin título'}"${sector ? ' — sector detectado: '+sector : ''}
+Tipo: ${tl}
+Objetivo: ${usageText}
+Dónde vivirán estas imágenes: ${chans.join(', ')||'web'}
+Lugar: ${locStr||'a confirmar'}
+Planificación: ${timStr||'flexible'}
+Lo más importante: ${prios.join(', ')||'autenticidad'}
+
+Sus preferencias visuales revelan: estética ${richDesc}, ritmo ${calmDesc}, enfoque ${preDesc}.`,
+
+    ca: `Aquí el que ${S.name||'el client'} ha respost sobre el seu projecte.
+
+Projecte: "${S.project||'sense títol'}"${sector ? ' — sector detectat: '+sector : ''}
+Tipus: ${tl}
+Objectiu: ${usageText}
+On viuran aquestes imatges: ${chans.join(', ')||'web'}
+Lloc: ${locStr||'a confirmar'}
+Planificació: ${timStr||'flexible'}
+El més important: ${prios.join(', ')||'autenticitat'}
+
+Les seves preferències visuals revelen: estètica ${richDesc}, ritme ${calmDesc}, enfocament ${preDesc}.`
+  };
   return prompts[L] || prompts.en;
 }
 
