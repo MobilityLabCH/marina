@@ -720,9 +720,13 @@ INSTRUCCIONS:
 Escriu en català natural, com si parlessis directament amb ${S.name||'el teu client'}.`
   };
 
-  const url='/api/generate';
+const url='/api/rewrite';
 
-  console.log('[AI] Calling worker with prompt length:', (promptLang[L]||promptLang.en).length);
+...
+body: JSON.stringify({
+  text: (promptLang[L] || promptLang.en),
+  mode: "rewrite"
+})
 
   const response=await fetch(url,{
     method:'POST',
