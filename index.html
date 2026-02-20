@@ -725,7 +725,7 @@ const url='/api/rewrite';
 ...
 body: JSON.stringify({
   text: (promptLang[L] || promptLang.en),
-  mode: "rewrite"
+  mode: "rewrite" text: `Rédige un brief chaleureux et professionnel en 3 paragraphes (200–250 mots). Pas de listes. Pas de prix.\n\n${(promptLang[L] || promptLang.en)}`
 })
 
   const response=await fetch(url,{
