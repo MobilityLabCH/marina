@@ -758,18 +758,12 @@ body: JSON.stringify({
   }
 
   // LE WORKER RENVOIE: { generated_text: "..." }
-  let text='';
-  if(data && typeof data==='object' && data.generated_text){
-    text=data.generated_text;
-    console.log('[AI] Extracted from generated_text, length:', text.length);
-  }else if(Array.isArray(data)){
-    // Au cas où le worker renverrait un tableau (format HF direct)
-    text=data?.[0]?.generated_text||'';
-    console.log('[AI] Extracted from array, length:', text.length);
-  }else if(typeof data==='string'){
-    text=data;
-    console.log('[AI] Using raw string, length:', text.length);
-  }
+ let text = '';
+if (data && typeof data === 'object' && data.result) {
+  text = data.result;
+} else if (typeof data === 'string') {
+  text = data;
+}
 
   text=(text||'').trim();
   
