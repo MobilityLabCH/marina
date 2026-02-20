@@ -1,109 +1,1076 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Marinaphoto — Brief</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
-        :root{--cream:#F5F1E8;--gold:#C8A882;--gold-l:#E8D5BC;--dark:#2C2C2C;--white:#FEFEFE;}
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;}
-        .page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 20px 60px;}
-        .topbar{width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
-        .brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark);}
-        .brand em{font-style:normal;color:var(--gold);font-family:'Inter',sans-serif;font-size:12px;font-weight:400;margin-left:8px;}
-        .prog-wrap{width:100%;max-width:860px;background:var(--white);border-radius:16px;padding:16px 22px;margin-bottom:22px;box-shadow:0 2px 16px rgba(44,44,44,.06);}
-        .prog-bar{height:5px;background:var(--cream);border-radius:10px;overflow:hidden;margin-bottom:10px;}
-        .prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));border-radius:10px;transition:width .5s ease;}
-        .card{width:100%;max-width:860px;background:var(--white);border-radius:24px;padding:clamp(28px,5vw,52px);box-shadow:0 8px 40px rgba(44,44,44,.10);text-align:center;}
-        h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,38px);margin-bottom:12px;}
-        .sub{font-size:17px;opacity:.7;margin-bottom:26px;}
-        input[type=text], input[type=email]{width:100%;padding:15px 20px;border:2px solid transparent;background:var(--cream);border-radius:14px;font-size:16px;outline:none;margin-top:8px;}
-        input:focus{border-color:var(--gold);background:var(--white);}
-        .bp{padding:14px 32px;background:var(--gold);color:white;border:none;border-radius:50px;font-weight:700;cursor:pointer;margin-top:20px;}
-        .loading{padding:40px 0;}
-        .spinner{width:40px;height:40px;border:4px solid var(--cream);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        .rpt-hero{background:rgba(200,168,130,.05);padding:40px;border-radius:24px;margin-bottom:30px;}
-        .rpt-body{text-align:left;line-height:1.8;font-size:18px;border-left:3px solid var(--gold);padding-left:25px;}
-        .ai-badge{display:inline-block;background:rgba(200,168,130,.1);padding:5px 15px;border-radius:20px;font-size:12px;color:var(--gold);margin-bottom:20px;}
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marinaphoto — Brief</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
+:root{--cream:#F5F1E8;--gold:#C8A882;--gold-l:#E8D5BC;--dark:#2C2C2C;--white:#FEFEFE;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;}
+.page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 20px 60px;}
+
+/* TOP BAR */
+.topbar{width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark);}
+.brand em{font-style:normal;color:var(--gold);font-family:'Inter',sans-serif;font-size:12px;font-weight:400;margin-left:8px;}
+.langs{display:flex;gap:2px;background:var(--white);border-radius:20px;padding:3px;box-shadow:0 2px 12px rgba(44,44,44,.08);}
+.langs button{border:none;background:transparent;color:var(--dark);opacity:.4;font-size:12px;font-weight:700;padding:7px 11px;border-radius:16px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.langs button.on{background:var(--gold);color:var(--white);opacity:1;}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:860px;background:var(--white);border-radius:16px;padding:16px 22px;margin-bottom:22px;box-shadow:0 2px 16px rgba(44,44,44,.06);}
+.prog-bar{height:5px;background:var(--cream);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));border-radius:10px;transition:width .5s ease;}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;font-weight:500;opacity:.6;}
+.prog-meta .t{color:var(--gold);font-weight:700;opacity:1;}
+
+/* CARD */
+.card{width:100%;max-width:860px;background:var(--white);border-radius:24px;padding:clamp(28px,5vw,52px);box-shadow:0 8px 40px rgba(44,44,44,.10);animation:up .4s ease;}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPOGRAPHY */
+.kicker{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,38px);font-weight:700;line-height:1.2;margin-bottom:12px;}
+.sub{font-size:17px;opacity:.7;line-height:1.65;margin-bottom:26px;}
+.opening-quote{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(20px,3vw,30px);color:var(--gold);line-height:1.45;text-align:center;margin:20px 0 32px;}
+
+/* INPUTS */
+input[type=text],input[type=email]{width:100%;padding:15px 20px;border:2px solid transparent;background:var(--cream);border-radius:14px;font-size:16px;font-family:'Inter',sans-serif;color:var(--dark);outline:none;margin-top:8px;transition:all .25s;}
+input:focus{border-color:var(--gold);background:var(--white);box-shadow:0 0 0 4px rgba(200,168,130,.12);}
+input::placeholder{opacity:.4;}
+
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{padding:18px 22px;background:var(--cream);border:2px solid transparent;border-radius:18px;cursor:pointer;transition:all .25s;position:relative;user-select:none;}
+.opt:hover{background:var(--white);border-color:var(--gold-l);transform:translateY(-2px);box-shadow:0 4px 20px rgba(44,44,44,.07);}
+.opt.sel{background:var(--white);border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,168,130,.15);}
+.opt.sel::after{content:'✓';position:absolute;top:50%;right:20px;transform:translateY(-50%);width:26px;height:26px;background:var(--gold);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;line-height:26px;text-align:center;}
+.opt-t{font-size:16px;font-weight:700;margin-bottom:3px;padding-right:36px;}
+.opt-d{font-size:13px;opacity:.6;line-height:1.4;padding-right:36px;}
+
+/* VIBE SLIDERS */
+.vibe-block{background:var(--cream);border-radius:20px;padding:22px;margin-bottom:18px;}
+.vibe-label-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px;opacity:.75;}
+.vibe-cat{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.45;margin-bottom:10px;}
+input[type=range]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--gold) var(--p,50%),rgba(200,168,130,.2) var(--p,50%));border-radius:10px;outline:none;cursor:pointer;margin:10px 0 16px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--white);border:3px solid var(--gold);border-radius:50%;box-shadow:0 2px 8px rgba(200,168,130,.4);}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--white);border:3px solid var(--gold);border-radius:50%;}
+.vibe-illus{display:grid;grid-template-columns:1fr 1fr;gap:8px;pointer-events:none;}
+.vibe-img{border-radius:12px;overflow:hidden;aspect-ratio:3/2;position:relative;}
+.vibe-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.vibe-img-lbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(44,44,44,.65));color:#fff;font-size:11px;font-weight:600;padding:12px 10px 7px;letter-spacing:.5px;}
+
+/* BUTTONS */
+.btns{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;}
+.bp{padding:14px 32px;background:var(--gold);color:var(--white);border:2px solid var(--gold);border-radius:50px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;}
+.bp:hover{background:#b89060;border-color:#b89060;transform:translateY(-2px);box-shadow:0 8px 20px rgba(200,168,130,.3);}
+.bs{padding:14px 24px;background:transparent;color:var(--gold);border:2px solid var(--gold);border-radius:50px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;}
+.bs:hover{background:var(--gold);color:var(--white);transform:translateY(-2px);}
+
+/* LOADING */
+.loading{text-align:center;padding:80px 20px;}
+.spinner{width:50px;height:50px;border:4px solid var(--cream);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 22px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading h2{font-family:'Playfair Display',serif;margin-bottom:10px;}
+.loading p{opacity:.6;font-size:16px;}
+
+/* RAPPORT */
+.rpt-hero{text-align:center;padding:56px 24px 40px;margin:-52px -52px 40px;background:linear-gradient(160deg,rgba(200,168,130,.07) 0%,transparent 60%);border-radius:24px 24px 0 0;border-bottom:1px solid rgba(200,168,130,.15);}
+.rpt-hero h1{font-family:'Playfair Display',serif;font-size:clamp(38px,7vw,72px);font-weight:900;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--dark) 30%,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.rpt-hero .client{font-size:18px;color:var(--gold);font-weight:600;margin-bottom:6px;}
+.rpt-hero .rdate{font-size:13px;opacity:.45;}
+.rpt-body{border-left:3px solid var(--gold);padding:4px 0 4px 32px;margin:0 0 44px;}
+.rpt-body p{font-size:18px;line-height:1.9;color:var(--dark);margin-bottom:22px;}
+.rpt-body p:last-child{margin-bottom:0;}
+
+/* Badge source IA */
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,168,130,.12);border:1px solid rgba(200,168,130,.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:20px;letter-spacing:.5px;}
+.ai-badge::before{content:'✦';font-size:10px;}
+
+/* CTA FINALE */
+.rpt-cta{background:linear-gradient(135deg,var(--gold) 0%,#b8916a 100%);border-radius:24px;padding:48px;text-align:center;}
+.rpt-cta h2{font-family:'Playfair Display',serif;font-size:26px;color:#fff;margin-bottom:10px;}
+.closing-q{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:#fff;opacity:.95;margin:18px 0 24px;line-height:1.5;}
+.rpt-cta p{color:#fff;opacity:.92;font-size:16px;line-height:1.65;margin-bottom:30px;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.rpt-cta .bp{background:#fff;color:var(--gold);border-color:#fff;}
+.rpt-cta .bp:hover{background:var(--cream);}
+.rpt-cta .bs{background:transparent;color:#fff;border-color:rgba(255,255,255,.7);}
+.rpt-cta .bs:hover{background:rgba(255,255,255,.15);}
+
+@media(max-width:640px){
+  .card{padding:22px 18px;}
+  .rpt-hero{margin:-22px -18px 30px;padding:38px 18px 26px;}
+  .rpt-body{padding-left:18px;}
+  .rpt-cta{padding:30px 20px;}
+  .btns,.cta-btns{flex-direction:column;}
+  .bp,.bs{width:100%;text-align:center;}
+}
+</style>
 </head>
 <body>
 <div class="page">
-    <div class="topbar">
-        <div class="brand">MARINAPHOTO <em>Brief</em></div>
+  <div class="topbar">
+    <div class="brand">MARINAPHOTO <em>Photography Brief</em></div>
+    <div class="langs">
+      <button id="l-fr" class="on" onclick="setLang('fr')">FR</button>
+      <button id="l-en" onclick="setLang('en')">EN</button>
+      <button id="l-es" onclick="setLang('es')">ES</button>
+      <button id="l-ca" onclick="setLang('ca')">CA</button>
     </div>
-    <div class="prog-wrap" id="prog-ui">
-        <div class="prog-bar"><div class="prog-fill" id="pbar"></div></div>
-        <div id="pstep" style="font-size:12px; opacity:0.6;">Étape 1/4</div>
-    </div>
-    <div class="card" id="card"></div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="pbar"></div></div>
+    <div class="prog-meta"><span id="pstep"></span><span class="t" id="ptime"></span></div>
+  </div>
+  <div class="card" id="card"></div>
 </div>
-
 <script>
-let step = 0;
-const S = { name:'', project:'', email:'', briefText:'', source:'' };
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const detectLang=()=>{
+  try{
+    const nav=navigator.language||navigator.userLanguage;
+    if(!nav) return 'en';
+    const code=nav.toLowerCase().slice(0,2);
+    if(code==='fr') return 'fr';
+    if(code==='es') return 'es';
+    if(code==='ca') return 'ca';
+    return 'en';
+  }catch(e){ return 'en'; }
+};
 
-function render() {
-    const c = document.getElementById('card');
-    const pbar = document.getElementById('pbar');
-    const pstep = document.getElementById('pstep');
-    
-    pbar.style.width = ((step + 1) / 4 * 100) + '%';
-    pstep.innerText = `Étape ${step + 1}/4`;
+let L = detectLang(), step = 0;
+const TOTAL = 11;
+const S = {
+  name:'', project:'', type:null,
+  priorities:[], usage:null, channels:[],
+  location:null, timing:null,
+  calm:50, present:50, rich:50,
+  email:'', briefText:'', briefSource:'ai'
+};
 
-    if(step === 0) {
-        c.innerHTML = `<h1>Bonjour !</h1><p class="sub">Commençons par votre prénom.</p>
-                       <input type="text" placeholder="Sophie" onchange="S.name=this.value">
-                       <br><button class="bp" onclick="step++;render();">Continuer</button>`;
-    } else if(step === 1) {
-        c.innerHTML = `<h1>Votre projet</h1><p class="sub">Comment s'appelle-t-il ?</p>
-                       <input type="text" placeholder="Hôtel Can Ros" onchange="S.project=this.value">
-                       <br><button class="bp" onclick="step++;render();">Continuer</button>`;
-    } else if(step === 2) {
-        c.innerHTML = `<h1>Contact</h1><p class="sub">Où vous envoyer le brief ?</p>
-                       <input type="email" placeholder="sophie@exemple.com" onchange="S.email=this.value">
-                       <br><button class="bp" onclick="generateAI();">Générer mon brief</button>`;
+// ═══════════════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════════════
+const TX = {
+fr:{
+  steps:['Intro','Prénom','Projet','Type','Priorités','Usage','Canaux','Lieu','Timing','Ambiance','Contact'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 sec','30 sec','20 sec'],
+  back:'Retour', maxTwo:'Maximum 2 choix', mustPick:'Veuillez choisir une option', emailErr:'Email invalide',
+  aiBadge:'Rédigé par IA · Cloudflare Workers AI',
+  fallbackBadge:'Brief généré automatiquement',
+  intro:{kicker:'Commençons',quote:'Je sais ce qu\'une image représente pour vous…',title:'3 minutes pour comprendre votre projet.',sub:'Quelques questions simples. Je transforme vos réponses en un brief personnalisé qui nous guide.',btn:'Commencer'},
+  name:{kicker:'À propos de vous',title:'Votre prénom',ph:'Ex : Sophie',btn:'Continuer'},
+  project:{kicker:'Le projet',title:'Comment s\'appelle votre projet ?',sub:'Un nom, même provisoire.',ph:'Ex : Hôtel Can Ros / Bodega Garraf',btn:'Continuer'},
+  type:{kicker:'Nature du projet',title:'Votre projet, c\'est avant tout…',opts:[
+    {id:'place',t:'🏠 Un lieu à faire ressentir',d:'Hôtel, restaurant, architecture. La lumière, l\'espace, l\'atmosphère.'},
+    {id:'story',t:'📖 Une histoire à raconter',d:'Artisan, marque, projet. Les gens, les gestes, le contexte.'},
+    {id:'moment',t:'⏳ Un moment à garder',d:'Famille, couple, événement. L\'instant, l\'émotion, la vie.'}
+  ],btn:'Continuer'},
+  priorities:{kicker:'L\'effet recherché',title:'Ce que vous voulez transmettre',sub:'1 ou 2 priorités',opts:[
+    {id:'auth',t:'Authenticité',d:'Vrai, présent, pas artificiel'},
+    {id:'brand',t:'Cohérence',d:'Aligné avec votre identité visuelle'},
+    {id:'singular',t:'Singularité',d:'Un regard reconnaissable, pas du déjà-vu'},
+    {id:'trust',t:'Crédibilité',d:'Professionnel, humain, qui inspire confiance'}
+  ],btn:'Continuer'},
+  usage:{kicker:'Usage',title:'Ces images vont servir à…',opts:[
+    {id:'launch',t:'📆 Un lancement / événement',d:'Ouverture, campagne précise, événement avec deadline'},
+    {id:'base',t:'🔁 Constituer une bibliothèque',d:'Images réutilisables pour votre communication courante'},
+    {id:'series',t:'🌱 Une série régulière',d:'Contenu continu (réseaux, blog, évolution dans le temps)'}
+  ],btn:'Continuer'},
+  channels:{kicker:'Diffusion',title:'Où ces images vivront-elles ?',sub:'Max 2',opts:[
+    {id:'web',t:'Site web'},{id:'social',t:'Réseaux sociaux'},{id:'press',t:'Presse / éditorial'},{id:'print',t:'Print / affichage'}
+  ],btn:'Continuer'},
+  location:{kicker:'Logistique',title:'Où se déroule la séance ?',opts:[
+    {id:'sitges',t:'📍 Sitges et environs',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelone',d:'Ville ou périphérie'},
+    {id:'cat',t:'📍 Ailleurs en Catalogne',d:'Costa Brava, Tarragone, intérieur…'},
+    {id:'other',t:'📍 En dehors de Catalogne',d:'À définir ensemble'}
+  ],btn:'Continuer'},
+  timing:{kicker:'Planning',title:'Quand avez-vous besoin des images ?',opts:[
+    {id:'fixed',t:'📅 Date fixée',d:'J\'ai une deadline précise'},
+    {id:'approx',t:'📆 Période approximative',d:'Dans les prochaines semaines ou mois'},
+    {id:'flex',t:'🌊 Pas d\'urgence',d:'On cale ça ensemble'}
+  ],btn:'Continuer'},
+  vibe:{kicker:'Direction artistique',title:'Comment je dois photographier',
+    sub:'Ajustez les trois curseurs. Les photos illustrent chaque extrême — elles ne sont pas cliquables.',
+    sliders:[
+      {id:'calm',cat:'Énergie',lo:'Calme & contemplatif',hi:'Vivant & dynamique',
+        imgs:[{src:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600',lbl:'Calme'},
+              {src:'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600',lbl:'Vivant'}]},
+      {id:'present',cat:'Proximité',lo:'Distance & contexte',hi:'Intime & détails',
+        imgs:[{src:'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600',lbl:'Vue large'},
+              {src:'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=600',lbl:'Proximité'}]},
+      {id:'rich',cat:'Esthétique',lo:'Épuré & minimaliste',hi:'Texturé & riche',
+        imgs:[{src:'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600',lbl:'Épuré'},
+              {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Texturé'}]}
+    ],btn:'Voir le brief'},
+  contact:{kicker:'Dernière étape',title:'Votre adresse email',sub:'Pour recevoir ce brief et commencer à échanger.',ph:'vous@email.com',btn:'Générer le brief'},
+  report:{loading:'Rédaction de votre brief…',loadSub:'L\'IA Cloudflare analyse vos réponses et compose votre brief personnalisé.',
+    ctaTitle:'La suite',ctaQuote:'…Et maintenant vous savez ce qu\'une image représente pour moi.',
+    ctaText:'Discutons de votre projet. Je vous prépare une proposition personnalisée — approche, planning et budget.',
+    btnEmail:'Envoyer le brief à Marina',btnRdv:'Prendre rendez-vous',btnPdf:'Télécharger en PDF',btnRestart:'Nouveau brief'},
+  emailSubj:'Brief photo',emailHi:'Bonjour Marina,',emailIntro:'Voici mon brief complété via le questionnaire en ligne.',emailSign:'Cordialement,',
+  restartConfirm:'Recommencer le questionnaire ?',
+  pdfFilename:'marinaphoto-brief'
+},
+en:{
+  steps:['Intro','Name','Project','Type','Priorities','Use','Channels','Location','Timing','Vibe','Contact'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 sec','30 sec','20 sec'],
+  back:'Back', maxTwo:'Maximum 2 choices', mustPick:'Please choose an option', emailErr:'Invalid email',
+  aiBadge:'Written by AI · Cloudflare Workers AI',
+  fallbackBadge:'Auto-generated brief',
+  intro:{kicker:'Let\'s start',quote:'I know what an image means to you…',title:'3 minutes to understand your project.',sub:'A few simple questions. I turn your answers into a personalised brief that guides our work.',btn:'Start'},
+  name:{kicker:'About you',title:'Your first name',ph:'e.g. Sophie',btn:'Continue'},
+  project:{kicker:'The project',title:'What is your project called?',sub:'A name, even a working one.',ph:'e.g. Hotel Can Ros / Garraf Winery',btn:'Continue'},
+  type:{kicker:'Project type',title:'Your project is mainly…',opts:[
+    {id:'place',t:'🏠 A place to make felt',d:'Hotel, restaurant, architecture. Light, space, atmosphere.'},
+    {id:'story',t:'📖 A story to tell',d:'Artisan, brand, project. People, gestures, context.'},
+    {id:'moment',t:'⏳ A moment to keep',d:'Family, couple, event. The instant, emotion, life.'}
+  ],btn:'Continue'},
+  priorities:{kicker:'The desired effect',title:'What you want to convey',sub:'1 or 2 priorities',opts:[
+    {id:'auth',t:'Authenticity',d:'Real, present, not artificial'},
+    {id:'brand',t:'Coherence',d:'Aligned with your visual identity'},
+    {id:'singular',t:'Singularity',d:'A recognisable eye, nothing generic'},
+    {id:'trust',t:'Credibility',d:'Professional, human, trust-inspiring'}
+  ],btn:'Continue'},
+  usage:{kicker:'Use',title:'These images will serve…',opts:[
+    {id:'launch',t:'📆 A launch / event',d:'Opening, specific campaign, event with deadline'},
+    {id:'base',t:'🔁 Building a library',d:'Reusable images for your ongoing communication'},
+    {id:'series',t:'🌱 An ongoing series',d:'Continuous content (social, blog, evolution over time)'}
+  ],btn:'Continue'},
+  channels:{kicker:'Distribution',title:'Where will these images live?',sub:'Max 2',opts:[
+    {id:'web',t:'Website'},{id:'social',t:'Social media'},{id:'press',t:'Press / editorial'},{id:'print',t:'Print / display'}
+  ],btn:'Continue'},
+  location:{kicker:'Logistics',title:'Where will the shoot take place?',opts:[
+    {id:'sitges',t:'📍 Sitges area',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelona',d:'City or surroundings'},
+    {id:'cat',t:'📍 Elsewhere in Catalonia',d:'Costa Brava, Tarragona, inland…'},
+    {id:'other',t:'📍 Outside Catalonia',d:'To define together'}
+  ],btn:'Continue'},
+  timing:{kicker:'Schedule',title:'When do you need the images?',opts:[
+    {id:'fixed',t:'📅 Fixed date',d:'I have a precise deadline'},
+    {id:'approx',t:'📆 Approximate timeframe',d:'Within the next weeks or months'},
+    {id:'flex',t:'🌊 No urgency',d:'We figure it out together'}
+  ],btn:'Continue'},
+  vibe:{kicker:'Artistic direction',title:'How should I photograph',
+    sub:'Adjust the three sliders. Photos illustrate each extreme — they are not clickable.',
+    sliders:[
+      {id:'calm',cat:'Energy',lo:'Calm & contemplative',hi:'Lively & dynamic',
+        imgs:[{src:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600',lbl:'Still'},
+              {src:'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600',lbl:'Lively'}]},
+      {id:'present',cat:'Proximity',lo:'Distance & context',hi:'Intimate & details',
+        imgs:[{src:'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600',lbl:'Wide'},
+              {src:'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=600',lbl:'Close'}]},
+      {id:'rich',cat:'Aesthetic',lo:'Minimal & clean',hi:'Textured & rich',
+        imgs:[{src:'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600',lbl:'Minimal'},
+              {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Textured'}]}
+    ],btn:'See brief'},
+  contact:{kicker:'Last step',title:'Your email address',sub:'To send you this brief and start the conversation.',ph:'you@email.com',btn:'Generate brief'},
+  report:{loading:'Writing your brief…',loadSub:'Cloudflare AI is analysing your answers and composing your personalised brief.',
+    ctaTitle:'Next step',ctaQuote:'…And now you know what an image means to me.',
+    ctaText:'Let\'s talk about your project. I\'ll prepare a personalised proposal — approach, timeline and budget.',
+    btnEmail:'Send brief to Marina',btnRdv:'Book a call',btnPdf:'Download PDF',btnRestart:'New brief'},
+  emailSubj:'Photo brief',emailHi:'Hello Marina,',emailIntro:'Here is my completed brief from the online questionnaire.',emailSign:'Best regards,',
+  restartConfirm:'Restart the questionnaire?',
+  pdfFilename:'marinaphoto-brief'
+},
+es:{
+  steps:['Intro','Nombre','Proyecto','Tipo','Prioridades','Uso','Canales','Lugar','Timing','Vibra','Contacto'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 seg','30 seg','20 seg'],
+  back:'Atrás', maxTwo:'Máximo 2 opciones', mustPick:'Por favor elija una opción', emailErr:'Email inválido',
+  aiBadge:'Redactado por IA · Cloudflare Workers AI',
+  fallbackBadge:'Brief generado automáticamente',
+  intro:{kicker:'Empecemos',quote:'Sé lo que una imagen significa para ti…',title:'3 minutos para entender tu proyecto.',sub:'Algunas preguntas simples. Transformo tus respuestas en un brief personalizado que guía nuestra colaboración.',btn:'Empezar'},
+  name:{kicker:'Sobre ti',title:'Tu nombre',ph:'ej. Sofía',btn:'Continuar'},
+  project:{kicker:'El proyecto',title:'¿Cómo se llama tu proyecto?',sub:'Un nombre, aunque sea provisional.',ph:'ej. Hotel Can Ros / Bodega Garraf',btn:'Continuar'},
+  type:{kicker:'Naturaleza del proyecto',title:'Tu proyecto es sobre todo…',opts:[
+    {id:'place',t:'🏠 Un lugar para sentir',d:'Hotel, restaurante, arquitectura. Luz, espacio, atmósfera.'},
+    {id:'story',t:'📖 Una historia que contar',d:'Artesano, marca, proyecto. Personas, gestos, contexto.'},
+    {id:'moment',t:'⏳ Un momento para guardar',d:'Familia, pareja, evento. El instante, la emoción, la vida.'}
+  ],btn:'Continuar'},
+  priorities:{kicker:'El efecto deseado',title:'Lo que quieres transmitir',sub:'1 o 2 prioridades',opts:[
+    {id:'auth',t:'Autenticidad',d:'Real, presente, no artificial'},
+    {id:'brand',t:'Coherencia',d:'Alineado con tu identidad visual'},
+    {id:'singular',t:'Singularidad',d:'Una mirada reconocible, nada genérico'},
+    {id:'trust',t:'Credibilidad',d:'Profesional, humano, que inspira confianza'}
+  ],btn:'Continuar'},
+  usage:{kicker:'Uso',title:'Estas imágenes servirán para…',opts:[
+    {id:'launch',t:'📆 Un lanzamiento / evento',d:'Apertura, campaña específica, evento con fecha límite'},
+    {id:'base',t:'🔁 Construir una biblioteca',d:'Imágenes reutilizables para tu comunicación habitual'},
+    {id:'series',t:'🌱 Una serie continua',d:'Contenido continuo (redes, blog, evolución en el tiempo)'}
+  ],btn:'Continuar'},
+  channels:{kicker:'Difusión',title:'¿Dónde vivirán estas imágenes?',sub:'Máx 2',opts:[
+    {id:'web',t:'Web'},{id:'social',t:'Redes sociales'},{id:'press',t:'Prensa / editorial'},{id:'print',t:'Impresión / display'}
+  ],btn:'Continuar'},
+  location:{kicker:'Logística',title:'¿Dónde se realizará la sesión?',opts:[
+    {id:'sitges',t:'📍 Sitges y alrededores',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelona',d:'Ciudad o alrededores'},
+    {id:'cat',t:'📍 Otra parte de Cataluña',d:'Costa Brava, Tarragona, interior…'},
+    {id:'other',t:'📍 Fuera de Cataluña',d:'A definir juntos'}
+  ],btn:'Continuar'},
+  timing:{kicker:'Planificación',title:'¿Cuándo necesitas las imágenes?',opts:[
+    {id:'fixed',t:'📅 Fecha fija',d:'Tengo una fecha límite precisa'},
+    {id:'approx',t:'📆 Período aproximado',d:'En las próximas semanas o meses'},
+    {id:'flex',t:'🌊 Sin urgencia',d:'Lo decidimos juntos'}
+  ],btn:'Continuar'},
+  vibe:{kicker:'Dirección artística',title:'Cómo debo fotografiar',
+    sub:'Ajusta los tres controles. Las fotos ilustran cada extremo — no son clicables.',
+    sliders:[
+      {id:'calm',cat:'Energía',lo:'Calmo & contemplativo',hi:'Vivo & dinámico',
+        imgs:[{src:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600',lbl:'Sereno'},
+              {src:'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600',lbl:'Vivo'}]},
+      {id:'present',cat:'Proximidad',lo:'Distancia & contexto',hi:'Íntimo & detalles',
+        imgs:[{src:'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600',lbl:'Amplio'},
+              {src:'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=600',lbl:'Cercano'}]},
+      {id:'rich',cat:'Estética',lo:'Limpio & minimalista',hi:'Texturado & rico',
+        imgs:[{src:'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600',lbl:'Limpio'},
+              {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Texturado'}]}
+    ],btn:'Ver brief'},
+  contact:{kicker:'Último paso',title:'Tu dirección de email',sub:'Para enviarte este brief y empezar a hablar.',ph:'tu@email.com',btn:'Generar brief'},
+  report:{loading:'Redactando tu brief…',loadSub:'La IA de Cloudflare analiza tus respuestas y compone tu brief personalizado.',
+    ctaTitle:'El próximo paso',ctaQuote:'…Y ahora sabes lo que una imagen significa para mí.',
+    ctaText:'Hablemos de tu proyecto. Te preparo una propuesta personalizada — enfoque, planificación y presupuesto.',
+    btnEmail:'Enviar brief a Marina',btnRdv:'Reservar una llamada',btnPdf:'Descargar PDF',btnRestart:'Nuevo brief'},
+  emailSubj:'Brief fotográfico',emailHi:'Hola Marina,',emailIntro:'Aquí está mi brief completado a través del cuestionario en línea.',emailSign:'Saludos,',
+  restartConfirm:'¿Reiniciar el cuestionario?',
+  pdfFilename:'marinaphoto-brief'
+},
+ca:{
+  steps:['Intro','Nom','Projecte','Tipus','Prioritats','Ús','Canals','Lloc','Timing','Vibra','Contacte'],
+  times:['3 min','2 min','2 min','2 min','1 min','1 min','1 min','1 min','30 seg','30 seg','20 seg'],
+  back:'Enrere', maxTwo:'Màxim 2 opcions', mustPick:'Si us plau, tria una opció', emailErr:'Email invàlid',
+  aiBadge:'Redactat per IA · Cloudflare Workers AI',
+  fallbackBadge:'Brief generat automàticament',
+  intro:{kicker:'Comencem',quote:'Sé el que una imatge significa per a tu…',title:'3 minuts per entendre el teu projecte.',sub:'Unes quantes preguntes simples. Transformo les teves respostes en un brief personalitzat que guia la nostra col·laboració.',btn:'Començar'},
+  name:{kicker:'Sobre tu',title:'El teu nom',ph:'ex. Núria',btn:'Continuar'},
+  project:{kicker:'El projecte',title:'Com s\'anomena el teu projecte?',sub:'Un nom, encara que sigui provisional.',ph:'ex. Hotel Can Ros / Celler Garraf',btn:'Continuar'},
+  type:{kicker:'Naturalesa del projecte',title:'El teu projecte és sobretot…',opts:[
+    {id:'place',t:'🏠 Un lloc per sentir',d:'Hotel, restaurant, arquitectura. Llum, espai, atmosfera.'},
+    {id:'story',t:'📖 Una història per explicar',d:'Artesà, marca, projecte. Persones, gestos, context.'},
+    {id:'moment',t:'⏳ Un moment per guardar',d:'Família, parella, esdeveniment. L\'instant, l\'emoció, la vida.'}
+  ],btn:'Continuar'},
+  priorities:{kicker:'L\'efecte desitjat',title:'El que vols transmetre',sub:'1 o 2 prioritats',opts:[
+    {id:'auth',t:'Autenticitat',d:'Real, present, no artificial'},
+    {id:'brand',t:'Coherència',d:'Alineat amb la teva identitat visual'},
+    {id:'singular',t:'Singularitat',d:'Una mirada reconeixible, res genèric'},
+    {id:'trust',t:'Credibilitat',d:'Professional, humà, que inspira confiança'}
+  ],btn:'Continuar'},
+  usage:{kicker:'Ús',title:'Aquestes imatges serviran per a…',opts:[
+    {id:'launch',t:'📆 Un llançament / esdeveniment',d:'Obertura, campanya específica, esdeveniment amb data límit'},
+    {id:'base',t:'🔁 Construir una biblioteca',d:'Imatges reutilitzables per a la teva comunicació habitual'},
+    {id:'series',t:'🌱 Una sèrie contínua',d:'Contingut continu (xarxes, blog, evolució en el temps)'}
+  ],btn:'Continuar'},
+  channels:{kicker:'Difusió',title:'On viuran aquestes imatges?',sub:'Màx 2',opts:[
+    {id:'web',t:'Web'},{id:'social',t:'Xarxes socials'},{id:'press',t:'Premsa / editorial'},{id:'print',t:'Impressió / cartelleria'}
+  ],btn:'Continuar'},
+  location:{kicker:'Logística',title:'On es farà la sessió?',opts:[
+    {id:'sitges',t:'📍 Sitges i rodalia',d:'Garraf, Vilanova, Cubelles…'},
+    {id:'bcn',t:'📍 Barcelona',d:'Ciutat o voltants'},
+    {id:'cat',t:'📍 Altra part de Catalunya',d:'Costa Brava, Tarragona, interior…'},
+    {id:'other',t:'📍 Fora de Catalunya',d:'A definir junts'}
+  ],btn:'Continuar'},
+  timing:{kicker:'Planificació',title:'Quan necessites les imatges?',opts:[
+    {id:'fixed',t:'📅 Data fixada',d:'Tinc una data límit precisa'},
+    {id:'approx',t:'📆 Període aproximat',d:'En les properes setmanes o mesos'},
+    {id:'flex',t:'🌊 Sense urgència',d:'Ho decidim junts'}
+  ],btn:'Continuar'},
+  vibe:{kicker:'Direcció artística',title:'Com he de fotografiar',
+    sub:'Ajusta els tres controls. Les fotos il·lustren cada extrem — no es poden clicar.',
+    sliders:[
+      {id:'calm',cat:'Energia',lo:'Calmat & contemplatiu',hi:'Viu & dinàmic',
+        imgs:[{src:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600',lbl:'Serè'},
+              {src:'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600',lbl:'Viu'}]},
+      {id:'present',cat:'Proximitat',lo:'Distància & context',hi:'Íntim & detalls',
+        imgs:[{src:'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600',lbl:'Ampli'},
+              {src:'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=600',lbl:'Proper'}]},
+      {id:'rich',cat:'Estètica',lo:'Net & minimalista',hi:'Texturat & ric',
+        imgs:[{src:'https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600',lbl:'Net'},
+              {src:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600',lbl:'Texturat'}]}
+    ],btn:'Veure brief'},
+  contact:{kicker:'Darrer pas',title:'El teu email',sub:'Per enviar-te aquest brief i començar a parlar.',ph:'tu@email.cat',btn:'Generar brief'},
+  report:{loading:'Redactant el teu brief…',loadSub:'La IA de Cloudflare analitza les teves respostes i compon el teu brief personalitzat.',
+    ctaTitle:'El proper pas',ctaQuote:'…I ara saps el que una imatge significa per a mi.',
+    ctaText:'Parlem del teu projecte. Et preparo una proposta personalitzada — enfocament, planificació i pressupost.',
+    btnEmail:'Enviar brief a Marina',btnRdv:'Reservar una trucada',btnPdf:'Descarregar PDF',btnRestart:'Nou brief'},
+  emailSubj:'Brief fotogràfic',emailHi:'Hola Marina,',emailIntro:'Aquí tens el meu brief completat a través del qüestionari en línia.',emailSign:'Cordialment,',
+  restartConfirm:'Reiniciar el qüestionari?',
+  pdfFilename:'marinaphoto-brief'
+}
+};
+
+const t = k => { let r=TX[L]; for(const p of k.split('.')) r=r[p]; return r; };
+
+// ═══════════════════════════════════════════════════════
+// PROGRESS + NAV
+// ═══════════════════════════════════════════════════════
+function upProg(){
+  document.getElementById('pbar').style.width=((step+1)/TOTAL*100)+'%';
+  document.getElementById('pstep').textContent=(step+1)+'/'+TOTAL+' · '+t('steps')[step];
+  document.getElementById('ptime').textContent='~'+t('times')[step];
+}
+function setLang(l){
+  L=l;
+  ['fr','en','es','ca'].forEach(x=>document.getElementById('l-'+x).classList.remove('on'));
+  document.getElementById('l-'+l).classList.add('on');
+  go();
+}
+function fwd(){if(step<TOTAL-1){step++;go();}}
+function bck(){if(step>0){step--;go();}}
+function go(){
+  upProg();
+  const c=document.getElementById('card');
+  c.style.cssText='opacity:0;transform:translateY(10px);transition:none;';
+  setTimeout(()=>{
+    draw();
+    c.style.cssText='opacity:1;transform:translateY(0);transition:all .35s ease;';
+    window.scrollTo({top:0,behavior:'smooth'});
+  },60);
+}
+
+// ═══════════════════════════════════════════════════════
+// DRAW STEPS
+// ═══════════════════════════════════════════════════════
+function draw(){
+  const c=document.getElementById('card');
+  const fns=[drawIntro,drawName,drawProject,drawType,drawPriorities,
+              drawUsage,drawChannels,drawLocation,drawTiming,drawVibe,drawContact];
+  if(fns[step]) c.innerHTML=fns[step]();
+  bindOpts();
+  initSliders();
+}
+
+const BK = ()=>`<button class="bs" onclick="bck()">← ${t('back')}</button>`;
+
+function drawIntro(){
+  return `<div class="kicker">${t('intro.kicker')}</div>
+  <div class="opening-quote">"${t('intro.quote')}"</div>
+  <h1>${t('intro.title')}</h1>
+  <p class="sub">${t('intro.sub')}</p>
+  <div class="btns"><button class="bp" onclick="fwd()">${t('intro.btn')}</button></div>`;
+}
+function drawName(){
+  return `<div class="kicker">${t('name.kicker')}</div>
+  <h1>${t('name.title')}</h1>
+  <input type="text" id="f-name" value="${esc(S.name)}" placeholder="${t('name.ph')}">
+  <div class="btns"><button class="bp" onclick="svName()">${t('name.btn')}</button>${BK()}</div>`;
+}
+function drawProject(){
+  return `<div class="kicker">${t('project.kicker')}</div>
+  <h1>${t('project.title')}</h1><p class="sub">${t('project.sub')}</p>
+  <input type="text" id="f-proj" value="${esc(S.project)}" placeholder="${t('project.ph')}">
+  <div class="btns"><button class="bp" onclick="svProject()">${t('project.btn')}</button>${BK()}</div>`;
+}
+function drawOpts(key, field, multi, stateRef){
+  const opts=t(key+'.opts');
+  return `<div class="kicker">${t(key+'.kicker')}</div>
+  <h1>${t(key+'.title')}</h1>
+  ${t(key+'.sub') ? `<p class="sub">${t(key+'.sub')}</p>` : ''}
+  <div class="opts">${opts.map(o=>`
+    <div class="opt${(multi?stateRef.includes(o.id):stateRef===o.id)?' sel':''}" data-id="${o.id}" data-field="${field}" data-multi="${multi}">
+      <div class="opt-t">${o.t}</div>${o.d?`<div class="opt-d">${o.d}</div>`:''}
+    </div>`).join('')}
+  </div>
+  <div class="btns">
+    <button class="bp" onclick="${multi?`valMulti('${field}',2)`:`valSingle('${field}')`}">${t(key+'.btn')}</button>
+    ${BK()}
+  </div>`;
+}
+function drawType(){return drawOpts('type','type',false,S.type);}
+function drawPriorities(){return drawOpts('priorities','priorities',true,S.priorities);}
+function drawUsage(){return drawOpts('usage','usage',false,S.usage);}
+function drawChannels(){return drawOpts('channels','channels',true,S.channels);}
+function drawLocation(){return drawOpts('location','location',false,S.location);}
+function drawTiming(){return drawOpts('timing','timing',false,S.timing);}
+
+function drawVibe(){
+  const sls=t('vibe.sliders');
+  return `<div class="kicker">${t('vibe.kicker')}</div>
+  <h1>${t('vibe.title')}</h1>
+  <p class="sub">${t('vibe.sub')}</p>
+  ${sls.map(sl=>`
+  <div class="vibe-block">
+    <div class="vibe-cat">${sl.cat}</div>
+    <div class="vibe-label-row"><span>${sl.lo}</span><span>${sl.hi}</span></div>
+    <input type="range" min="0" max="100" value="${S[sl.id]}" data-key="${sl.id}"
+      style="--p:${S[sl.id]}%"
+      oninput="S['${sl.id}']=+this.value;this.style.setProperty('--p',this.value+'%')">
+    <div class="vibe-illus">
+      ${sl.imgs.map(img=>`
+      <div class="vibe-img">
+        <img src="${img.src}" alt="${img.lbl}" loading="lazy">
+        <div class="vibe-img-lbl">${img.lbl}</div>
+      </div>`).join('')}
+    </div>
+  </div>`).join('')}
+  <div class="btns"><button class="bp" onclick="fwd()">${t('vibe.btn')}</button>${BK()}</div>`;
+}
+
+function drawContact(){
+  return `<div class="kicker">${t('contact.kicker')}</div>
+  <h1>${t('contact.title')}</h1>
+  <p class="sub">${t('contact.sub')}</p>
+  <input type="email" id="f-email" value="${esc(S.email)}" placeholder="${t('contact.ph')}">
+  <div class="btns"><button class="bp" onclick="svEmail()">${t('contact.btn')}</button>${BK()}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// EVENT BINDING
+// ═══════════════════════════════════════════════════════
+function bindOpts(){
+  document.querySelectorAll('.opt[data-field]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const id=el.dataset.id, field=el.dataset.field, multi=el.dataset.multi==='true';
+      if(multi){
+        if(el.classList.contains('sel')){
+          S[field]=S[field].filter(x=>x!==id);
+          el.classList.remove('sel');
+        } else {
+          if(S[field].length>=2){alert(t('maxTwo'));return;}
+          S[field].push(id);
+          el.classList.add('sel');
+        }
+      } else {
+        document.querySelectorAll(`.opt[data-field="${field}"]`).forEach(x=>x.classList.remove('sel'));
+        S[field]=id;
+        el.classList.add('sel');
+      }
+    });
+  });
+}
+function initSliders(){
+  document.querySelectorAll('input[type=range]').forEach(el=>{
+    el.style.setProperty('--p',el.value+'%');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// SAVE / VALIDATE
+// ═══════════════════════════════════════════════════════
+const esc=s=>(s||'').replace(/"/g,'&quot;');
+function svName(){S.name=document.getElementById('f-name').value.trim();fwd();}
+function svProject(){S.project=document.getElementById('f-proj').value.trim();fwd();}
+function valSingle(f){if(!S[f]){alert(t('mustPick'));return;}fwd();}
+function valMulti(f,max){if(!S[f].length){alert(t('mustPick'));return;}fwd();}
+function svEmail(){
+  const v=document.getElementById('f-email').value.trim();
+  if(!v||!v.includes('@')||!v.includes('.')){alert(t('emailErr'));return;}
+  S.email=v;
+  showReport();
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD AI PROMPT
+// ═══════════════════════════════════════════════════════
+function buildPrompt(){
+  const inferSector=(name)=>{
+    const n=(name||'').toLowerCase();
+    if(/hotel|hostal|apart|boutique.*hotel|casa.*rural|mas\b|can\s/i.test(n)) return 'hôtellerie';
+    if(/beach.*club|club.*playa|platja|chiringuito/i.test(n)) return 'club de plage';
+    if(/restaura|gastro|cuina|cocina|kitchen|bistro|tavern/i.test(n)) return 'restaurant';
+    if(/bode?ga|celler|vi[nñ]|wine|vi\b/i.test(n)) return 'vignoble';
+    if(/caf[eé]|coffee|barista/i.test(n)) return 'café';
+    if(/bar\b|tapas|vermut/i.test(n)) return 'bar';
+    if(/dent|odonto/i.test(n)) return 'cabinet dentaire';
+    if(/m[eé]dic|clinic|doctor|salud|health/i.test(n)) return 'médical';
+    if(/est[eé]tic|beauty|spa|wellness/i.test(n)) return 'esthétique & spa';
+    if(/fisio|physio/i.test(n)) return 'physiothérapie';
+    if(/yoga|pilates|fitness|gym/i.test(n)) return 'fitness';
+    if(/inmobil|real.*estate|propied/i.test(n)) return 'immobilier';
+    if(/architect|arquitec/i.test(n)) return 'architecture';
+    if(/construc|obra|reform/i.test(n)) return 'construction';
+    if(/taller|atelier|artesa|craft/i.test(n)) return 'artisanat';
+    if(/botiga|tienda|shop|store|boutique/i.test(n)) return 'commerce';
+    if(/florist|flor/i.test(n)) return 'fleuriste';
+    if(/design|gràfic|graphic/i.test(n)) return 'design';
+    if(/galer[ií]|art.*space/i.test(n)) return 'galerie';
+    if(/wedding|boda|casament/i.test(n)) return 'mariage';
+    if(/event|celebra|festes/i.test(n)) return 'événementiel';
+    if(/formaci[oó]|training|cours/i.test(n)) return 'formation';
+    if(/fiduci|asesor|consult|gestori/i.test(n)) return 'services professionnels';
+    if(/indust|f[aà]bric/i.test(n)) return 'industrie';
+    return null;
+  };
+
+  const sector = inferSector(S.project);
+  const c=S.calm, p=S.present, r=S.rich;
+
+  const TYPE_L={fr:{place:'lieu à faire ressentir',story:'histoire de marque',moment:'moment à capturer'},en:{place:'place to convey',story:'brand story',moment:'moment to capture'},es:{place:'lugar para sentir',story:'historia de marca',moment:'momento a capturar'},ca:{place:'lloc per sentir',story:'història de marca',moment:'moment a capturar'}};
+  const PRIO_L={fr:{auth:'authenticité',brand:'cohérence',singular:'singularité',trust:'crédibilité'},en:{auth:'authenticity',brand:'coherence',singular:'singularity',trust:'credibility'},es:{auth:'autenticidad',brand:'coherencia',singular:'singularidad',trust:'credibilidad'},ca:{auth:'autenticitat',brand:'coherència',singular:'singularitat',trust:'credibilitat'}};
+  const CHAN_L={fr:{web:'site web',social:'réseaux sociaux',press:'presse',print:'print'},en:{web:'website',social:'social media',press:'press',print:'print'},es:{web:'web',social:'redes sociales',press:'prensa',print:'impresión'},ca:{web:'web',social:'xarxes socials',press:'premsa',print:'impressió'}};
+  const LOC_L={fr:{sitges:'Sitges et environs (Garraf, Vilanova...)',bcn:'Barcelone',cat:'Catalogne',other:'en dehors de Catalogne'},en:{sitges:'Sitges area (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Catalonia',other:'outside Catalonia'},es:{sitges:'Sitges y alrededores (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Cataluña',other:'fuera de Cataluña'},ca:{sitges:'Sitges i rodal (Garraf, Vilanova...)',bcn:'Barcelona',cat:'Catalunya',other:'fora de Catalunya'}};
+  const TIM_L={fr:{fixed:'avec une date précise',approx:'dans les prochains mois',flex:'flexible, sans urgence'},en:{fixed:'with a specific date',approx:'within the next few months',flex:'flexible, no rush'},es:{fixed:'con fecha precisa',approx:'en los próximos meses',flex:'flexible, sin urgencia'},ca:{fixed:'amb data precisa',approx:'en els propers mesos',flex:'flexible, sense urgència'}};
+
+  const tl = S.type && TYPE_L[L] ? (TYPE_L[L][S.type]||'') : '';
+  const prios = S.priorities.map(x=>PRIO_L[L]?.[x]).filter(Boolean);
+  const chans = S.channels.map(x=>CHAN_L[L]?.[x]).filter(Boolean);
+  const locStr = LOC_L[L]?.[S.location] || '';
+  const timStr = TIM_L[L]?.[S.timing] || '';
+
+  const calmDesc = c<35 ? (L==='fr'?'très calme et contemplatif':L==='es'?'muy calmo y contemplativo':L==='ca'?'molt calmat i contemplatiu':'very calm and contemplative') : c>65 ? (L==='fr'?'vivant et dynamique, plein d\'énergie':L==='es'?'vivo y dinámico, lleno de energía':L==='ca'?'viu i dinàmic, ple d\'energia':'lively and dynamic, full of energy') : (L==='fr'?'équilibré entre calme et dynamisme':L==='es'?'equilibrado entre calma y dinamismo':L==='ca'?'equilibrat entre calma i dinamisme':'balanced between calm and dynamic');
+  const preDesc = p<35 ? (L==='fr'?'avec des vues larges qui donnent du contexte':L==='es'?'con vistas amplias que dan contexto':L==='ca'?'amb vistes àmplies que donen context':'with wide views providing context') : p>65 ? (L==='fr'?'intime et proche, valorisant les détails et les textures':L==='es'?'íntimo y cercano, valorando detalles y texturas':L==='ca'?'íntim i proper, valorant detalls i textures':'intimate and close, highlighting details and textures') : (L==='fr'?'mixte entre vues d\'ensemble et détails':L==='es'?'mixto entre vistas generales y detalles':L==='ca'?'mixt entre vistes generals i detalls':'a mix of wide shots and close details');
+  const richDesc = r<35 ? (L==='fr'?'épuré et minimaliste, beaucoup d\'espace et de lumière':L==='es'?'limpio y minimalista, mucho espacio y luz':L==='ca'?'net i minimalista, molt espai i llum':'clean and minimalist, lots of space and light') : r>65 ? (L==='fr'?'riche en textures et en matières, atmosphères denses':L==='es'?'rico en texturas y materiales, atmósferas densas':L==='ca'?'ric en textures i materials, atmosferes denses':'rich in textures and materials, dense atmospheres') : (L==='fr'?'équilibré entre épuré et richesse visuelle':L==='es'?'equilibrado entre limpieza y riqueza visual':L==='ca'?'equilibrat entre neteja i riquesa visual':'balanced between clean and visually rich');
+
+  const prompts = {
+    fr: `Rédige un brief photographique chaleureux et professionnel en français, composé de 3 paragraphes séparés par une ligne vide (200 à 250 mots au total).
+
+INFORMATIONS SUR LE PROJET :
+- Prénom du client : ${S.name||'(non précisé)'}
+- Nom du projet : ${S.project||'(non précisé)'}${sector ? '\n- Secteur identifié : '+sector : ''}
+- Nature : ${tl}
+- Priorités visuelles : ${prios.join(', ')||'authenticité'}
+- Usage : ${S.usage==='launch'?'lancement / événement avec deadline':S.usage==='base'?'bibliothèque d\'images réutilisables':S.usage==='series'?'série de contenu continu':'communication générale'}
+- Diffusion : ${chans.join(', ')||'web'}
+- Lieu de la séance : ${locStr}
+- Planning : ${timStr}
+
+DIRECTION ARTISTIQUE SOUHAITÉE :
+- Énergie : ${calmDesc}
+- Proximité / cadrage : ${preDesc}
+- Esthétique : ${richDesc}
+
+STRUCTURE DES 3 PARAGRAPHES :
+1. Montrer que tu comprends bien le projet et le contexte du client (cite le nom du projet et le secteur si identifié)
+2. Décrire concrètement ton approche photographique en lien direct avec la direction artistique
+3. Logistique (lieu, planning) + invitation chaleureuse à se rencontrer pour affiner le projet
+
+RÈGLES ABSOLUES :
+- Tutoyer le client, ton chaleureux mais professionnel
+- Utiliser le prénom naturellement
+- 3 paragraphes séparés par une ligne vide, AUCUNE liste, AUCUN prix
+- 200 à 250 mots maximum`,
+
+    en: `Write a warm, professional photography brief in English, in 3 paragraphs separated by a blank line (200–250 words total).
+
+PROJECT INFORMATION:
+- Client first name: ${S.name||'(not specified)'}
+- Project name: ${S.project||'(not specified)'}${sector ? '\n- Detected sector: '+sector : ''}
+- Type: ${tl}
+- Visual priorities: ${prios.join(', ')||'authenticity'}
+- Use: ${S.usage==='launch'?'launch / event with deadline':S.usage==='base'?'reusable image library':S.usage==='series'?'ongoing content series':'general communication'}
+- Distribution: ${chans.join(', ')||'web'}
+- Shoot location: ${locStr}
+- Timeline: ${timStr}
+
+DESIRED ARTISTIC DIRECTION:
+- Energy: ${calmDesc}
+- Proximity / framing: ${preDesc}
+- Aesthetic: ${richDesc}
+
+PARAGRAPH STRUCTURE:
+1. Show you understand the project and the client's context (mention the project name and sector if identified)
+2. Concretely describe your photographic approach in direct relation to the artistic direction
+3. Logistics (location, timeline) + warm invitation to meet and refine the project
+
+ABSOLUTE RULES:
+- Use informal "you", warm but professional tone
+- Use the first name naturally
+- 3 paragraphs separated by a blank line, NO lists, NO pricing
+- 200–250 words maximum`,
+
+    es: `Redacta un brief fotográfico cálido y profesional en español, en 3 párrafos separados por una línea en blanco (200–250 palabras en total).
+
+INFORMACIÓN DEL PROYECTO:
+- Nombre del cliente: ${S.name||'(no especificado)'}
+- Nombre del proyecto: ${S.project||'(no especificado)'}${sector ? '\n- Sector identificado: '+sector : ''}
+- Tipo: ${tl}
+- Prioridades visuales: ${prios.join(', ')||'autenticidad'}
+- Uso: ${S.usage==='launch'?'lanzamiento / evento con fecha límite':S.usage==='base'?'biblioteca de imágenes reutilizables':S.usage==='series'?'serie de contenido continuo':'comunicación general'}
+- Difusión: ${chans.join(', ')||'web'}
+- Lugar de la sesión: ${locStr}
+- Planificación: ${timStr}
+
+DIRECCIÓN ARTÍSTICA DESEADA:
+- Energía: ${calmDesc}
+- Proximidad / encuadre: ${preDesc}
+- Estética: ${richDesc}
+
+ESTRUCTURA DE LOS 3 PÁRRAFOS:
+1. Mostrar que entiendes bien el proyecto y el contexto del cliente (menciona el nombre del proyecto y el sector si identificado)
+2. Describir concretamente tu enfoque fotográfico en relación directa con la dirección artística
+3. Logística (lugar, planificación) + invitación cálida a reunirse para afinar el proyecto
+
+REGLAS ABSOLUTAS:
+- Tutear al cliente, tono cálido pero profesional
+- Usar el nombre naturalmente
+- 3 párrafos separados por línea en blanco, NINGUNA lista, NINGÚN precio
+- 200–250 palabras máximo`,
+
+    ca: `Redacta un brief fotogràfic càlid i professional en català, en 3 paràgrafs separats per una línia en blanc (200–250 paraules en total).
+
+INFORMACIÓ DEL PROJECTE:
+- Nom del client: ${S.name||'(no especificat)'}
+- Nom del projecte: ${S.project||'(no especificat)'}${sector ? '\n- Sector identificat: '+sector : ''}
+- Tipus: ${tl}
+- Prioritats visuals: ${prios.join(', ')||'autenticitat'}
+- Ús: ${S.usage==='launch'?'llançament / esdeveniment amb data límit':S.usage==='base'?'biblioteca d\'imatges reutilitzables':S.usage==='series'?'sèrie de contingut continu':'comunicació general'}
+- Difusió: ${chans.join(', ')||'web'}
+- Lloc de la sessió: ${locStr}
+- Planificació: ${timStr}
+
+DIRECCIÓ ARTÍSTICA DESITJADA:
+- Energia: ${calmDesc}
+- Proximitat / enquadrament: ${preDesc}
+- Estètica: ${richDesc}
+
+ESTRUCTURA DELS 3 PARÀGRAFS:
+1. Mostrar que entens bé el projecte i el context del client (menciona el nom del projecte i el sector si identificat)
+2. Descriure concretament el teu enfocament fotogràfic en relació directa amb la direcció artística
+3. Logística (lloc, planificació) + invitació càlida a trobar-se per afinar el projecte
+
+REGLES ABSOLUTES:
+- Tutear el client, to càlid però professional
+- Usar el nom naturalment
+- 3 paràgrafs separats per línia en blanc, CAP llista, CAP preu
+- 200–250 paraules màxim`
+  };
+
+  return prompts[L] || prompts.en;
+}
+
+// ═══════════════════════════════════════════════════════
+// GENERATE BRIEF WITH CLOUDFLARE AI
+// ═══════════════════════════════════════════════════════
+async function generateBriefWithAI(){
+  const prompt = buildPrompt();
+
+  const response = await fetch('/api/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: prompt })
+  });
+
+  if(!response.ok){
+    const errText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errText}`);
+  }
+
+  const data = await response.json();
+
+  if(data && data.error){
+    throw new Error(`Worker error: ${data.error}`);
+  }
+
+  const text = (data?.result || '').trim();
+
+  if(text.length < 80){
+    throw new Error(`Response too short (${text.length} chars)`);
+  }
+
+  S.briefSource = 'ai';
+  return text;
+}
+
+// ═══════════════════════════════════════════════════════
+// SHOW REPORT — calls AI then renders
+// ═══════════════════════════════════════════════════════
+function showReport(){
+  step=10; upProg();
+  const c=document.getElementById('card');
+  c.innerHTML=`<div class="loading">
+    <div class="spinner"></div>
+    <h2>${t('report.loading')}</h2>
+    <p>${t('report.loadSub')}</p>
+  </div>`;
+
+  generateBriefWithAI()
+    .then(brief=>{
+      S.briefText=brief;
+      S.briefSource='ai';
+      renderReport(brief);
+    })
+    .catch(err=>{
+      console.warn('Cloudflare AI failed, using fallback:', err);
+      const brief=fallback();
+      S.briefText=brief;
+      S.briefSource='fallback';
+      renderReport(brief);
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER REPORT
+// ═══════════════════════════════════════════════════════
+function renderReport(txt){
+  const c=document.getElementById('card');
+  const proj=S.project||(L==='fr'?'Votre projet':L==='es'?'Tu proyecto':L==='ca'?'El teu projecte':'Your project');
+  const locale={fr:'fr-FR',en:'en-GB',es:'es-ES',ca:'ca-ES'}[L]||'en-GB';
+  const date=new Date().toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
+  const paras=txt.split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim().replace(/\n/g,'<br>')}</p>`).join('');
+  const badgeLabel = S.briefSource==='ai' ? t('aiBadge') : t('fallbackBadge');
+
+  c.innerHTML=`
+    <div class="rpt-hero">
+      <h1>${proj}</h1>
+      ${S.name?`<div class="client">${S.name}</div>`:''}
+      <div class="rdate">${date}</div>
+    </div>
+    <div class="ai-badge">${badgeLabel}</div>
+    <div class="rpt-body">${paras}</div>
+    <div class="rpt-cta">
+      <h2>${t('report.ctaTitle')}</h2>
+      <div class="closing-q">"${t('report.ctaQuote')}"</div>
+      <p>${t('report.ctaText')}</p>
+      <div class="cta-btns">
+        <button class="bp" onclick="doEmail().catch(e=>console.error('Email error:',e))">${t('report.btnEmail')}</button>
+        <button class="bs" onclick="doRdv()">${t('report.btnRdv')}</button>
+        <button class="bs" onclick="doPDF()">${t('report.btnPdf')}</button>
+        <button class="bs" onclick="doRestart()">${t('report.btnRestart')}</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// FALLBACK — rich text generation without AI
+// ═══════════════════════════════════════════════════════
+function fallback(){
+  const proj=S.project||'';
+  const c=S.calm, p=S.present, r=S.rich;
+
+  const inferSector=(name)=>{
+    const n=(name||'').toLowerCase();
+    if(/hotel|hostal|apart|boutique.*hotel|casa.*rural|mas\b|can\s/i.test(n)) return 'hotel';
+    if(/beach.*club|club.*playa|platja|chiringuito/i.test(n)) return 'beach-club';
+    if(/restaura|gastro|cuina|cocina|kitchen|bistro|tavern/i.test(n)) return 'restaurant';
+    if(/bode?ga|celler|vi[nñ]|wine|vi\b/i.test(n)) return 'wine';
+    if(/caf[eé]|coffee|barista/i.test(n)) return 'cafe';
+    if(/bar\b|tapas|vermut/i.test(n)) return 'bar';
+    if(/dent|odonto/i.test(n)) return 'dental';
+    if(/m[eé]dic|clinic|doctor|salud|health/i.test(n)) return 'medical';
+    if(/est[eé]tic|beauty|spa|wellness/i.test(n)) return 'beauty';
+    if(/fisio|physio/i.test(n)) return 'physio';
+    if(/yoga|pilates|fitness|gym/i.test(n)) return 'fitness';
+    if(/inmobil|real.*estate|propied/i.test(n)) return 'realestate';
+    if(/architect|arquitec/i.test(n)) return 'architecture';
+    if(/taller|atelier|artesa|craft/i.test(n)) return 'craft';
+    if(/botiga|tienda|shop|store|boutique/i.test(n)) return 'retail';
+    if(/florist|flor/i.test(n)) return 'florist';
+    if(/design|gràfic|graphic/i.test(n)) return 'design';
+    if(/galer[ií]|art.*space/i.test(n)) return 'gallery';
+    if(/wedding|boda|casament/i.test(n)) return 'wedding';
+    if(/event|celebra|festes/i.test(n)) return 'events';
+    return null;
+  };
+  const sector=inferSector(proj);
+
+  const TYPE_L={fr:{place:'un lieu',story:'une histoire de marque',moment:'un moment de vie'},en:{place:'a place',story:'a brand story',moment:'a life moment'},es:{place:'un lugar',story:'una historia de marca',moment:'un momento de vida'},ca:{place:'un lloc',story:'una història de marca',moment:'un moment de vida'}};
+  const PRIO_L={fr:{auth:'authenticité',brand:'cohérence',singular:'singularité',trust:'crédibilité'},en:{auth:'authenticity',brand:'coherence',singular:'singularity',trust:'credibility'},es:{auth:'autenticidad',brand:'coherencia',singular:'singularidad',trust:'credibilidad'},ca:{auth:'autenticitat',brand:'coherència',singular:'singularitat',trust:'credibilitat'}};
+  const CHAN_L={fr:{web:'site web',social:'réseaux sociaux',press:'presse',print:'print'},en:{web:'website',social:'social media',press:'press',print:'print'},es:{web:'web',social:'redes sociales',press:'prensa',print:'impresión'},ca:{web:'web',social:'xarxes socials',press:'premsa',print:'impressió'}};
+  const LOC_L={fr:{sitges:'Sitges et environs',bcn:'Barcelone',cat:'Catalogne',other:'en dehors de la Catalogne'},en:{sitges:'Sitges area',bcn:'Barcelona',cat:'Catalonia',other:'outside Catalonia'},es:{sitges:'Sitges y alrededores',bcn:'Barcelona',cat:'Cataluña',other:'fuera de Cataluña'},ca:{sitges:'Sitges i rodal',bcn:'Barcelona',cat:'Catalunya',other:'fora de Catalunya'}};
+  const TIM_L={fr:{fixed:'avec une date précise',approx:'dans les prochains mois',flex:'sans urgence'},en:{fixed:'with a specific date',approx:'within the next few months',flex:'no rush'},es:{fixed:'con fecha precisa',approx:'en los próximos meses',flex:'sin prisa'},ca:{fixed:'amb data precisa',approx:'en els propers mesos',flex:'sense pressa'}};
+
+  const tl=S.type&&TYPE_L[L]?.[S.type]||'';
+  const prios=S.priorities.map(x=>PRIO_L[L]?.[x]).filter(Boolean);
+  const chans=S.channels.map(x=>CHAN_L[L]?.[x]).filter(Boolean);
+  const locStr=LOC_L[L]?.[S.location]||'';
+  const timStr=TIM_L[L]?.[S.timing]||'';
+  const sep={fr:' et ',en:' and ',es:' y ',ca:' i '}[L];
+
+  const SECTOR_NAMES={
+    fr:{hotel:'hôtellerie','beach-club':'club de plage',restaurant:'restaurant',wine:'vignoble',cafe:'café',bar:'bar',dental:'cabinet dentaire',medical:'médical',beauty:'esthétique & spa',physio:'physiothérapie',fitness:'fitness',realestate:'immobilier',architecture:'architecture',craft:'artisanat',retail:'commerce',florist:'fleuriste',design:'design',gallery:'galerie d\'art',events:'événementiel',wedding:'mariage'},
+    en:{hotel:'hospitality','beach-club':'beach club',restaurant:'gastronomy',wine:'winery',cafe:'café',bar:'bar',dental:'dental clinic',medical:'medical',beauty:'beauty & spa',physio:'physiotherapy',fitness:'fitness',realestate:'real estate',architecture:'architecture',craft:'craft',retail:'retail',florist:'florist',design:'design',gallery:'art gallery',events:'events',wedding:'wedding'},
+    es:{hotel:'hostelería','beach-club':'club de playa',restaurant:'gastronomía',wine:'viñedo',cafe:'café',bar:'bar',dental:'clínica dental',medical:'médico',beauty:'estética & spa',physio:'fisioterapia',fitness:'fitness',realestate:'inmobiliaria',architecture:'arquitectura',craft:'artesanía',retail:'comercio',florist:'floristería',design:'diseño',gallery:'galería de arte',events:'eventos',wedding:'boda'},
+    ca:{hotel:'hostaleria','beach-club':'club de platja',restaurant:'gastronomia',wine:'vinya',cafe:'cafè',bar:'bar',dental:'clínica dental',medical:'mèdic',beauty:'estètica & spa',physio:'fisioteràpia',fitness:'fitness',realestate:'immobiliària',architecture:'arquitectura',craft:'artesania',retail:'comerç',florist:'floristeria',design:'disseny',gallery:'galeria d\'art',events:'esdeveniments',wedding:'casament'}
+  };
+  const sectorName=sector&&SECTOR_NAMES[L]?.[sector]||'';
+
+  const VIBE={
+    fr:{
+      calm:[['des images posées, contemplatives','un rythme calme qui laisse respirer'],['un équilibre entre calme et énergie','du mouvement sans agitation'],['de l\'énergie et du mouvement','des images vivantes, pleines de vie']],
+      present:[['des vues larges qui donnent du contexte','de la profondeur, de l\'espace'],['un équilibre entre vues d\'ensemble et détails','alterner les angles'],['de la proximité et de l\'intimité','les textures, les détails, les gestes de près']],
+      rich:[['une esthétique épurée','des cadrages nets, de l\'espace, de la lumière'],['un équilibre entre sobriété et présence visuelle','propre sans être vide'],['des images riches en textures','des atmosphères denses et sensuelles']]
+    },
+    en:{
+      calm:[['still, contemplative images','a calm rhythm that lets images breathe'],['a balance of calm and energy','movement without agitation'],['energy and movement','lively images full of life']],
+      present:[['wide shots giving context','depth and space'],['a mix of wide and close shots','alternating perspectives'],['intimacy and proximity','textures, details, gestures up close']],
+      rich:[['a clean aesthetic','sharp framing, space and light'],['a balance of restraint and visual presence','clean but not empty'],['rich textured images','dense, sensorial atmospheres']]
+    },
+    es:{
+      calm:[['imágenes serenas y contemplativas','un ritmo calmo que deja respirar'],['un equilibrio entre calma y energía','movimiento sin agitación'],['energía y movimiento','imágenes vivas y llenas de vida']],
+      present:[['vistas amplias que dan contexto','profundidad y espacio'],['un mix de vistas generales y detalles','alternar perspectivas'],['intimidad y proximidad','texturas, detalles, gestos de cerca']],
+      rich:[['estética limpia','encuadres netos, espacio y luz'],['equilibrio entre sobriedad y presencia visual','limpio pero no vacío'],['imágenes ricas en texturas','atmósferas densas y sensoriales']]
+    },
+    ca:{
+      calm:[['imatges serenes i contemplatives','un ritme calmat que deixa respirar'],['un equilibri entre calma i energia','moviment sense agitació'],['energia i moviment','imatges vives i plenes de vida']],
+      present:[['vistes àmplies que donen context','profunditat i espai'],['un mix de vistes generals i detalls','alternar perspectives'],['intimitat i proximitat','textures, detalls, gestos de prop']],
+      rich:[['estètica neta','enquadraments nets, espai i llum'],['equilibri entre sobrietat i presència visual','net però no buit'],['imatges riques en textures','atmosferes denses i sensorials']]
     }
+  };
+
+  const vi=c<35?0:c>65?2:1;
+  const vp=p<35?0:p>65?2:1;
+  const vr=r<35?0:r>65?2:1;
+  const vC=VIBE[L]?.calm?.[vi]||['',''];
+  const vP=VIBE[L]?.present?.[vp]||['',''];
+  const vR=VIBE[L]?.rich?.[vr]||['',''];
+
+  const INTRO={
+    fr:`${sectorName?`Je vois que ${proj||'votre projet'} est dans le secteur ${sectorName} — `:proj?`${proj} — `:''}${S.name?`${S.name}, votre projet `:'Ce projet '}porte sur ${tl}, destiné ${chans.length?'à '+chans.join(sep):'à vos supports de communication'}. ${prios.length?'Les priorités visuelles que vous avez identifiées — '+prios.join(sep)+' — seront au cœur de mon approche.':'L\'authenticité et la singularité guideront mon regard.'}`,
+    en:`${sectorName?`I can see that ${proj||'your project'} is in the ${sectorName} sector — `:proj?`${proj} — `:''}${S.name?`${S.name}, your project `:'This project '}is about ${tl}, for ${chans.length?chans.join(sep):'your communication channels'}. ${prios.length?'The visual priorities you\'ve identified — '+prios.join(sep)+' — will be at the heart of my approach.':'Authenticity and singularity will guide my eye.'}`,
+    es:`${sectorName?`Veo que ${proj||'tu proyecto'} está en el sector ${sectorName} — `:proj?`${proj} — `:''}${S.name?`${S.name}, tu proyecto `:'Este proyecto '}es sobre ${tl}, destinado ${chans.length?'a '+chans.join(sep):'a tus soportes de comunicación'}. ${prios.length?'Las prioridades visuales que has identificado — '+prios.join(sep)+' — estarán en el centro de mi enfoque.':'La autenticidad y la singularidad guiarán mi mirada.'}`,
+    ca:`${sectorName?`Veig que ${proj||'el teu projecte'} és al sector ${sectorName} — `:proj?`${proj} — `:''}${S.name?`${S.name}, el teu projecte `:'Aquest projecte '}és sobre ${tl}, destinat ${chans.length?'a '+chans.join(sep):'als teus suports de comunicació'}. ${prios.length?'Les prioritats visuals que has identificat — '+prios.join(sep)+' — seran al cor del meu enfocament.':'L\'autenticitat i la singularitat guiaran la meva mirada.'}`
+  };
+
+  const DIRECTION={
+    fr:`Mon approche : ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, avec ${vP[1]}.`,
+    en:`My approach: ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, with ${vP[1]}.`,
+    es:`Mi enfoque: ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, con ${vP[1]}.`,
+    ca:`El meu enfocament: ${vC[0]}, ${vP[0]}. ${vR[0].charAt(0).toUpperCase()+vR[0].slice(1)}, ${vR[1]}. ${vC[1].charAt(0).toUpperCase()+vC[1].slice(1)}, amb ${vP[1]}.`
+  };
+
+  const LOGISTICS={
+    fr:`Lieu : ${locStr||'à définir'}. Planning : ${timStr||'à caler ensemble'}. ${S.name?S.name+', d':'D'}iscutons pour affiner ce brief et organiser la séance. ${S.email?'Je vous contacte très vite !':'À très bientôt !'}`,
+    en:`Location: ${locStr||'to be defined'}. Timeline: ${timStr||'to plan together'}. ${S.name?S.name+', let\'s':'Let\'s'} talk to refine this brief and organise the shoot. ${S.email?'I\'ll be in touch soon!':'Talk soon!'}`,
+    es:`Lugar: ${locStr||'a definir'}. Planificación: ${timStr||'a decidir juntos'}. ${S.name?S.name+', h':'H'}ablemos para afinar este brief y organizar la sesión. ${S.email?'¡Te contacto pronto!':'¡Hasta pronto!'}`,
+    ca:`Lloc: ${locStr||'a definir'}. Planificació: ${timStr||'a decidir junts'}. ${S.name?S.name+', p':'P'}arlem per afinar aquest brief i organitzar la sessió. ${S.email?'Et contacto aviat!':'Fins aviat!'}`
+  };
+
+  return (INTRO[L]||INTRO.en)+'\n\n'+(DIRECTION[L]||DIRECTION.en)+'\n\n'+(LOGISTICS[L]||LOGISTICS.en);
 }
 
-async function generateAI() {
-    const c = document.getElementById('card');
-    document.getElementById('prog-ui').style.display = 'none';
-    c.innerHTML = `<div class="loading"><div class="spinner"></div><h2>Rédaction de votre brief...</h2><p>L'IA analyse le projet "${S.project}"</p></div>`;
+// ═══════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════
+async function doEmail(){
+  const NL='\n';
+  const TYPE_L={fr:{place:'Lieu',story:'Narration / Marque',moment:'Moment'},en:{place:'Place',story:'Brand story',moment:'Moment'},es:{place:'Lugar',story:'Historia / Marca',moment:'Momento'},ca:{place:'Lloc',story:'Història / Marca',moment:'Moment'}};
+  const PRIO_L={fr:{auth:'Authenticité',brand:'Cohérence',singular:'Singularité',trust:'Crédibilité'},en:{auth:'Authenticity',brand:'Coherence',singular:'Singularity',trust:'Credibility'},es:{auth:'Autenticidad',brand:'Coherencia',singular:'Singularidad',trust:'Credibilidad'},ca:{auth:'Autenticitat',brand:'Coherència',singular:'Singularitat',trust:'Credibilitat'}};
+  const CHAN_L={fr:{web:'Site web',social:'Réseaux sociaux',press:'Presse',print:'Print'},en:{web:'Website',social:'Social media',press:'Press',print:'Print'},es:{web:'Web',social:'Redes sociales',press:'Prensa',print:'Print'},ca:{web:'Web',social:'Xarxes socials',press:'Premsa',print:'Print'}};
+  const LOC_L={fr:{sitges:'Sitges et environs',bcn:'Barcelone',cat:'Catalogne',other:'Hors Catalogne'},en:{sitges:'Sitges area',bcn:'Barcelona',cat:'Catalonia',other:'Outside Catalonia'},es:{sitges:'Sitges y alrededores',bcn:'Barcelona',cat:'Cataluña',other:'Fuera de Cataluña'},ca:{sitges:'Sitges i rodal',bcn:'Barcelona',cat:'Catalunya',other:'Fora de Catalunya'}};
+  const TIM_L={fr:{fixed:'Date fixée',approx:'Période approximative',flex:'Flexible'},en:{fixed:'Fixed date',approx:'Approximate period',flex:'Flexible'},es:{fixed:'Fecha fija',approx:'Período aproximado',flex:'Flexible'},ca:{fixed:'Data fixada',approx:'Període aproximat',flex:'Flexible'}};
+  const VIBE_L={fr:['Calme','Équilibré','Vivant'],en:['Calm','Balanced','Lively'],es:['Calmo','Equilibrado','Vivo'],ca:['Calmat','Equilibrat','Viu']};
+  const vibeWord=(val)=>val<35?VIBE_L[L][0]:val>65?VIBE_L[L][2]:VIBE_L[L][1];
+  const FIELDS={fr:{proj:'Projet',type:'Type',prio:'Priorités',usage:'Usage',chan:'Diffusion',loc:'Lieu',tim:'Planning',calm:'Énergie',pres:'Proximité',rich:'Esthétique',email:'Email'},en:{proj:'Project',type:'Type',prio:'Priorities',usage:'Use',chan:'Distribution',loc:'Location',tim:'Timeline',calm:'Energy',pres:'Proximity',rich:'Aesthetic',email:'Email'},es:{proj:'Proyecto',type:'Tipo',prio:'Prioridades',usage:'Uso',chan:'Difusión',loc:'Lugar',tim:'Planificación',calm:'Energía',pres:'Proximidad',rich:'Estética',email:'Email'},ca:{proj:'Projecte',type:'Tipus',prio:'Prioritats',usage:'Ús',chan:'Difusió',loc:'Lloc',tim:'Planificació',calm:'Energia',pres:'Proximitat',rich:'Estètica',email:'Email'}};
+  const F=FIELDS[L]||FIELDS.en;
+  const subj=t('emailSubj')+': '+(S.project||'—');
+  const formBlock=[
+    `${F.proj}: ${S.project||'—'}`,
+    `${F.type}: ${TYPE_L[L]?.[S.type]||'—'}`,
+    `${F.prio}: ${S.priorities.map(x=>PRIO_L[L]?.[x]).filter(Boolean).join(', ')||'—'}`,
+    `${F.usage}: ${({launch:{fr:'Lancement',en:'Launch',es:'Lanzamiento',ca:'Llançament'},base:{fr:'Bibliothèque',en:'Library',es:'Biblioteca',ca:'Biblioteca'},series:{fr:'Série',en:'Series',es:'Serie',ca:'Sèrie'}}[S.usage]?.[L])||'—'}`,
+    `${F.chan}: ${S.channels.map(x=>CHAN_L[L]?.[x]).filter(Boolean).join(', ')||'—'}`,
+    `${F.loc}: ${LOC_L[L]?.[S.location]||'—'}`,
+    `${F.tim}: ${TIM_L[L]?.[S.timing]||'—'}`,
+    `${F.calm}: ${S.calm}/100 (${vibeWord(S.calm)})`,
+    `${F.pres}: ${S.present}/100 (${vibeWord(S.present)})`,
+    `${F.rich}: ${S.rich}/100 (${vibeWord(S.rich)})`,
+    `${F.email}: ${S.email||'—'}`
+  ].join(NL);
 
-    try {
-        const response = await fetch('/api/generate', {
-            method: 'POST',
-            body: JSON.stringify({ text: `Client: ${S.name}, Projet: ${S.project}` }),
-            headers: {'Content-Type': 'application/json'}
-        });
-        const data = await response.json();
-        S.briefText = data.result;
-        S.source = 'ai';
-    } catch (e) {
-        S.briefText = `Nous allons collaborer sur "${S.project}" pour créer des visuels uniques...`;
-        S.source = 'fallback';
+  const sourceNote = S.briefSource==='ai' ? '\n[Brief généré par Cloudflare Workers AI · Llama 3.1]' : '\n[Brief généré automatiquement]';
+  const emailBody=
+    t('emailHi')+NL+NL+
+    t('emailIntro')+NL+NL+
+    '━━━ BRIEF ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
+    (S.briefText||fallback())+sourceNote+NL+NL+
+    '━━━ FORMULAIRE ━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
+    formBlock+NL+NL+
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'+NL+NL+
+    t('emailSign')+NL+(S.name||'');
+
+  const sendMsg={fr:{sending:'Envoi...',success:'✅ Brief envoyé!',error:'Erreur. Redirection vers votre client mail...'},en:{sending:'Sending...',success:'✅ Brief sent!',error:'Error. Redirecting to your mail client...'},es:{sending:'Enviando...',success:'✅ Brief enviado!',error:'Error. Redirigiendo a tu cliente de correo...'},ca:{sending:'Enviant...',success:'✅ Brief enviat!',error:'Error. Redirigint al teu client de correu...'}};
+  const msg=sendMsg[L]||sendMsg.en;
+  const btn=document.querySelector('.cta-btns .bp');
+  if(btn){
+    const origTxt=btn.textContent;
+    btn.textContent=msg.sending;
+    btn.disabled=true;
+    try{
+      const res=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({access_key:'31469485-cf3b-405a-832e-c6b18c9911ea',subject:subj,from_name:S.name||'Questionnaire Marinaphoto',email:S.email,message:emailBody,to:'info@marinaphoto.es'})});
+      if(!res.ok) throw new Error('Web3Forms failed');
+      const data=await res.json();
+      if(!data.success) throw new Error(data.message||'Send failed');
+      alert(msg.success);
+    }catch(err){
+      console.warn('Direct send failed, using mailto fallback:',err);
+      alert(msg.error);
+      window.location.href=`mailto:info@marinaphoto.es?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(emailBody)}`;
+    }finally{
+      btn.textContent=origTxt;
+      btn.disabled=false;
     }
-    showFinal();
+  }else{
+    window.location.href=`mailto:info@marinaphoto.es?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(emailBody)}`;
+  }
 }
 
-function showFinal() {
-    const c = document.getElementById('card');
-    c.innerHTML = `
-        <div class="rpt-hero">
-            <div style="color:var(--gold); font-weight:700;">PROJET : ${S.project.toUpperCase()}</div>
-            <h1>Votre Brief Personnalisé</h1>
-        </div>
-        <div class="ai-badge">${S.source === 'ai' ? '✦ RÉDIGÉ PAR L\'IA' : 'BROUILLON AUTOMATIQUE'}</div>
-        <div class="rpt-body">${S.briefText.split('\n').map(p => `<p>${p}</p>`).join('')}</div>
-        <button class="bp" onclick="location.reload();">Nouveau brief</button>
-    `;
+function doRdv(){
+  window.open('https://calendly.com/ericimstepf/30min','_blank','noopener');
 }
 
-render();
+function doPDF(){
+  if(typeof window.jspdf==='undefined'||!window.jspdf.jsPDF){
+    alert({fr:'Module PDF non chargé. Rechargez la page.',en:'PDF module not loaded. Please reload.',es:'Módulo PDF no cargado. Recarga la página.',ca:'Mòdul PDF no carregat. Recarrega la pàgina.'}[L]||'PDF error');
+    return;
+  }
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+    const gold=[200,168,130],dark=[44,44,44],white=[254,254,254],cream=[245,241,232];
+    const W=210,margin=18;
+    doc.setFillColor(...gold);doc.rect(0,0,W,38,'F');
+    doc.setTextColor(...white);doc.setFontSize(18);doc.setFont('helvetica','bold');
+    doc.text('MARINAPHOTO',margin,16);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');
+    doc.text('Photography Brief',margin,24);
+    const locale={fr:'fr-FR',en:'en-GB',es:'es-ES',ca:'ca-ES'}[L]||'en-GB';
+    const dateStr=new Date().toLocaleDateString(locale,{day:'numeric',month:'long',year:'numeric'});
+    doc.text(dateStr,W-margin,24,{align:'right'});
+    doc.setFillColor(...cream);doc.rect(0,38,W,36,'F');
+    doc.setTextColor(...dark);doc.setFontSize(26);doc.setFont('helvetica','bold');
+    const proj=S.project||(L==='fr'?'Votre projet':L==='es'?'Tu proyecto':L==='ca'?'El teu projecte':'Your project');
+    doc.text(proj,margin,58);
+    if(S.name){doc.setFontSize(12);doc.setFont('helvetica','normal');doc.setTextColor(...gold);doc.text(S.name,margin,68);}
+    // AI badge in PDF
+    doc.setFontSize(8);doc.setFont('helvetica','italic');doc.setTextColor(...gold);
+    const badgeTxt = S.briefSource==='ai' ? '✦ '+t('aiBadge') : '✦ '+t('fallbackBadge');
+    doc.text(badgeTxt,margin,80);
+    let y=92;
+    doc.setFillColor(...gold);doc.rect(margin,y,2,120,'F');
+    doc.setTextColor(...dark);doc.setFontSize(11);doc.setFont('helvetica','normal');
+    const briefTxt=S.briefText||fallback();
+    const lines=doc.splitTextToSize(briefTxt,W-margin*2-8);
+    lines.forEach(ln=>{
+      if(y>262){doc.addPage();y=20;doc.setFillColor(...gold);doc.rect(margin,y,2,120,'F');}
+      doc.text(ln,margin+6,y);y+=6.2;
+    });
+    y+=12;
+    if(y>250){doc.addPage();y=20;}
+    doc.setFillColor(...gold);doc.roundedRect(margin,y,W-margin*2,26,4,4,'F');
+    doc.setTextColor(...white);doc.setFontSize(10);doc.setFont('helvetica','italic');
+    doc.text('"'+t('report.ctaQuote')+'"',W/2,y+10,{align:'center',maxWidth:W-margin*2-8});
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+    doc.text(t('report.ctaText'),W/2,y+18,{align:'center',maxWidth:W-margin*2-8});
+    const FY=285;
+    doc.setFillColor(...dark);doc.rect(0,FY-2,W,14,'F');
+    doc.setTextColor(...white);doc.setFontSize(9);
+    doc.setFont('helvetica','bold');doc.text('MARINAPHOTO',margin,FY+5);
+    doc.setFont('helvetica','normal');doc.text('info@marinaphoto.es',W/2,FY+5,{align:'center'});
+    doc.text('Sitges — Barcelona',W-margin,FY+5,{align:'right'});
+    const fn=(t('pdfFilename')+'-'+(S.project||'project').replace(/[^a-z0-9]/gi,'-').toLowerCase()+'.pdf');
+    doc.save(fn);
+  }catch(e){
+    console.error('PDF error:',e);
+    alert('PDF error: '+e.message);
+  }
+}
+
+function doRestart(){
+  if(!confirm(t('restartConfirm')))return;
+  step=0;
+  Object.assign(S,{name:'',project:'',type:null,priorities:[],usage:null,channels:[],location:null,timing:null,calm:50,present:50,rich:50,email:'',briefText:'',briefSource:'ai'});
+  go();
+}
+
+// ═══════════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════════
+go();
 </script>
 </body>
 </html>
