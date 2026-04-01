@@ -2,17 +2,17 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1C1208">
 <meta name="description" content="MarinaPhoto — Fotografía profesional en Sitges y Barcelona. Hoteles, restaurantes, marcas y momentos que se sienten reales.">
 <meta property="og:title" content="MarinaPhoto — Fotografía que se siente real">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://marina-beb.pages.dev">
 <title>MarinaPhoto — Fotografía que se siente real</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 60'><circle cx='40' cy='9' r='8' fill='%23C4922A'/><path d='M4 54 L22 20 L40 34 L58 20 L76 54' stroke='%23C4922A' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 60'><circle cx='40' cy='9' r='8' fill='%23C4922A'/><path d='M4 54 L22 20 L40 34 L58 20 L76 54' stroke='%23C4922A' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
+
 :root{
   --cream:#EFE8DC;--paper:#F7F3EE;
   --espresso:#1C1208;--brown:#3A2910;--brown-mid:#6B4E2A;
@@ -123,8 +123,9 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 .mnf-phrase{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,6vw,5.6rem);font-weight:300;line-height:1.16;color:white;letter-spacing:-.01em;margin-bottom:60px}
 .mnf-phrase em{font-style:italic;color:var(--gold-pale)}
 /* Phrase reveal */
-.mnf-phrase{opacity:0;transform:translateY(28px);transition:opacity 1.2s ease .2s,transform 1.2s cubic-bezier(.16,1,.3,1) .2s}
+.mnf-phrase{opacity:0;transform:translateY(40px);transition:opacity 1.4s cubic-bezier(.16,1,.3,1),transform 1.4s cubic-bezier(.16,1,.3,1)}
 .mnf-phrase.vis{opacity:1;transform:translateY(0)}
+.mnf-eye.vis{opacity:1;transform:translateY(0)}
 .mnf-p-line1{display:block}
 .mnf-p-line2{display:inline}
 /* Scroll hint */
@@ -136,8 +137,8 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 
 /* ── SERVICE PANELS ── */
 .sp{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
-.sp-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.42) saturate(.82);will-change:filter,transform;transition:filter 1.8s ease,transform .1s ease}
-.sp.entered .sp-bg{filter:brightness(.62) saturate(.98);animation:kbZoom 18s ease-out both}
+.sp-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.38) saturate(.78);will-change:filter;transition:filter 1.8s ease}
+.sp.entered .sp-bg{filter:brightness(.58) saturate(.95);animation:kbZoom 18s ease-out both}
 @keyframes kbZoom{from{transform:scale(1.1)}to{transform:scale(1.02)}}
 /* Desktop: hover reveals image authenticity */
 @media(hover:hover)and(pointer:fine){
@@ -155,7 +156,7 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 .sp.entered .sp-title{transform:translateY(0);transition-delay:.35s}
 .sp-kw{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:20px;opacity:0;transition:opacity .6s ease;transition-delay:.6s}
 .sp.entered .sp-kw{opacity:1}
-.sp-desc{font-size:15px;color:rgba(255,255,255,.62);font-weight:300;max-width:380px;line-height:1.85;opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease;transition-delay:.7s}
+.sp-desc{font-size:15px;color:rgba(255,255,255,.78);font-weight:300;max-width:380px;line-height:1.85;opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease;transition-delay:.7s}
 .sp.entered .sp-desc{opacity:1;transform:translateY(0)}
 .sp-link{display:inline-flex;align-items:center;gap:12px;margin-top:30px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.42);border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:3px;transition:color .3s,border-color .3s,gap .3s;opacity:0;transition:opacity .6s ease .95s,color .3s,border-color .3s,gap .3s}
 .sp.entered .sp-link{opacity:1}
@@ -336,66 +337,30 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 
 
 /* ── LOGO ANIMATION ── */
-/* ── LOGO: circle scales in, path draws ── */
-.logo-svg .logo-circle{transform-origin:40px 9px;transform:scale(0);opacity:0;transition:transform .55s cubic-bezier(.34,1.56,.64,1) .2s, opacity .3s ease .2s}
-.logo-svg .logo-path{stroke-dasharray:123;stroke-dashoffset:123;transition:stroke-dashoffset .9s cubic-bezier(.16,1,.3,1) .45s}
-.logo-svg.logo-drawn .logo-circle{transform:scale(1);opacity:1}
-.logo-svg.logo-drawn .logo-path{stroke-dashoffset:0}
-/* Nav hover — subtle gold glow */
-.nlogo:hover .logo-svg{filter:drop-shadow(0 0 5px rgba(196,146,42,.35));transition:filter .4s ease}
-/* Loader logo — animated on keyframes */
-.loader-logo .logo-circle{transform-origin:40px 9px;transform:scale(0);opacity:0;animation:dotPop .6s cubic-bezier(.34,1.56,.64,1) .5s both}
-.loader-logo .logo-path{stroke-dasharray:123;stroke-dashoffset:123;animation:pathDraw .9s cubic-bezier(.16,1,.3,1) .85s forwards}
-@keyframes dotPop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+/* ── LOGO ANIMATION ── */
+/* Nav logo: always visible, subtle path-draw on page load */
+.logo-svg .logo-circle{opacity:1;transform:scale(1)}
+.logo-svg .logo-path{stroke-dasharray:123;stroke-dashoffset:0}
+/* Loader logo: animated draw */
+.loader-logo .logo-circle{transform-origin:40px 9px;transform:scale(0);opacity:0;
+  animation:dotPop .55s cubic-bezier(.34,1.56,.64,1) .6s both}
+.loader-logo .logo-path{stroke-dasharray:123;stroke-dashoffset:123;
+  animation:pathDraw .85s cubic-bezier(.16,1,.3,1) .9s forwards}
+@keyframes dotPop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.2);opacity:1}100%{transform:scale(1);opacity:1}}
 @keyframes pathDraw{to{stroke-dashoffset:0}}
-
-/* pgi-wide responsive */
-.pgi-wide{grid-column:span 2}
-@media(max-width:600px){.pgi-wide{grid-column:span 1}}
-
-/* CMS overlay */
-#cms-overlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(28,18,8,.97);overflow-y:auto}
-#cms-overlay.open{display:block}
-.cms-wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px}
-.cms-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:24px;margin-bottom:36px;border-bottom:1px solid rgba(196,146,42,.2)}
-.cms-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--gold-lt);letter-spacing:.06em}
-.cms-close-btn{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:8px 18px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .3s}
-.cms-close-btn:hover{border-color:var(--gold);color:var(--gold)}
-.cms-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08)}
-.cms-tab{padding:10px 20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .3s}
-.cms-tab.on{color:var(--gold-lt);border-bottom-color:var(--gold)}
-.cms-panel{display:none}
-.cms-panel.on{display:block}
-.cms-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;margin-top:32px;padding-bottom:8px;border-bottom:1px solid rgba(196,146,42,.15)}
-.cms-field{margin-bottom:18px}
-.cms-label{display:block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:7px}
-.cms-input,.cms-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:2px;color:rgba(255,255,255,.85);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:border-color .3s}
-.cms-input:focus,.cms-textarea:focus{border-color:var(--gold)}
-.cms-textarea{resize:vertical;min-height:80px;line-height:1.6}
-.cms-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cms-save-btn{background:var(--gold);color:white;border:none;padding:12px 32px;font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s;margin-top:24px}
-.cms-save-btn:hover{background:var(--gold-lt)}
-.cms-saved-msg{display:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--gold-lt);margin-top:12px}
-.cms-saved-msg.show{display:block}
-.cms-img-preview{width:80px;height:60px;object-fit:cover;border-radius:2px;margin-top:8px;display:block;border:1px solid rgba(255,255,255,.1)}
-#cms-login{position:fixed;inset:0;z-index:100000;background:rgba(28,18,8,.98);display:none;align-items:center;justify-content:center}
-#cms-login.open{display:flex}
-.cms-login-box{text-align:center;width:300px}
-.cms-login-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:white;margin-bottom:6px}
-.cms-login-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.28);text-transform:uppercase;margin-bottom:32px}
-.cms-pwd-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:white;font-family:'Outfit',sans-serif;font-size:14px;padding:12px 16px;outline:none;border-radius:2px;text-align:center;letter-spacing:.2em;margin-bottom:12px;transition:border-color .3s}
-.cms-pwd-input:focus{border-color:var(--gold)}
-.cms-login-btn{width:100%;padding:12px;background:var(--gold);color:white;border:none;font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s}
-.cms-login-btn:hover{background:var(--gold-lt)}
-.cms-err{color:rgba(220,80,80,.9);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;margin-top:10px;display:none}
-@media(max-width:600px){.cms-row{grid-template-columns:1fr}.cms-wrap{padding:24px 16px 60px}}
-
+/* Nav logo hover */
+.nlogo:hover .logo-svg{filter:drop-shadow(0 0 4px rgba(196,146,42,.3));transition:filter .4s}
 
 /* ── MOBILE: hide About from nav ── */
 @media(max-width:768px){.nlink-about{display:none}}
+
+/* ── Mobile nav: only Portfolio + Contact ── */
+@media(max-width:768px){.nlink-hide-mobile{display:none}}
 </style>
 </head>
 <body>
+<div id="scrollProg"></div>
+
 <div id="scrollProg"></div>
 
 <div id="scrollProg"></div>
@@ -427,9 +392,9 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
     <span class="nwm">MarinaPhoto</span>
   </a>
   <ul class="nlinks">
-    <li><a href="#sp-lugares" class="lt" data-es="Servicios" data-en="Services" data-fr="Services" data-ca="Serveis">Servicios</a></li>
+    <li><a href="#sp-lugares" class="lt nlink-hide-mobile" data-es="Servicios" data-en="Services" data-fr="Services" data-ca="Serveis">Servicios</a></li>
     <li><a href="#portfolio" class="lt" data-es="Portfolio" data-en="Portfolio" data-fr="Portfolio" data-ca="Portfolio">Portfolio</a></li>
-    <li><a href="#about" class="lt nlink-about" data-es="Sobre mí" data-en="About" data-fr="À propos" data-ca="Sobre mi">Sobre mí</a></li>
+    <li><a href="#about" class="lt nlink-hide-mobile" data-es="Sobre mí" data-en="About" data-fr="À propos" data-ca="Sobre mi">Sobre mí</a></li>
     <li><a href="#questionnaire" class="lt" data-es="Contacto" data-en="Contact" data-fr="Contact" data-ca="Contacte">Contacto</a></li>
   </ul>
   <div class="lswitch">
@@ -471,13 +436,13 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 <section id="manifesto">
   <div class="mnf-vline"></div>
   <div class="mnf-inner">
-    <div class="mnf-eye lt rv"
+    <div class="mnf-eye lt"
       data-es="Una imagen que se siente"
       data-en="An image that is felt"
       data-fr="Une image qui se ressent"
       data-ca="Una imatge que se sent">Una imagen que se siente</div>
 
-    <div class="mnf-phrase rv d1">
+    <div class="mnf-phrase">
       <span class="lt"
         data-es="Sé lo que significa"
         data-en="I know what an image"
@@ -494,7 +459,7 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
         data-ca="per a tu.">para ti.</em>
     </div>
 
-    <div class="mnf-scroll rv d2">
+    <div class="mnf-scroll" style="opacity:0">
       <div class="mnf-scroll-line"></div>
       <span class="mnf-scroll-lbl lt"
         data-es="Descubrir"
@@ -761,7 +726,7 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
       <h4 class="lt" data-es="Navegación" data-en="Navigation" data-fr="Navigation" data-ca="Navegació">Navegación</h4>
       <ul>
         <li><a href="#portfolio" class="lt" data-es="Portfolio" data-en="Portfolio" data-fr="Portfolio" data-ca="Portfolio">Portfolio</a></li>
-        <li><a href="#sp-lugares" class="lt" data-es="Servicios" data-en="Services" data-fr="Services" data-ca="Serveis">Servicios</a></li>
+        <li><a href="#sp-lugares" class="lt nlink-hide-mobile" data-es="Servicios" data-en="Services" data-fr="Services" data-ca="Serveis">Servicios</a></li>
         <li><a href="#about" class="lt" data-es="Sobre mí" data-en="About me" data-fr="À propos" data-ca="Sobre mi">Sobre mí</a></li>
         <li><a href="#questionnaire" class="lt" data-es="Contacto" data-en="Contact" data-fr="Contact" data-ca="Contacte">Contacto</a></li>
       </ul>
@@ -1045,7 +1010,9 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
   </div>
 </div>
 
+
 <script>
+
 /* ─────────────────────────────────────────────────────────────
    MARINAPHOTO — Complete JS  (no truncation, all functions global)
    ───────────────────────────────────────────────────────────── */
@@ -1126,31 +1093,39 @@ function gsl(n){
 }
 if(sls.length>0)setInterval(function(){gsl((cs+1)%sls.length);},5500);
 
-/* ── LOGO ANIMATION ── */
+/* ── LOGO: nav logo always visible; loader runs its own CSS animation ── */
 (function(){
-  var logo=document.querySelector('.logo-svg');
-  if(!logo)return;
-  // Draw animation via CSS class added on load
-  setTimeout(function(){logo.classList.add('logo-drawn');},400);
+  // Add logo-drawn to ALL nav logos (not loader, which uses @keyframes directly)
+  setTimeout(function(){
+    document.querySelectorAll('.logo-svg:not(.loader-logo)').forEach(function(el){
+      el.classList.add('logo-drawn');
+    });
+  }, 300);
 })();
 
-/* ── MANIFESTO REVEAL ── */
+/* ── MANIFESTO REVEAL ── dramatic stagger ── */
 (function(){
-  var phrase=document.querySelector('.mnf-phrase');
-  var eye=document.querySelector('.mnf-eye');
-  var scroll=document.querySelector('.mnf-scroll');
-  if(!phrase)return;
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        e.target.classList.add('vis');
-        obs.unobserve(e.target);
-      }
-    });
-  },{threshold:0.25});
-  obs.observe(phrase);
-  if(eye)obs.observe(eye);
-  if(scroll)obs.observe(scroll);
+  var mnf = document.getElementById('manifesto');
+  if(!mnf) return;
+
+  function revealMnf(){
+    var eye = mnf.querySelector('.mnf-eye');
+    var phrase = mnf.querySelector('.mnf-phrase');
+    var scroll = mnf.querySelector('.mnf-scroll');
+    if(eye){ eye.style.transition='opacity .9s ease,transform .9s ease';
+      eye.style.opacity='0';eye.style.transform='translateY(20px)';
+      setTimeout(function(){eye.style.opacity='1';eye.style.transform='translateY(0)';
+        eye.classList.add('vis');},100); }
+    if(phrase){ setTimeout(function(){phrase.classList.add('vis');},350); }
+    if(scroll){ setTimeout(function(){
+      scroll.style.transition='opacity .8s ease';scroll.style.opacity='1';scroll.classList.add('vis');
+    },900); }
+  }
+
+  var obs = new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){ revealMnf(); obs.disconnect(); }
+  },{threshold:0.1,rootMargin:'-50px 0px 0px 0px'});
+  obs.observe(mnf);
 })();
 
 /* ── SERVICE PANELS — scroll reveal ── */
@@ -1161,7 +1136,7 @@ if(sls.length>0)setInterval(function(){gsl((cs+1)%sls.length);},5500);
     entries.forEach(function(e){
       if(e.isIntersecting)e.target.classList.add('entered');
     });
-  },{threshold:0.15});
+  },{threshold:0,rootMargin:'-5% 0px -5% 0px'});
   panels.forEach(function(p){obs.observe(p);});
 })();
 
@@ -1169,7 +1144,7 @@ if(sls.length>0)setInterval(function(){gsl((cs+1)%sls.length);},5500);
 (function(){
   var obs=new IntersectionObserver(function(entries){
     entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('vis');});
-  },{threshold:0,rootMargin:'60px 0px 60px 0px'});
+  },{threshold:0,rootMargin:'80px 0px 80px 0px'});
   document.querySelectorAll('.rv').forEach(function(el){obs.observe(el);});
 })();
 
@@ -1397,9 +1372,14 @@ function setLang(l){
   document.querySelectorAll('.lt').forEach(function(el){
     var v=el.dataset[l];
     if(v===undefined)return;
-    el.style.transition='opacity .18s ease';
+    // Instant swap + fade in (no delay = no broken state)
+    el.style.transition='none';
     el.style.opacity='0';
-    setTimeout(function(){el.innerHTML=v;el.style.opacity='1';},190);
+    el.innerHTML=v;
+    requestAnimationFrame(function(){
+      el.style.transition='opacity .25s ease';
+      el.style.opacity='1';
+    });
   });
   // Update input placeholders
   document.querySelectorAll('[data-ph-'+l+']').forEach(function(inp){
@@ -1695,6 +1675,7 @@ function cmsSave(){
     setTimeout(cmsOpen, 600);
   }
 })();
+
 
 </script>
 </body>
