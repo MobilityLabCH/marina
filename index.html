@@ -136,9 +136,15 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 
 /* ── SERVICE PANELS ── */
 .sp{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
-.sp-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.35) saturate(.75);will-change:filter;transition:filter 2.4s ease}
-.sp.entered .sp-bg{filter:brightness(.52) saturate(.95);animation:kbZoom 22s ease-out both}
+.sp-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.42) saturate(.82);will-change:filter,transform;transition:filter 1.8s ease,transform .1s ease}
+.sp.entered .sp-bg{filter:brightness(.62) saturate(.98);animation:kbZoom 18s ease-out both}
 @keyframes kbZoom{from{transform:scale(1.1)}to{transform:scale(1.02)}}
+/* Desktop: hover reveals image authenticity */
+@media(hover:hover)and(pointer:fine){
+  .sp{cursor:default}
+  .sp:hover .sp-bg{filter:brightness(.72) saturate(1.05)!important;transition:filter .6s ease!important}
+  .sp:hover .sp-overlay{opacity:.7;transition:opacity .6s ease}
+}
 .sp-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,7,2,.72) 0%,rgba(14,7,2,.2) 60%,transparent 100%),linear-gradient(to top,rgba(14,7,2,.65) 0%,transparent 50%)}
 .sp-num-bg{position:absolute;right:6vw;top:50%;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:28vw;font-weight:300;color:rgba(255,255,255,.025);line-height:1;pointer-events:none;user-select:none;transition:opacity 1.5s ease}
 .sp-content{position:relative;z-index:3;padding:6vw 8vw 10vh;width:100%}
@@ -330,15 +336,18 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 
 
 /* ── LOGO ANIMATION ── */
-.logo-svg .logo-circle{stroke-dasharray:52;stroke-dashoffset:52;transition:stroke-dashoffset 0.7s cubic-bezier(.16,1,.3,1) .3s}
-.logo-svg .logo-path{stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset 0.9s cubic-bezier(.16,1,.3,1) .5s}
-.logo-svg.logo-drawn .logo-circle,.logo-svg.logo-drawn .logo-path{stroke-dashoffset:0}
-.nlogo:hover .logo-svg .logo-circle,.nlogo:hover .logo-svg .logo-path{filter:drop-shadow(0 0 4px rgba(196,146,42,.5))}
-/* Loader logo animation */
-.loader-logo .logo-circle{stroke-dasharray:52;stroke-dashoffset:52;animation:drawCircle .7s cubic-bezier(.16,1,.3,1) .6s forwards}
-.loader-logo .logo-path{stroke-dasharray:120;stroke-dashoffset:120;animation:drawPath .9s cubic-bezier(.16,1,.3,1) .9s forwards}
-@keyframes drawCircle{to{stroke-dashoffset:0}}
-@keyframes drawPath{to{stroke-dashoffset:0}}
+/* ── LOGO: circle scales in, path draws ── */
+.logo-svg .logo-circle{transform-origin:40px 9px;transform:scale(0);opacity:0;transition:transform .55s cubic-bezier(.34,1.56,.64,1) .2s, opacity .3s ease .2s}
+.logo-svg .logo-path{stroke-dasharray:123;stroke-dashoffset:123;transition:stroke-dashoffset .9s cubic-bezier(.16,1,.3,1) .45s}
+.logo-svg.logo-drawn .logo-circle{transform:scale(1);opacity:1}
+.logo-svg.logo-drawn .logo-path{stroke-dashoffset:0}
+/* Nav hover — subtle gold glow */
+.nlogo:hover .logo-svg{filter:drop-shadow(0 0 5px rgba(196,146,42,.35));transition:filter .4s ease}
+/* Loader logo — animated on keyframes */
+.loader-logo .logo-circle{transform-origin:40px 9px;transform:scale(0);opacity:0;animation:dotPop .6s cubic-bezier(.34,1.56,.64,1) .5s both}
+.loader-logo .logo-path{stroke-dasharray:123;stroke-dashoffset:123;animation:pathDraw .9s cubic-bezier(.16,1,.3,1) .85s forwards}
+@keyframes dotPop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes pathDraw{to{stroke-dashoffset:0}}
 
 /* pgi-wide responsive */
 .pgi-wide{grid-column:span 2}
@@ -381,6 +390,9 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 .cms-err{color:rgba(220,80,80,.9);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;margin-top:10px;display:none}
 @media(max-width:600px){.cms-row{grid-template-columns:1fr}.cms-wrap{padding:24px 16px 60px}}
 
+
+/* ── MOBILE: hide About from nav ── */
+@media(max-width:768px){.nlink-about{display:none}}
 </style>
 </head>
 <body>
@@ -415,8 +427,9 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
     <span class="nwm">MarinaPhoto</span>
   </a>
   <ul class="nlinks">
+    <li><a href="#sp-lugares" class="lt" data-es="Servicios" data-en="Services" data-fr="Services" data-ca="Serveis">Servicios</a></li>
     <li><a href="#portfolio" class="lt" data-es="Portfolio" data-en="Portfolio" data-fr="Portfolio" data-ca="Portfolio">Portfolio</a></li>
-    <li><a href="#about" class="lt" data-es="Sobre mí" data-en="About me" data-fr="À propos" data-ca="Sobre mi">Sobre mí</a></li>
+    <li><a href="#about" class="lt nlink-about" data-es="Sobre mí" data-en="About" data-fr="À propos" data-ca="Sobre mi">Sobre mí</a></li>
     <li><a href="#questionnaire" class="lt" data-es="Contacto" data-en="Contact" data-fr="Contact" data-ca="Contacte">Contacto</a></li>
   </ul>
   <div class="lswitch">
@@ -454,6 +467,43 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
   <div class="hpbar"><div class="hpfill" id="hpf"></div></div>
 </section>
 
+<!-- ═══ MANIFESTO ═══ -->
+<section id="manifesto">
+  <div class="mnf-vline"></div>
+  <div class="mnf-inner">
+    <div class="mnf-eye lt rv"
+      data-es="Una imagen que se siente"
+      data-en="An image that is felt"
+      data-fr="Une image qui se ressent"
+      data-ca="Una imatge que se sent">Una imagen que se siente</div>
+
+    <div class="mnf-phrase rv d1">
+      <span class="lt"
+        data-es="Sé lo que significa"
+        data-en="I know what an image"
+        data-fr="Je sais ce que signifie"
+        data-ca="Sé el que significa">Sé lo que significa</span><br>
+      <span class="lt"
+        data-es="una imagen"
+        data-en="means"
+        data-fr="une image"
+        data-ca="una imatge">una imagen</span>&nbsp;<em class="lt"
+        data-es="para ti."
+        data-en="to you."
+        data-fr="pour vous."
+        data-ca="per a tu.">para ti.</em>
+    </div>
+
+    <div class="mnf-scroll rv d2">
+      <div class="mnf-scroll-line"></div>
+      <span class="mnf-scroll-lbl lt"
+        data-es="Descubrir"
+        data-en="Discover"
+        data-fr="Découvrir"
+        data-ca="Descobrir">Descubrir</span>
+    </div>
+  </div>
+</section>
 
 
 <!-- ═══ SERVICE PANEL 1 — LUGARES ═══ -->
@@ -760,12 +810,12 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
     </div>
 
     <div class="cms-tabs">
-      <button class="cms-tab on" onclick="cmsTab(this,'tab-general')">General</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-hero')">Hero</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-services')">Servicios</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-about')">About</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-portfolio')">Portfolio</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-contact')">Contacto</button>
+      <button class="cms-tab on" onclick="cmsTab(this,'tab-general')">⚙ General</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-hero')">🏠 Hero</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-services')">📷 Servicios</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-about')">👤 About</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-portfolio')">🖼 Portfolio</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-contact')">✉ Contacto</button>
     </div>
 
     <!-- GENERAL -->
@@ -851,49 +901,79 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 
     <!-- SERVICES -->
     <div class="cms-panel" id="tab-services">
-      <div class="cms-section-title">Lugares (01)</div>
+      <div class="cms-section-title">Lugares / Places / Lieux (01)</div>
       <div class="cms-field">
         <label class="cms-label">URL imagen de fondo</label>
-        <input class="cms-input" id="c-svc1-img" type="text" placeholder="https://...">
+        <input class="cms-input" id="c-svc1-img" type="text" placeholder="https://images.unsplash.com/...">
       </div>
       <div class="cms-row">
         <div class="cms-field">
-          <label class="cms-label">Descripción (ES)</label>
+          <label class="cms-label">Descripción ES</label>
           <textarea class="cms-textarea" id="c-svc1-desc-es"></textarea>
         </div>
         <div class="cms-field">
-          <label class="cms-label">Description (EN)</label>
+          <label class="cms-label">Description EN</label>
           <textarea class="cms-textarea" id="c-svc1-desc-en"></textarea>
         </div>
       </div>
-      <div class="cms-section-title">Artesanos (02)</div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Description FR</label>
+          <textarea class="cms-textarea" id="c-svc1-desc-fr"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Descripció CA</label>
+          <textarea class="cms-textarea" id="c-svc1-desc-ca"></textarea>
+        </div>
+      </div>
+      <div class="cms-section-title">Artesanos / Artisans (02)</div>
       <div class="cms-field">
         <label class="cms-label">URL imagen de fondo</label>
-        <input class="cms-input" id="c-svc2-img" type="text" placeholder="https://...">
+        <input class="cms-input" id="c-svc2-img" type="text" placeholder="https://images.unsplash.com/...">
       </div>
       <div class="cms-row">
         <div class="cms-field">
-          <label class="cms-label">Descripción (ES)</label>
+          <label class="cms-label">Descripción ES</label>
           <textarea class="cms-textarea" id="c-svc2-desc-es"></textarea>
         </div>
         <div class="cms-field">
-          <label class="cms-label">Description (EN)</label>
+          <label class="cms-label">Description EN</label>
           <textarea class="cms-textarea" id="c-svc2-desc-en"></textarea>
         </div>
       </div>
-      <div class="cms-section-title">Memorias (03)</div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Description FR</label>
+          <textarea class="cms-textarea" id="c-svc2-desc-fr"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Descripció CA</label>
+          <textarea class="cms-textarea" id="c-svc2-desc-ca"></textarea>
+        </div>
+      </div>
+      <div class="cms-section-title">Memorias / Memories (03)</div>
       <div class="cms-field">
         <label class="cms-label">URL imagen de fondo</label>
-        <input class="cms-input" id="c-svc3-img" type="text" placeholder="https://...">
+        <input class="cms-input" id="c-svc3-img" type="text" placeholder="https://images.unsplash.com/...">
       </div>
       <div class="cms-row">
         <div class="cms-field">
-          <label class="cms-label">Descripción (ES)</label>
+          <label class="cms-label">Descripción ES</label>
           <textarea class="cms-textarea" id="c-svc3-desc-es"></textarea>
         </div>
         <div class="cms-field">
-          <label class="cms-label">Description (EN)</label>
+          <label class="cms-label">Description EN</label>
           <textarea class="cms-textarea" id="c-svc3-desc-en"></textarea>
+        </div>
+      </div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Description FR</label>
+          <textarea class="cms-textarea" id="c-svc3-desc-fr"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Descripció CA</label>
+          <textarea class="cms-textarea" id="c-svc3-desc-ca"></textarea>
         </div>
       </div>
     </div>
@@ -910,13 +990,25 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
         <textarea class="cms-textarea" id="c-about-p2-es"></textarea>
       </div>
       <div class="cms-section-title">Text (EN)</div>
-      <div class="cms-field">
-        <label class="cms-label">Paragraph 1</label>
-        <textarea class="cms-textarea" id="c-about-p1-en"></textarea>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Paragraph 1 (EN)</label>
+          <textarea class="cms-textarea" id="c-about-p1-en"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Paragraphe 1 (FR)</label>
+          <textarea class="cms-textarea" id="c-about-p1-fr"></textarea>
+        </div>
       </div>
-      <div class="cms-field">
-        <label class="cms-label">Paragraph 2</label>
-        <textarea class="cms-textarea" id="c-about-p2-en"></textarea>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Paragraph 2 (EN)</label>
+          <textarea class="cms-textarea" id="c-about-p2-en"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Paràgraf 1 (CA)</label>
+          <textarea class="cms-textarea" id="c-about-p1-ca"></textarea>
+        </div>
       </div>
     </div>
 
@@ -1317,6 +1409,17 @@ function setLang(l){
   document.title=T[l]||T.es;
 }
 
+/* ── MANIFESTO scroll hint click ── */
+(function(){
+  var hint=document.querySelector('.mnf-scroll');
+  if(!hint)return;
+  hint.addEventListener('click',function(){
+    var target=document.getElementById('sp-lugares');
+    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  hint.style.cursor='pointer';
+})();
+
 /* ── SMOOTH SCROLL ── */
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
   a.addEventListener('click',function(e){
@@ -1335,10 +1438,64 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 var CMS_KEY = 'marinaphoto_cms_v2';
 var CMS_PASS = 'admin';
 
+// ── DEFAULTS: existing site content ──
+var CMS_DEFAULTS = {
+  'site-title':'MarinaPhoto — Fotografía que se siente real',
+  'meta-desc':'Fotografía profesional en Sitges y Barcelona. Hoteles, restaurantes, marcas y momentos que se sienten reales.',
+  'email':'marinaphotg@gmail.com',
+  'instagram':'marinaphotg',
+  'phone':'+34 600 000 000',
+  'hero-eye-es':'Sitges · Barcelona · Mediterráneo',
+  'hero-eye-en':'Sitges · Barcelona · Mediterranean',
+  'hero-eye-fr':'Sitges · Barcelone · Méditerranée',
+  'hero-eye-ca':'Sitges · Barcelona · Mediterrani',
+  'hero-t1-es':'Fotografía que',
+  'hero-t2-es':'se siente real.',
+  'hero-t1-en':'Photography that',
+  'hero-t2-en':'feels real.',
+  'hero-t1-fr':'Photographie qui',
+  'hero-t2-fr':'se ressent vraiment.',
+  'hero-t1-ca':'Fotografia que',
+  'hero-t2-ca':'se sent real.',
+  'hero-sub-es':'Imágenes que respiran. Marcas que se reconocen. Momentos que permanecen.',
+  'hero-sub-en':'Images that breathe. Brands that are recognized. Moments that remain.',
+  'hero-sub-fr':'Des images qui respirent. Des marques qui se reconnaissent. Des moments qui restent.',
+  'hero-sub-ca':'Imatges que respiren. Marques que es reconeixen. Moments que romanen.',
+  'svc1-desc-es':'Fotografía comercial para web, booking y marketing. La imagen que hace que tu espacio se reserve antes de ser visitado.',
+  'svc1-desc-en':'Commercial photography for web, booking and marketing. The image that makes your space booked before it's visited.',
+  'svc1-desc-fr':'Photographie commerciale pour web, booking et marketing. L'image qui fait réserver votre espace avant d'être visité.',
+  'svc1-desc-ca':'Fotografia comercial per a web, booking i màrqueting. La imatge que fa que el teu espai es reservi abans de ser visitat.',
+  'svc2-desc-es':'Contenido visual para web, redes y publicidad. Fotos y vídeo que comunican tu marca de forma auténtica.',
+  'svc2-desc-en':'Visual content for web, social and advertising. Photos and video that communicate your brand authentically.',
+  'svc2-desc-fr':'Contenu visuel pour web, réseaux et publicité. Photos et vidéo qui communiquent votre marque authentiquement.',
+  'svc2-desc-ca':'Contingut visual per a web, xarxes i publicitat. Fotos i vídeo que comuniquen la teva marca autènticament.',
+  'svc3-desc-es':'Reportajes en Sitges y el Mediterráneo. Luz natural, movimiento real, sin poses forzadas.',
+  'svc3-desc-en':'Reports in Sitges and the Mediterranean. Natural light, real movement, no forced poses.',
+  'svc3-desc-fr':'Reportages à Sitges et en Méditerranée. Lumière naturelle, mouvement réel, sans poses forcées.',
+  'svc3-desc-ca':'Reportatges a Sitges i la Mediterrània. Llum natural, moviment real, sense poses forçades.',
+  'about-p1-es':'No me gustan las poses falsas. Trabajo con empresas y marcas que valoran la autenticidad y la atención al detalle.',
+  'about-p1-en':'I don't like fake poses. I work with businesses and brands that value authenticity and attention to detail.',
+  'about-p1-fr':'Je n'aime pas les poses artificielles. Je travaille avec des entreprises qui valorisent l'authenticité et l'attention aux détails.',
+  'about-p1-ca':'No m'agraden les poses falses. Treballo amb empreses que valoren l'autenticitat i l'atenció al detall.',
+  'about-p2-es':'Basada en Sitges, trabajo en toda el área de Barcelona y el Mediterráneo. Cuerpo Sony Alpha 7V — full frame, perfecta en cualquier luz.',
+  'about-p2-en':'Based in Sitges, I work throughout the Barcelona area and Mediterranean. Sony Alpha 7V — full frame, perfect in any light.',
+  'about-p2-fr':'Basée à Sitges, je travaille dans toute la région de Barcelone et la Méditerranée. Sony Alpha 7V — plein format.',
+  'about-p2-ca':'Basada a Sitges, treballo per tota l'àrea de Barcelona i la Mediterrània. Sony Alpha 7V — full frame.',
+  'footer-text-es':'Fotografía que se siente real. Basada en Sitges, trabajando por toda el área de Barcelona y el Mediterráneo.',
+  'footer-text-en':'Photography that feels real. Based in Sitges, working throughout the Barcelona area and the Mediterranean.',
+  'footer-text-fr':'Photographie qui se ressent vraiment. Basée à Sitges, travaillant dans toute la région de Barcelone.',
+  'footer-text-ca':'Fotografia que se sent real. Basada a Sitges, treballant per tota l'àrea de Barcelona.',
+  'address':'Sitges, Barcelona — España',
+  'copyright':'© 2025 MarinaPhoto. Todos los derechos reservados.'
+};
+
 // ── Apply saved content on load ──
 (function cmsApply(){
   var raw = localStorage.getItem(CMS_KEY);
-  if(!raw) return;
+  var d = raw ? JSON.parse(raw) : {};
+  // Merge defaults with saved (saved overrides defaults)
+  var data = Object.assign({}, CMS_DEFAULTS, d);
+  if(!raw) return; // Don't apply defaults on fresh load (they're already in HTML)
   var d;
   try { d = JSON.parse(raw); } catch(e){ return; }
 
@@ -1404,7 +1561,8 @@ var CMS_PASS = 'admin';
 // ── Load fields into CMS form ──
 function cmsLoadFields(){
   var raw = localStorage.getItem(CMS_KEY);
-  var d = raw ? JSON.parse(raw) : {};
+  var saved = raw ? JSON.parse(raw) : {};
+  var d = Object.assign({}, CMS_DEFAULTS, saved);
   var fields = ['site-title','meta-desc','email','instagram','phone',
     'hero-eye-es','hero-t1-es','hero-t2-es','hero-sub-es','hero-t1-en','hero-t2-en',
     'hero-img-1','hero-img-2','hero-img-3','hero-img-4',
@@ -1413,6 +1571,12 @@ function cmsLoadFields(){
     'svc3-img','svc3-desc-es','svc3-desc-en',
     'about-p1-es','about-p2-es','about-p1-en','about-p2-en',
     'footer-text-es','address','copyright'];
+  // Also load multilingual service fields and about fields
+  ['svc1-desc-fr','svc1-desc-ca','svc2-desc-fr','svc2-desc-ca','svc3-desc-fr','svc3-desc-ca',
+   'about-p1-fr','about-p1-ca','about-p2-fr','about-p2-ca',
+   'hero-sub-es','hero-sub-en','hero-sub-fr','hero-sub-ca',
+   'hero-eye-fr','hero-eye-ca','footer-text-fr','footer-text-ca',
+   'hero-t1-fr','hero-t2-fr','hero-t1-ca','hero-t2-ca'].forEach(function(k){ if(!fields.includes(k)) fields.push(k); });
   fields.forEach(function(k){
     var el = document.getElementById('c-'+k);
     if(el && d[k]) el.value = d[k];
@@ -1500,7 +1664,12 @@ function cmsSave(){
     'svc3-img','svc3-desc-es','svc3-desc-en',
     'about-p1-es','about-p2-es','about-p1-en','about-p2-en',
     'footer-text-es','address','copyright'];
-  fields.forEach(function(k){
+  var allFields = fields.concat(['svc1-desc-fr','svc1-desc-ca','svc2-desc-fr','svc2-desc-ca',
+    'svc3-desc-fr','svc3-desc-ca','about-p1-fr','about-p1-ca','about-p2-fr','about-p2-ca',
+    'hero-sub-es','hero-sub-en','hero-sub-fr','hero-sub-ca',
+    'hero-eye-fr','hero-eye-ca','footer-text-fr','footer-text-ca',
+    'hero-t1-fr','hero-t2-fr','hero-t1-ca','hero-t2-ca']);
+  allFields.forEach(function(k){
     var el = document.getElementById('c-'+k);
     if(el && el.value.trim()) d[k] = el.value.trim();
   });
