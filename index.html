@@ -347,7 +347,11 @@ ticking=true;
 .pgi{cursor:pointer}
 .pgi::after{content:’’;position:absolute;inset:0;background:transparent;z-index:2}
 
+/* LOADER DEAD STATE — overrides everything */
+#loader.dead,#loader[data-dead]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;position:fixed!important;width:0!important;height:0!important;overflow:hidden!important}
+#loader.dead *,#loader[data-dead] *{animation:none!important;transition:none!important;opacity:0!important;visibility:hidden!important;will-change:auto!important}
 </style>
+
 </head>
 <body>
 
@@ -844,27 +848,60 @@ document.getElementById('cms-pwd').addEventListener('keydown',e=>{if(e.key==='En
 const bl=document.getElementById(‘blades’);
 for(let i=0;i<9;i++){const d=document.createElement(‘div’);d.className=‘blade’;d.style.animationDelay=(i*.065)+‘s’;bl.appendChild(d);}
 (function(){
+var _killed=false;
 function killLoader(){
-const ldr=document.getElementById(‘loader’);
-if(!ldr||ldr._dead)return;
-ldr._dead=true;
-// Stop ALL child animations first (iOS GPU layer fix)
-ldr.querySelectorAll(’*’).forEach(c=>{
-c.style.cssText+=‘animation:none!important;transition:none!important;opacity:0!important;visibility:hidden!important;’;
-});
-ldr.style.cssText=‘position:fixed!important;inset:0!important;z-index:10000!important;pointer-events:none!important;opacity:0!important;visibility:hidden!important;display:none!important;’;
-try{ldr.remove();}catch(e){}
+if(_killed)return;
+var ldr=document.getElementById(‘loader’);
+if(!ldr){_killed=true;return;}
+_killed=true;
+// Step 1: CSS class (stylesheet !important — reliable on all browsers)
+ldr.classList.add(‘dead’);
+ldr.setAttribute(‘data-dead’,‘1’);
+ldr.setAttribute(‘hidden’,’’);
+// Step 2: Direct property assignment (no cssText, no inline !important)
+ldr.style.display=‘none’;
+ldr.style.visibility=‘hidden’;
+ldr.style.opacity=‘0’;
+ldr.style.pointerEvents=‘none’;
+ldr.style.width=‘0’;
+ldr.style.height=‘0’;
+ldr.style.overflow=‘hidden’;
+ldr.style.position=‘fixed’;
+// Step 3: Stop child GPU layers (the iOS compositing layer escape fix)
+try{
+var kids=ldr.querySelectorAll(’*’);
+for(var i=0;i<kids.length;i++){
+kids[i].style.animation=‘none’;
+kids[i].style.transition=‘none’;
+kids[i].style.opacity=‘0’;
+kids[i].style.visibility=‘hidden’;
+kids[i].style.willChange=‘auto’;
+kids[i].style.transform=‘none’;
 }
-// Multiple triggers for maximum reliability
-var delay=1800;
-if(document.readyState===‘complete’){setTimeout(killLoader,delay);}
-else{window.addEventListener(‘load’,function(){setTimeout(killLoader,delay);},true);}
-// Hard fallback: kill after 3s no matter what
-setTimeout(killLoader,3000);
-// Extra fallback: kill on first user interaction
-[‘touchstart’,‘click’,‘scroll’].forEach(function(ev){
-document.addEventListener(ev,function h(){killLoader();document.removeEventListener(ev,h);},{once:true,passive:true});
+}catch(e){}
+// Step 4: Remove from DOM (use parentNode.removeChild for max compat)
+requestAnimationFrame(function(){
+requestAnimationFrame(function(){
+try{if(ldr.parentNode)ldr.parentNode.removeChild(ldr);}catch(e){}
 });
+});
+}
+// Trigger 1: immediate if already loaded
+if(document.readyState===‘complete’){setTimeout(killLoader,1400);}
+// Trigger 2: on load event
+window.addEventListener(‘load’,function(){setTimeout(killLoader,1400);},{once:true,capture:true});
+// Trigger 3: DOMContentLoaded fallback
+document.addEventListener(‘DOMContentLoaded’,function(){setTimeout(killLoader,1800);},{once:true});
+// Trigger 4: hard timeout (2.5s) — no matter what
+setTimeout(killLoader,2500);
+// Trigger 5: FIRST USER INTERACTION (scroll/touch/click)
+// This ensures loader dies the moment user tries to interact
+function onFirstInteract(){killLoader();}
+document.addEventListener(‘scroll’,onFirstInteract,{once:true,passive:true,capture:true});
+document.addEventListener(‘touchstart’,onFirstInteract,{once:true,passive:true,capture:true});
+document.addEventListener(‘click’,onFirstInteract,{once:true,passive:false,capture:true});
+document.addEventListener(‘touchmove’,onFirstInteract,{once:true,passive:true,capture:true});
+document.addEventListener(‘pointerdown’,onFirstInteract,{once:true,passive:true,capture:true});
 })();
 
 /* CURSOR */
