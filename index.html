@@ -7,11 +7,13 @@
 <meta name="description" content="MarinaPhoto — Fotografía profesional en Sitges y Barcelona. Hoteles, restaurantes, marcas y momentos que se sienten reales.">
 <meta property="og:title" content="MarinaPhoto — Fotografía que se siente real">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://marina-beb.pages.dev">
 <title>MarinaPhoto — Fotografía que se siente real</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 60'><circle cx='40' cy='9' r='8' fill='%23C4922A'/><path d='M4 54 L22 20 L40 34 L58 20 L76 54' stroke='%23C4922A' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
-<style>:root{
+<style>
+:root{
   --cream:#EFE8DC;--paper:#F7F3EE;
   --espresso:#1C1208;--brown:#3A2910;--brown-mid:#6B4E2A;
   --gold:#C4922A;--gold-lt:#DDB96A;--gold-pale:#EDD89A;
@@ -68,7 +70,7 @@ nav.solid .nlinks a{color:var(--brown-mid)}
 .nlinks a:hover::after{right:0}
 .nlinks a:hover{color:var(--gold)}
 nav.solid .nlinks a:hover{color:var(--gold)}
-.lswitch{display:flex;border:1px solid rgba(255,255,255,.28);border-radius:2px;overflow:hidden;position:relative;z-index:10}
+.lswitch{display:flex;position:relative;z-index:400;border:1px solid rgba(255,255,255,.28);border-radius:2px;overflow:hidden;position:relative;z-index:10}
 nav.solid .lswitch{border-color:rgba(58,41,16,.2)}
 .lbtn{padding:6px 11px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,.45);transition:all .22s;user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-width:32px}
 nav.solid .lbtn{color:rgba(58,41,16,.4)}
@@ -120,9 +122,9 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 /* Phrase: chars split by JS */
 .mnf-phrase{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,6vw,5.6rem);font-weight:300;line-height:1.16;color:white;letter-spacing:-.01em;margin-bottom:60px}
 .mnf-phrase em{font-style:italic;color:var(--gold-pale)}
-/* Phrase clean reveal — no char splitting */
-.mnf-phrase{opacity:0;transform:translateY(32px) scale(.98);transition:opacity 1.3s cubic-bezier(.16,1,.3,1),transform 1.3s cubic-bezier(.16,1,.3,1)}
-.mnf-phrase.vis{opacity:1;transform:translateY(0) scale(1)}
+/* Phrase reveal */
+.mnf-phrase{opacity:0;transform:translateY(28px);transition:opacity 1.2s ease .2s,transform 1.2s cubic-bezier(.16,1,.3,1) .2s}
+.mnf-phrase.vis{opacity:1;transform:translateY(0)}
 .mnf-p-line1{display:block}
 .mnf-p-line2{display:inline}
 /* Scroll hint */
@@ -168,7 +170,7 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 /* ── QUESTIONNAIRE ── */
 #questionnaire{min-height:100svh;background:var(--espresso);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 #questionnaire::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 50%,rgba(196,146,42,.07) 0%,transparent 70%);pointer-events:none}
-.qbox{position:relative;z-index:2;width:100%;max-width:600px;padding:80px 40px;text-align:center}
+.qbox{position:relative;z-index:2;-webkit-tap-highlight-color:transparent;width:100%;max-width:600px;padding:80px 40px;text-align:center}
 .qeye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.42em;text-transform:uppercase;color:rgba(196,146,42,.7);margin-bottom:28px}
 .qbox h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:300;color:white;line-height:1.2;margin-bottom:12px}
 .qbox .sub{font-size:14px;font-weight:300;color:rgba(255,255,255,.45);margin-bottom:52px;line-height:1.7}
@@ -182,7 +184,7 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 @keyframes qIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .qques{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,2.8vw,1.85rem);font-weight:300;font-style:italic;color:rgba(255,255,255,.88);margin-bottom:28px;line-height:1.4}
 .qopts{display:flex;flex-direction:column;gap:10px;text-align:left}
-.qopt{padding:18px 24px;border:1px solid rgba(255,255,255,.14);border-radius:3px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.72);font-family:'Outfit',sans-serif;font-size:14px;font-weight:300;cursor:pointer;text-align:left;transition:border-color .28s,background .28s,color .28s,transform .28s;touch-action:manipulation;width:100%;line-height:1.5}
+.qopt{padding:18px 24px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1px solid rgba(255,255,255,.22);border-radius:3px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.88);font-family:'Outfit',sans-serif;font-size:14px;font-weight:300;cursor:pointer;text-align:left;transition:border-color .28s,background .28s,color .28s,transform .28s;touch-action:manipulation;width:100%;line-height:1.5}
 .qopt:hover{border-color:rgba(196,146,42,.4);background:rgba(196,146,42,.07);color:rgba(255,255,255,.9)}
 .qopt.sel{border-color:var(--gold-lt);background:rgba(196,146,42,.12);color:white;transform:translateX(5px)}
 .qbtn{display:block;width:100%;margin-top:28px;padding:15px;background:var(--gold);color:white;border:none;border-radius:3px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;cursor:pointer;opacity:.18;pointer-events:none;transition:opacity .35s ease,background .3s,transform .2s;touch-action:manipulation}
@@ -326,9 +328,64 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 .mnf-p-line1{display:block;overflow:hidden}
 .mnf-p-line2,.mnf-phrase em{display:inline-block}
 
+
+/* ── LOGO ANIMATION ── */
+.logo-svg .logo-circle{stroke-dasharray:52;stroke-dashoffset:52;transition:stroke-dashoffset 0.7s cubic-bezier(.16,1,.3,1) .3s}
+.logo-svg .logo-path{stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset 0.9s cubic-bezier(.16,1,.3,1) .5s}
+.logo-svg.logo-drawn .logo-circle,.logo-svg.logo-drawn .logo-path{stroke-dashoffset:0}
+.nlogo:hover .logo-svg .logo-circle,.nlogo:hover .logo-svg .logo-path{filter:drop-shadow(0 0 4px rgba(196,146,42,.5))}
+/* Loader logo animation */
+.loader-logo .logo-circle{stroke-dasharray:52;stroke-dashoffset:52;animation:drawCircle .7s cubic-bezier(.16,1,.3,1) .6s forwards}
+.loader-logo .logo-path{stroke-dasharray:120;stroke-dashoffset:120;animation:drawPath .9s cubic-bezier(.16,1,.3,1) .9s forwards}
+@keyframes drawCircle{to{stroke-dashoffset:0}}
+@keyframes drawPath{to{stroke-dashoffset:0}}
+
+/* pgi-wide responsive */
+.pgi-wide{grid-column:span 2}
+@media(max-width:600px){.pgi-wide{grid-column:span 1}}
+
+/* CMS overlay */
+#cms-overlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(28,18,8,.97);overflow-y:auto}
+#cms-overlay.open{display:block}
+.cms-wrap{max-width:860px;margin:0 auto;padding:40px 24px 80px}
+.cms-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:24px;margin-bottom:36px;border-bottom:1px solid rgba(196,146,42,.2)}
+.cms-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--gold-lt);letter-spacing:.06em}
+.cms-close-btn{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:8px 18px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .3s}
+.cms-close-btn:hover{border-color:var(--gold);color:var(--gold)}
+.cms-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08)}
+.cms-tab{padding:10px 20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .3s}
+.cms-tab.on{color:var(--gold-lt);border-bottom-color:var(--gold)}
+.cms-panel{display:none}
+.cms-panel.on{display:block}
+.cms-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;margin-top:32px;padding-bottom:8px;border-bottom:1px solid rgba(196,146,42,.15)}
+.cms-field{margin-bottom:18px}
+.cms-label{display:block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:7px}
+.cms-input,.cms-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:2px;color:rgba(255,255,255,.85);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:border-color .3s}
+.cms-input:focus,.cms-textarea:focus{border-color:var(--gold)}
+.cms-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.cms-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cms-save-btn{background:var(--gold);color:white;border:none;padding:12px 32px;font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s;margin-top:24px}
+.cms-save-btn:hover{background:var(--gold-lt)}
+.cms-saved-msg{display:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--gold-lt);margin-top:12px}
+.cms-saved-msg.show{display:block}
+.cms-img-preview{width:80px;height:60px;object-fit:cover;border-radius:2px;margin-top:8px;display:block;border:1px solid rgba(255,255,255,.1)}
+#cms-login{position:fixed;inset:0;z-index:100000;background:rgba(28,18,8,.98);display:none;align-items:center;justify-content:center}
+#cms-login.open{display:flex}
+.cms-login-box{text-align:center;width:300px}
+.cms-login-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:white;margin-bottom:6px}
+.cms-login-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.28);text-transform:uppercase;margin-bottom:32px}
+.cms-pwd-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:white;font-family:'Outfit',sans-serif;font-size:14px;padding:12px 16px;outline:none;border-radius:2px;text-align:center;letter-spacing:.2em;margin-bottom:12px;transition:border-color .3s}
+.cms-pwd-input:focus{border-color:var(--gold)}
+.cms-login-btn{width:100%;padding:12px;background:var(--gold);color:white;border:none;font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s}
+.cms-login-btn:hover{background:var(--gold-lt)}
+.cms-err{color:rgba(220,80,80,.9);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;margin-top:10px;display:none}
+@media(max-width:600px){.cms-row{grid-template-columns:1fr}.cms-wrap{padding:24px 16px 60px}}
+
 </style>
 </head>
 <body>
+<div id="scrollProg"></div>
+
 <div id="scrollProg"></div>
 
 <!-- CURSOR -->
@@ -339,7 +396,10 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 <div id="loader">
   <div class="blades" id="blades"></div>
   <div class="lc">
-    <svg width="54" height="42" viewBox="0 0 80 60" fill="none"><circle cx="40" cy="9" r="9" fill="#DDB96A"/><path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="#DDB96A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg width="54" height="42" viewBox="0 0 80 60" fill="none" class="logo-svg loader-logo">
+      <circle class="logo-circle" cx="40" cy="9" r="9" fill="none" stroke="#DDB96A" stroke-width="2"/>
+      <path class="logo-path" d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="#DDB96A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
     <div class="lwm">MarinaPhoto</div>
     <div class="lbar"><div class="lfill"></div></div>
   </div>
@@ -348,7 +408,10 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 <!-- NAV -->
 <nav id="nav">
   <a href="#" class="nlogo">
-    <svg width="32" height="24" viewBox="0 0 80 60" fill="none"><circle cx="40" cy="9" r="8" fill="currentColor"/><path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg width="32" height="24" viewBox="0 0 80 60" fill="none" class="logo-svg">
+      <circle class="logo-circle" cx="40" cy="9" r="8" fill="currentColor"/>
+      <path class="logo-path" d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
     <span class="nwm">MarinaPhoto</span>
   </a>
   <ul class="nlinks">
@@ -391,50 +454,7 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
   <div class="hpbar"><div class="hpfill" id="hpf"></div></div>
 </section>
 
-<!-- ═══ TICKER (differentiating element) ═══ -->
-<div class="ticker-wrap">
-  <div class="ticker-track" id="tickerTrack">
-    <span class="ticker-item"><span class="ticker-dot"></span><span class="lt" data-es="Fotografía de autor" data-en="Authorial photography" data-fr="Photographie d'auteur" data-ca="Fotografia d'autor">Fotografía de autor</span></span>
-    <span class="ticker-item"><span class="ticker-dot"></span><span class="lt" data-es="Sitges, Barcelona, Mediterráneo" data-en="Sitges, Barcelona, Mediterranean" data-fr="Sitges, Barcelone, Méditerranée" data-ca="Sitges, Barcelona, Mediterrani">Sitges, Barcelona, Mediterráneo</span></span>
-    <span class="ticker-item"><span class="ticker-dot"></span><span class="lt" data-es="Sony Alpha 7V" data-en="Sony Alpha 7V" data-fr="Sony Alpha 7V" data-ca="Sony Alpha 7V">Sony Alpha 7V</span></span>
-    <span class="ticker-item"><span class="ticker-dot"></span><span class="lt" data-es="Hoteles · Restaurantes · Marcas · Memorias" data-en="Hotels · Restaurants · Brands · Memories" data-fr="Hôtels · Restaurants · Marques · Souvenirs" data-ca="Hotels · Restaurants · Marques · Memòries">Hoteles · Restaurantes · Marcas · Memorias</span></span>
-    <span class="ticker-item"><span class="ticker-dot"></span><span class="lt" data-es="Fotografía que se siente real" data-en="Photography that feels real" data-fr="Photographie qui se ressent vraiment" data-ca="Fotografia que se sent real">Fotografía que se siente real</span></span>
-    <span class="ticker-item"><span class="ticker-dot"></span><span class="lt" data-es="Luz natural · Movimiento real" data-en="Natural light · Real movement" data-fr="Lumière naturelle · Mouvement réel" data-ca="Llum natural · Moviment real">Luz natural · Movimiento real</span></span>
-    <span class="ticker-item"><span class="ticker-dot"></span><span>@marinaphotg</span></span>
-  </div>
-</div>
 
-<!-- ═══ MANIFESTO ═══ -->
-<section id="manifesto">
-  <div class="mnf-vline"></div>
-  <div class="mnf-inner">
-    <div class="mnf-eye lt"
-      data-es="Una imagen que se siente"
-      data-en="An image that is felt"
-      data-fr="Une image qui se ressent"
-      data-ca="Una imatge que se sent">Una imagen que se siente</div>
-    <div class="mnf-phrase">
-    <span class="mnf-p-line1 lt"
-      data-es="Sé lo que significa"
-      data-en="I know what an image"
-      data-fr="Je sais ce que signifie"
-      data-ca="Sé el que significa">Sé lo que significa</span><br>
-    <span class="mnf-p-line2 lt"
-      data-es="una imagen"
-      data-en="une image"
-      data-fr="une image"
-      data-ca="una imatge">una imagen</span>&nbsp;<em class="lt"
-      data-es="para ti."
-      data-en="to you."
-      data-fr="pour vous."
-      data-ca="per a tu.">para ti.</em>
-  </div>
-    <div class="mnf-scroll">
-      <div class="mnf-scroll-line"></div>
-      <span class="mnf-scroll-lbl lt" data-es="Descubrir" data-en="Discover" data-fr="Découvrir" data-ca="Descobrir">Descubrir</span>
-    </div>
-  </div>
-</section>
 
 <!-- ═══ SERVICE PANEL 1 — LUGARES ═══ -->
 <section class="sp" id="sp-lugares">
@@ -568,7 +588,7 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
     <a href="#" class="secl rv lt" data-es="Ver todo →" data-en="View all →" data-fr="Tout voir →" data-ca="Veure tot →">Ver todo →</a>
   </div>
   <div class="pfilt rv">
-    <button class="pftab on" onclick="pflt('all',this)" class="lt" data-es="Todo" data-en="All" data-fr="Tout" data-ca="Tot">Todo</button>
+    <button class="pftab on" onclick="pflt('all',this)" data-es="Todo" data-en="All" data-fr="Tout" data-ca="Tot">Todo</button>
     <button class="pftab" onclick="pflt('lugares',this)" data-es="Lugares" data-en="Places" data-fr="Lieux" data-ca="Llocs">Lugares</button>
     <button class="pftab" onclick="pflt('artesanos',this)" data-es="Artesanos" data-en="Artisans" data-fr="Artisans" data-ca="Artesans">Artesanos</button>
     <button class="pftab" onclick="pflt('memorias',this)" data-es="Memorias" data-en="Memories" data-fr="Souvenirs" data-ca="Memòries">Memorias</button>
@@ -720,64 +740,314 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>/* ── LOADER ── */
-var bl=document.getElementById('blades');
-if(bl){for(var i=0;i<9;i++){var d=document.createElement('div');d.className='blade';d.style.animationDelay=(i*.06)+'s';bl.appendChild(d);}}
-setTimeout(function(){var l=document.getElementById('loader');if(l&&l.parentNode)l.parentNode.removeChild(l);},2800);
+<!-- CMS LOGIN -->
+<div id="cms-login">
+  <div class="cms-login-box">
+    <div class="cms-login-title">Admin</div>
+    <p class="cms-login-sub">MarinaPhoto CMS</p>
+    <input id="cms-pwd" class="cms-pwd-input" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="cms-login-btn" onclick="cmsAuth()">Entrar →</button>
+    <p class="cms-err" id="cms-err">Contraseña incorrecta</p>
+  </div>
+</div>
 
-/* ── CURSOR (desktop) ── */
+<!-- CMS PANEL -->
+<div id="cms-overlay">
+  <div class="cms-wrap">
+    <div class="cms-header">
+      <div class="cms-title">MarinaPhoto CMS</div>
+      <button class="cms-close-btn" onclick="cmsClose()">✕ Cerrar</button>
+    </div>
+
+    <div class="cms-tabs">
+      <button class="cms-tab on" onclick="cmsTab(this,'tab-general')">General</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-hero')">Hero</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-services')">Servicios</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-about')">About</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-portfolio')">Portfolio</button>
+      <button class="cms-tab" onclick="cmsTab(this,'tab-contact')">Contacto</button>
+    </div>
+
+    <!-- GENERAL -->
+    <div class="cms-panel on" id="tab-general">
+      <div class="cms-section-title">Marca</div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Título de página</label>
+          <input class="cms-input" id="c-site-title" type="text" placeholder="MarinaPhoto — Fotografía que se siente real">
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Meta descripción</label>
+          <input class="cms-input" id="c-meta-desc" type="text">
+        </div>
+      </div>
+      <div class="cms-section-title">Contacto</div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Email</label>
+          <input class="cms-input" id="c-email" type="email" placeholder="marinaphotg@gmail.com">
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Instagram (@handle)</label>
+          <input class="cms-input" id="c-instagram" type="text" placeholder="marinaphotg">
+        </div>
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Teléfono</label>
+        <input class="cms-input" id="c-phone" type="text" placeholder="+34 600 000 000" style="max-width:260px">
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="cms-panel" id="tab-hero">
+      <div class="cms-section-title">Texto Hero (ES)</div>
+      <div class="cms-field">
+        <label class="cms-label">Línea eyebrow</label>
+        <input class="cms-input" id="c-hero-eye-es" type="text" placeholder="Sitges · Barcelona · Mediterráneo">
+      </div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Título línea 1</label>
+          <input class="cms-input" id="c-hero-t1-es" type="text" placeholder="Fotografía que">
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Título línea 2 (cursiva dorada)</label>
+          <input class="cms-input" id="c-hero-t2-es" type="text" placeholder="se siente real.">
+        </div>
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Subtítulo</label>
+        <input class="cms-input" id="c-hero-sub-es" type="text">
+      </div>
+      <div class="cms-section-title">Texto Hero (EN)</div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Title line 1</label>
+          <input class="cms-input" id="c-hero-t1-en" type="text" placeholder="Photography that">
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Title line 2</label>
+          <input class="cms-input" id="c-hero-t2-en" type="text" placeholder="feels real.">
+        </div>
+      </div>
+      <div class="cms-section-title">Imágenes Hero</div>
+      <div class="cms-field">
+        <label class="cms-label">Slide 1 — URL imagen</label>
+        <input class="cms-input" id="c-hero-img-1" type="text" placeholder="https://...">
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Slide 2 — URL imagen</label>
+        <input class="cms-input" id="c-hero-img-2" type="text" placeholder="https://...">
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Slide 3 — URL imagen</label>
+        <input class="cms-input" id="c-hero-img-3" type="text" placeholder="https://...">
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Slide 4 — URL imagen</label>
+        <input class="cms-input" id="c-hero-img-4" type="text" placeholder="https://...">
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="cms-panel" id="tab-services">
+      <div class="cms-section-title">Lugares (01)</div>
+      <div class="cms-field">
+        <label class="cms-label">URL imagen de fondo</label>
+        <input class="cms-input" id="c-svc1-img" type="text" placeholder="https://...">
+      </div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Descripción (ES)</label>
+          <textarea class="cms-textarea" id="c-svc1-desc-es"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Description (EN)</label>
+          <textarea class="cms-textarea" id="c-svc1-desc-en"></textarea>
+        </div>
+      </div>
+      <div class="cms-section-title">Artesanos (02)</div>
+      <div class="cms-field">
+        <label class="cms-label">URL imagen de fondo</label>
+        <input class="cms-input" id="c-svc2-img" type="text" placeholder="https://...">
+      </div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Descripción (ES)</label>
+          <textarea class="cms-textarea" id="c-svc2-desc-es"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Description (EN)</label>
+          <textarea class="cms-textarea" id="c-svc2-desc-en"></textarea>
+        </div>
+      </div>
+      <div class="cms-section-title">Memorias (03)</div>
+      <div class="cms-field">
+        <label class="cms-label">URL imagen de fondo</label>
+        <input class="cms-input" id="c-svc3-img" type="text" placeholder="https://...">
+      </div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">Descripción (ES)</label>
+          <textarea class="cms-textarea" id="c-svc3-desc-es"></textarea>
+        </div>
+        <div class="cms-field">
+          <label class="cms-label">Description (EN)</label>
+          <textarea class="cms-textarea" id="c-svc3-desc-en"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="cms-panel" id="tab-about">
+      <div class="cms-section-title">Texto (ES)</div>
+      <div class="cms-field">
+        <label class="cms-label">Párrafo 1</label>
+        <textarea class="cms-textarea" id="c-about-p1-es"></textarea>
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Párrafo 2</label>
+        <textarea class="cms-textarea" id="c-about-p2-es"></textarea>
+      </div>
+      <div class="cms-section-title">Text (EN)</div>
+      <div class="cms-field">
+        <label class="cms-label">Paragraph 1</label>
+        <textarea class="cms-textarea" id="c-about-p1-en"></textarea>
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Paragraph 2</label>
+        <textarea class="cms-textarea" id="c-about-p2-en"></textarea>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div class="cms-panel" id="tab-portfolio">
+      <div class="cms-section-title">Imágenes Portfolio</div>
+      <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.15em;margin-bottom:20px;line-height:1.8">
+        Para cada elemento: URL imagen, categoría (lugares / artesanos / memorias / video) y etiqueta visible.
+      </p>
+      <div id="cms-portfolio-items"></div>
+      <button class="cms-save-btn" style="background:rgba(255,255,255,.08);margin-top:12px" onclick="cmsAddPortfolioItem()">+ Añadir elemento</button>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="cms-panel" id="tab-contact">
+      <div class="cms-section-title">Footer</div>
+      <div class="cms-field">
+        <label class="cms-label">Texto footer (ES)</label>
+        <textarea class="cms-textarea" id="c-footer-text-es"></textarea>
+      </div>
+      <div class="cms-field">
+        <label class="cms-label">Dirección</label>
+        <input class="cms-input" id="c-address" type="text" placeholder="Sitges, Barcelona, España">
+      </div>
+      <div class="cms-section-title">Copyright</div>
+      <div class="cms-field">
+        <label class="cms-label">Texto copyright</label>
+        <input class="cms-input" id="c-copyright" type="text" placeholder="© 2025 MarinaPhoto">
+      </div>
+    </div>
+
+    <button class="cms-save-btn" onclick="cmsSave()">Guardar cambios</button>
+    <p class="cms-saved-msg" id="cms-saved-msg">✓ Cambios guardados correctamente</p>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   MARINAPHOTO — Complete JS  (no truncation, all functions global)
+   ───────────────────────────────────────────────────────────── */
+
+/* ── LOADER ── */
+(function(){
+  var bl=document.getElementById('blades');
+  if(bl){for(var i=0;i<9;i++){var d=document.createElement('div');d.className='blade';d.style.animationDelay=(i*.06)+'s';bl.appendChild(d);}}
+  setTimeout(function(){var l=document.getElementById('loader');if(l&&l.parentNode)l.parentNode.removeChild(l);},2600);
+})();
+
+/* ── DEVICE DETECT ── */
 var isTouchDevice=('ontouchstart' in window)||navigator.maxTouchPoints>0;
-var mx=0,my=0;
-var lp=document.getElementById('loupe'),lo=document.getElementById('lo'),dot=document.getElementById('ldot');
-if(!isTouchDevice&&lp&&dot){
+
+/* ── CURSOR (desktop only) ── */
+(function(){
+  if(isTouchDevice)return;
+  var mx=0,my=0;
+  var lp=document.getElementById('loupe'),lo=document.getElementById('lo'),dot=document.getElementById('ldot');
+  if(!lp||!dot)return;
   document.addEventListener('mousemove',function(e){
     mx=e.clientX;my=e.clientY;
     lp.style.left=mx+'px';lp.style.top=my+'px';
     dot.style.left=mx+'px';dot.style.top=my+'px';
     var hero=document.getElementById('hero');
-    if(hero){var r=hero.getBoundingClientRect();
-      if(mx>r.left&&mx<r.right&&my>r.top&&my<r.bottom){
-        var sp=document.getElementById('spot'),si=document.getElementById('simg');
-        if(sp){sp.style.left=(mx-r.left)+'px';sp.style.top=(my-r.top)+'px';}
-        if(si){var asl=document.querySelector('.hsl.on');if(asl)si.style.backgroundImage=asl.style.backgroundImage;
-          var dx=((mx-r.left)/r.width-.5)*-32,dy=((my-r.top)/r.height-.5)*-32;
-          si.style.transform='scale(1.15) translate('+dx+'px,'+dy+'px)';}}}
+    if(!hero)return;
+    var r=hero.getBoundingClientRect();
+    if(mx>r.left&&mx<r.right&&my>r.top&&my<r.bottom){
+      var sp=document.getElementById('spot'),si=document.getElementById('simg');
+      if(sp){sp.style.left=(mx-r.left)+'px';sp.style.top=(my-r.top)+'px';}
+      if(si){
+        var asl=document.querySelector('.hsl.on');
+        if(asl)si.style.backgroundImage=asl.style.backgroundImage;
+        var dx=((mx-r.left)/r.width-.5)*-32,dy=((my-r.top)/r.height-.5)*-32;
+        si.style.transform='scale(1.15) translate('+dx+'px,'+dy+'px)';
+      }
+    }
   });
-  document.querySelectorAll('a,button,.qopt,.pgi,.sp,.mb,.pftab,.hdot').forEach(function(el){
+  document.querySelectorAll('a,button,.qopt,.pgi,.svc,.mb,.pftab,.hdot').forEach(function(el){
     el.addEventListener('mouseenter',function(){if(lo)lo.style.width=lo.style.height='58px';if(dot)dot.style.transform='translate(-50%,-50%) scale(.5)';});
     el.addEventListener('mouseleave',function(){if(lo)lo.style.width=lo.style.height='44px';if(dot)dot.style.transform='translate(-50%,-50%) scale(1)';});
   });
-}
+})();
 
-/* ── NAV ── */
-var navEl=document.getElementById('nav');
-window.addEventListener('scroll',function(){if(navEl)navEl.classList.toggle('solid',window.scrollY>50);},{passive:true});
+/* ── NAV SCROLL ── */
+(function(){
+  var nav=document.getElementById('nav');
+  if(!nav)return;
+  window.addEventListener('scroll',function(){nav.classList.toggle('solid',window.scrollY>50);},{passive:true});
+})();
+
+/* ── SCROLL PROGRESS BAR ── */
+(function(){
+  var prog=document.getElementById('scrollProg');
+  if(!prog)return;
+  window.addEventListener('scroll',function(){
+    var pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+    prog.style.height=Math.min(pct,100)+'%';
+  },{passive:true});
+})();
 
 /* ── HERO SLIDESHOW ── */
 var cs=0;
-var sls=document.querySelectorAll('.hsl'),dts=document.querySelectorAll('.hdot');
+var sls=document.querySelectorAll('.hsl');
+var dts=document.querySelectorAll('.hdot');
 function gsl(n){
-  if(sls[cs])sls[cs].classList.remove('on');if(dts[cs])dts[cs].classList.remove('on');
-  cs=n;if(sls[cs])sls[cs].classList.add('on');if(dts[cs])dts[cs].classList.add('on');
-  var ctrEl=document.getElementById('hctr');if(ctrEl)ctrEl.textContent='0'+(cs+1)+' / 0'+sls.length;
-  var f=document.getElementById('hpf');if(f){f.style.animation='none';void f.offsetWidth;f.style.animation='hprog 5.5s linear infinite';}
-  var si=document.getElementById('simg');if(si&&sls[cs])si.style.backgroundImage=sls[cs].style.backgroundImage;
+  if(sls[cs])sls[cs].classList.remove('on');
+  if(dts[cs])dts[cs].classList.remove('on');
+  cs=n;
+  if(sls[cs])sls[cs].classList.add('on');
+  if(dts[cs])dts[cs].classList.add('on');
+  var ctr=document.getElementById('hctr');
+  if(ctr)ctr.textContent='0'+(cs+1)+' / 0'+sls.length;
+  var f=document.getElementById('hpf');
+  if(f){f.style.animation='none';void f.offsetWidth;f.style.animation='hprog 5.5s linear infinite';}
+  var si=document.getElementById('simg');
+  if(si&&sls[cs])si.style.backgroundImage=sls[cs].style.backgroundImage;
 }
 if(sls.length>0)setInterval(function(){gsl((cs+1)%sls.length);},5500);
 
-/* ── TICKER ── */
+/* ── LOGO ANIMATION ── */
 (function(){
-  var track=document.getElementById('tickerTrack');
-  if(!track)return;
-  track.innerHTML+=track.innerHTML; // duplicate for seamless loop
+  var logo=document.querySelector('.logo-svg');
+  if(!logo)return;
+  // Draw animation via CSS class added on load
+  setTimeout(function(){logo.classList.add('logo-drawn');},400);
 })();
 
 /* ── MANIFESTO REVEAL ── */
 (function(){
-  var phraseEl=document.querySelector('.mnf-phrase');
-  var eyeEl=document.querySelector('.mnf-eye');
-  var scrollEl=document.querySelector('.mnf-scroll');
-  if(!phraseEl)return;
+  var phrase=document.querySelector('.mnf-phrase');
+  var eye=document.querySelector('.mnf-eye');
+  var scroll=document.querySelector('.mnf-scroll');
+  if(!phrase)return;
   var obs=new IntersectionObserver(function(entries){
     entries.forEach(function(e){
       if(e.isIntersecting){
@@ -785,44 +1055,62 @@ if(sls.length>0)setInterval(function(){gsl((cs+1)%sls.length);},5500);
         obs.unobserve(e.target);
       }
     });
-  },{threshold:0.3});
-  obs.observe(phraseEl);
-  if(eyeEl)obs.observe(eyeEl);
-  if(scrollEl)obs.observe(scrollEl);
+  },{threshold:0.25});
+  obs.observe(phrase);
+  if(eye)obs.observe(eye);
+  if(scroll)obs.observe(scroll);
+})();
+
+/* ── SERVICE PANELS — scroll reveal ── */
+(function(){
+  var panels=document.querySelectorAll('.sp');
+  if(!panels.length)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting)e.target.classList.add('entered');
+    });
+  },{threshold:0.15});
+  panels.forEach(function(p){obs.observe(p);});
 })();
 
 /* ── SCROLL REVEAL ── */
-var ro=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');}});
-},{threshold:0,rootMargin:'60px 0px 60px 0px'});
-document.querySelectorAll('.rv').forEach(function(el){ro.observe(el);});
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('vis');});
+  },{threshold:0,rootMargin:'60px 0px 60px 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){obs.observe(el);});
+})();
 
-/* ── PORTFOLIO VIDEO AUTOPLAY ON SCROLL ── */
-var videoObs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    var vid=e.target.querySelector('video.pgi-vid');
-    if(!vid)return;
-    if(e.isIntersecting)vid.play().catch(function(){});
-    else{vid.pause();vid.currentTime=0;}
-  });
-},{threshold:0.4});
-document.querySelectorAll('.pgi.pgi-video').forEach(function(el){videoObs.observe(el);});
+/* ── ABOUT PARALLAX ── */
+(function(){
+  var about=document.getElementById('about');
+  if(!about)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting)about.classList.add('entered');});
+  },{threshold:0.1});
+  obs.observe(about);
+  if(isTouchDevice)return;
+  window.addEventListener('scroll',function(){
+    var r=about.getBoundingClientRect();
+    if(r.bottom>0&&r.top<window.innerHeight){
+      var img=about.querySelector('.aimg-fill img');
+      if(img)img.style.transform='scale(1.03) translateY('+(r.top/window.innerHeight*3)+'%)';
+    }
+  },{passive:true});
+})();
 
 /* ── QUESTIONNAIRE ── */
 var qa={a1:'',a2:'',a3:''};
-// Init first progress dot
-(function(){var sp1=document.getElementById('sp1');if(sp1)sp1.classList.add('active');})();
+(function(){
+  var sp1=document.getElementById('sp1');
+  if(sp1)sp1.classList.add('active');
+})();
 
 function qsel(el,k){
   var opts=el.closest('.qopts');
-  if(opts)opts.querySelectorAll('.qopt').forEach(function(o){
-    o.classList.remove('sel');
-    o.style.transform='';
-  });
+  if(opts)opts.querySelectorAll('.qopt').forEach(function(o){o.classList.remove('sel');o.style.transform='';});
   el.classList.add('sel');
-  // Brief scale feedback
-  el.style.transform='scale(.99)';
-  setTimeout(function(){el.style.transform='translateX(6px)';},100);
+  el.style.transform='translateX(6px)';
   var lang=document.documentElement.lang||'es';
   qa[k]=el.dataset[lang]||el.textContent.trim();
   var btnMap={a1:'qn1',a2:'qn2',a3:'qn3'};
@@ -834,82 +1122,69 @@ function qnext(n){
   var curr=document.getElementById('qs'+n);
   var next=document.getElementById('qs'+(n+1));
   var prog=document.getElementById('sp'+n);
+  var nextProg=document.getElementById('sp'+(n+1));
   if(curr){
-    curr.style.opacity='0';
-    curr.style.transform='translateX(-20px)';
-    curr.style.transition='opacity .35s ease,transform .35s ease';
+    curr.style.cssText='opacity:0;transform:translateX(-24px);transition:opacity .32s ease,transform .32s ease';
     setTimeout(function(){
-      curr.classList.remove('on');
-      curr.style.cssText='';
+      curr.classList.remove('on');curr.style.cssText='';
       if(next){
         next.classList.add('on');
-        next.style.opacity='0';
-        next.style.transform='translateX(20px)';
+        next.style.cssText='opacity:0;transform:translateX(24px)';
         requestAnimationFrame(function(){
-          next.style.transition='opacity .45s ease,transform .45s ease';
-          next.style.opacity='1';
-          next.style.transform='translateX(0)';
+          next.style.cssText='opacity:1;transform:translateX(0);transition:opacity .42s ease,transform .42s cubic-bezier(.16,1,.3,1)';
+          setTimeout(function(){next.style.cssText='';},500);
         });
       }
-    },350);
+    },340);
   }
   if(prog)prog.classList.add('done');
-  var nextProg=document.getElementById('sp'+(n+1));
-  if(nextProg)nextProg.classList.add('active');
+  if(nextProg){nextProg.classList.remove('active');nextProg.classList.add('active');}
 }
 
 function qresult(){
-  var s3=document.getElementById('qs3');
-  var sr=document.getElementById('qsr');
+  var s3=document.getElementById('qs3'),sr=document.getElementById('qsr');
   if(s3){
-    s3.style.opacity='0';s3.style.transform='translateX(-20px)';s3.style.transition='all .35s ease';
+    s3.style.cssText='opacity:0;transform:translateX(-24px);transition:opacity .32s ease,transform .32s ease';
     setTimeout(function(){
       s3.classList.remove('on');s3.style.cssText='';
       if(sr){
-        sr.classList.add('on');
-        sr.style.opacity='0';sr.style.transform='translateY(16px)';
+        sr.classList.add('on');sr.style.cssText='opacity:0;transform:translateY(18px)';
         requestAnimationFrame(function(){
-          sr.style.transition='all .45s ease';sr.style.opacity='1';sr.style.transform='translateY(0)';
+          sr.style.cssText='opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s cubic-bezier(.16,1,.3,1)';
+          setTimeout(function(){sr.style.cssText='';},600);
         });
       }
-    },350);
+    },340);
   }
   document.querySelectorAll('.qpd').forEach(function(p){p.classList.add('done');});
   var lang=document.documentElement.lang||'es';
   var el=document.getElementById('qsum');
-  var nameEl=document.getElementById('qname');
-  var emailEl=document.getElementById('qemail');
   if(!el)return;
-  var txt={
-    es:'Así es como entiendo tu proyecto.<br><br>Quieres fotografiar <strong>'+qa.a1+'</strong>, para usarlo en <strong>'+qa.a2+'</strong>. Timing: <strong>'+qa.a3+'</strong>.<br><br><em>Primera lectura basada en tus respuestas.</em>',
-    en:'Here\'s how I understand your project.<br><br>You\'d like to photograph <strong>'+qa.a1+'</strong>, to use for <strong>'+qa.a2+'</strong>. Timing: <strong>'+qa.a3+'</strong>.<br><br><em>First reading based on your answers.</em>',
+  var T={
+    es:'Así entiendo tu proyecto.<br><br>Quieres fotografiar <strong>'+qa.a1+'</strong>, para usarlo en <strong>'+qa.a2+'</strong>. Timing: <strong>'+qa.a3+'</strong>.<br><br><em>Primera lectura basada en tus respuestas.</em>',
+    en:'Here\'s how I see your project.<br><br>You\'d like to photograph <strong>'+qa.a1+'</strong>, to use for <strong>'+qa.a2+'</strong>. Timing: <strong>'+qa.a3+'</strong>.<br><br><em>First reading based on your answers.</em>',
     fr:'Voici comment je comprends votre projet.<br><br>Vous souhaitez photographier <strong>'+qa.a1+'</strong>, pour <strong>'+qa.a2+'</strong>. Timing: <strong>'+qa.a3+'</strong>.<br><br><em>Première lecture d\'après vos réponses.</em>',
     ca:'Aquí com entenc el teu projecte.<br><br>Vols fotografiar <strong>'+qa.a1+'</strong>, per a <strong>'+qa.a2+'</strong>. Timing: <strong>'+qa.a3+'</strong>.<br><br><em>Primera lectura a partir de les teves respostes.</em>'
   };
-  el.innerHTML=txt[lang]||txt.es;
-  var ph={es:{n:'Tu nombre',e:'Tu correo electrónico'},en:{n:'Your name',e:'Your email'},fr:{n:'Votre nom',e:'Votre email'},ca:{n:'El teu nom',e:'El teu correu'}};
-  var p=ph[lang]||ph.es;
-  if(nameEl)nameEl.placeholder=p.n;
-  if(emailEl)emailEl.placeholder=p.e;
+  el.innerHTML=T[lang]||T.es;
+  var N=document.getElementById('qname'),E=document.getElementById('qemail');
+  var PH={es:{n:'Tu nombre',e:'Tu correo electrónico'},en:{n:'Your name',e:'Your email'},fr:{n:'Votre nom',e:'Votre email'},ca:{n:'El teu nom',e:'El teu correu'}};
+  var ph=PH[lang]||PH.es;
+  if(N)N.placeholder=ph.n;
+  if(E)E.placeholder=ph.e;
 }
 
 function qsub(){
-  var nameEl=document.getElementById('qname');
-  var emailEl=document.getElementById('qemail');
-  var name=nameEl?nameEl.value.trim():'';
-  var email=emailEl?emailEl.value.trim():'';
-  if(!name||!email){
-    if(nameEl&&!name){nameEl.style.borderColor='rgba(196,146,42,.7)';}
-    if(emailEl&&!email){emailEl.style.borderColor='rgba(196,146,42,.7)';}
-    return;
-  }
+  var N=document.getElementById('qname'),E=document.getElementById('qemail');
+  var name=N?N.value.trim():'',email=E?E.value.trim():'';
+  if(!name){if(N){N.style.borderColor='rgba(196,146,42,.9)';N.focus();}return;}
+  if(!email){if(E){E.style.borderColor='rgba(196,146,42,.9)';E.focus();}return;}
   var lang=document.documentElement.lang||'es';
-  var subj={es:'Consulta fotografía — '+name,en:'Photography enquiry — '+name,fr:'Demande photo — '+name,ca:'Consulta fotografia — '+name};
+  var S={es:'Consulta fotografía — '+name,en:'Photography enquiry — '+name,fr:'Demande photo — '+name,ca:'Consulta fotografia — '+name};
   var body=name+' <'+email+'>\n\nProyecto: '+qa.a1+'\nUso: '+qa.a2+'\nTiming: '+qa.a3;
-  window.location.href='mailto:marinaphotg@gmail.com?subject='+encodeURIComponent(subj[lang]||subj.es)+'&body='+encodeURIComponent(body);
-  var frow=document.getElementById('qfrow');
-  var ty=document.getElementById('qty');
-  if(frow)frow.style.display='none';
+  window.location.href='mailto:marinaphotg@gmail.com?subject='+encodeURIComponent(S[lang]||S.es)+'&body='+encodeURIComponent(body);
+  var fr=document.getElementById('qfrow'),ty=document.getElementById('qty');
+  if(fr)fr.style.display='none';
   if(ty){ty.textContent=ty.dataset[lang]||ty.dataset.es;ty.style.display='block';}
 }
 
@@ -918,29 +1193,48 @@ function pflt(cat,btn){
   document.querySelectorAll('.pftab').forEach(function(t){t.classList.remove('on');});
   if(btn)btn.classList.add('on');
   document.querySelectorAll('.pgi').forEach(function(it){
-    var show=cat==='all'||it.dataset.cat===cat;
+    var cats=(it.dataset.cat||'').split(' ');
+    var show=cat==='all'||cats.indexOf(cat)>-1;
     it.style.opacity=show?'1':'0.1';
-    it.style.transform=show?'':'scale(.95)';
-    it.style.transition='all .45s ease';
+    it.style.transform=show?'':'scale(.97)';
+    it.style.pointerEvents=show?'':'none';
+    it.style.transition='all .4s ease';
   });
 }
 
-/* ── LIGHTBOX with VIDEO support ── */
+/* ── LIGHTBOX ── */
 var lbData=[],lbIdx=0,lbTX=0,lbDrag=false;
-document.querySelectorAll('.pgi').forEach(function(el,i){
-  var imgEl=el.querySelector('img');
-  var vidEl=el.querySelector('.pgi-vid');
-  if(!imgEl&&!vidEl)return;
-  var src=imgEl?imgEl.src:(vidEl&&vidEl.getAttribute('poster')?vidEl.getAttribute('poster'):'');
-  var isVideo=el.classList.contains('pgi-video');
-  var videoSrc=el.dataset.videoSrc||'';
-  var youtubeId=el.dataset.youtube||'';
-  lbData.push({img:src,isVideo:isVideo,videoSrc:videoSrc,youtubeId:youtubeId});
-  el.addEventListener('click',function(){lbOpen(i);});
-});}
-  else if(vid){lbData.push({img:vid.poster||'',isVideo:true,videoSrc:vid.src});}
-  el.addEventListener('click',function(){lbOpen(i);});
+(function(){
+  document.querySelectorAll('.pgi').forEach(function(el,i){
+    var imgEl=el.querySelector('img');
+    var vidEl=el.querySelector('.pgi-vid');
+    if(!imgEl&&!vidEl)return;
+    var src=imgEl?imgEl.src:(vidEl&&vidEl.poster?vidEl.poster:'');
+    lbData.push({
+      img:src,
+      isVideo:el.classList.contains('pgi-video'),
+      videoSrc:el.dataset.videoSrc||'',
+      youtubeId:el.dataset.youtube||''
+    });
+    el.addEventListener('click',function(){lbOpen(i);});
+  });
+  var lbEl=document.getElementById('lb');
+  if(!lbEl)return;
+  lbEl.addEventListener('touchstart',function(e){lbTX=e.touches[0].clientX;lbDrag=true;},{passive:true});
+  lbEl.addEventListener('touchend',function(e){
+    if(!lbDrag)return;lbDrag=false;
+    if(Math.abs(e.changedTouches[0].clientX-lbTX)>50)lbNav(e.changedTouches[0].clientX<lbTX?1:-1);
+  },{passive:true});
+  lbEl.addEventListener('click',function(e){if(e.target===lbEl)lbClose();});
+})();
+document.addEventListener('keydown',function(e){
+  var lb=document.getElementById('lb');
+  if(!lb||!lb.classList.contains('open'))return;
+  if(e.key==='Escape')lbClose();
+  if(e.key==='ArrowRight')lbNav(1);
+  if(e.key==='ArrowLeft')lbNav(-1);
 });
+
 function lbOpen(i){
   if(!lbData.length)return;
   lbIdx=i;
@@ -964,61 +1258,275 @@ function lbClose(){
     if(yt)yt.remove();
   },320);
 }
-
 function lbShow(){
-  var item=lbData[lbIdx];
-  if(!item)return;
+  var item=lbData[lbIdx];if(!item)return;
   var img=document.getElementById('lb-media');
   var vwrap=document.getElementById('lb-video-wrap');
-  var lbVid=vwrap?vwrap.querySelector('video'):null;
   var ctr=document.getElementById('lb-counter');
-  // Kill any existing YouTube iframe
-  var ytOld=document.getElementById('lb-yt');
-  if(ytOld)ytOld.remove();
-  if(vwrap)vwrap.style.display='none';
-  if(lbVid){lbVid.pause();lbVid.src='';}
+  var yt=document.getElementById('lb-yt');
+  if(yt)yt.remove();
+  if(vwrap){var v=vwrap.querySelector('video');if(v){v.pause();v.src='';}vwrap.style.display='none';}
   if(img)img.style.display='none';
   if(item.youtubeId){
-    // YouTube embed
-    var yt=document.createElement('iframe');
-    yt.id='lb-yt';
-    yt.src='https://www.youtube.com/embed/'+item.youtubeId+'?autoplay=1&rel=0&modestbranding=1';
-    yt.allow='autoplay;fullscreen';
-    yt.style.cssText='width:min(90vw,1120px);height:min(80svh,630px);border:none;border-radius:2px;display:block';
+    var iframe=document.createElement('iframe');
+    iframe.id='lb-yt';
+    iframe.src='https://www.youtube.com/embed/'+item.youtubeId+'?autoplay=1&rel=0&modestbranding=1';
+    iframe.allow='autoplay;fullscreen';
+    iframe.style.cssText='width:min(90vw,1120px);height:min(80svh,630px);border:none;border-radius:2px;display:block';
     var lb=document.getElementById('lb');
-    var lbClose=document.getElementById('lb-close');
-    lb.insertBefore(yt,lbClose);
-  }else if(item.videoSrc){
-    if(vwrap)vwrap.style.display='block';
-    if(lbVid){lbVid.src=item.videoSrc;lbVid.play().catch(function(){});}
-  }else{
-    if(img){img.style.display='block';img.style.opacity='0';img.src=item.img;img.onload=function(){img.style.opacity='1';};}
+    var lbc=document.getElementById('lb-close');
+    if(lb&&lbc)lb.insertBefore(iframe,lbc);
+  } else if(item.videoSrc&&vwrap){
+    vwrap.style.display='flex';
+    var vid2=vwrap.querySelector('video');
+    if(vid2){vid2.src=item.videoSrc;vid2.play().catch(function(){});}
+  } else if(img){
+    img.style.display='block';img.style.opacity='0';
+    img.src=item.img;
+    img.onload=function(){img.style.transition='opacity .25s ease';img.style.opacity='1';};
   }
   if(ctr)ctr.textContent=(lbIdx+1)+' / '+lbData.length;
 }
-
-function lbNav(d){if(!lbData.length)return;lbIdx=(lbIdx+d+lbData.length)%lbData.length;lbShow();}
-var lbEl=document.getElementById('lb');
-if(lbEl){
-  lbEl.addEventListener('touchstart',function(e){lbTX=e.touches[0].clientX;lbDrag=true;},{passive:true});
-  lbEl.addEventListener('touchend',function(e){if(!lbDrag)return;lbDrag=false;var dx=e.changedTouches[0].clientX-lbTX;if(Math.abs(dx)>50)lbNav(dx<0?1:-1);},{passive:true});
-  lbEl.addEventListener('click',function(e){if(e.target===lbEl)lbClose();});
+function lbNav(d){
+  if(!lbData.length)return;
+  lbIdx=(lbIdx+d+lbData.length)%lbData.length;
+  lbShow();
 }
-document.addEventListener('keydown',function(e){var lb=document.getElementById('lb');if(lb&&lb.classList.contains('open')){if(e.key==='Escape')lbClose();if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1);}});
 
 /* ── LANGUAGE SWITCHER ── */
 var lang='es';
 function setLang(l){
-  lang=l;document.documentElement.lang=l;
-  ['es','en','fr','ca'].forEach(function(k){var btn=document.getElementById('b'+k.toUpperCase());if(btn)btn.classList.toggle('on',k===l);});
-  document.querySelectorAll('.lt').forEach(function(el){
-    var v=el.dataset[l];if(v===undefined)return;
-    el.style.opacity='0';el.style.transform='translateY(4px)';
-    setTimeout(function(){el.innerHTML=v;el.style.opacity='1';el.style.transform='translateY(0)';},180);
+  lang=l;
+  document.documentElement.lang=l;
+  ['ES','EN','FR','CA'].forEach(function(k){
+    var btn=document.getElementById('b'+k);
+    if(btn)btn.classList.toggle('on',k===l.toUpperCase());
   });
-  var t={es:'MarinaPhoto — Fotografía que se siente real',en:'MarinaPhoto — Photography that feels real',fr:'MarinaPhoto — Photographie qui se ressent vraiment',ca:'MarinaPhoto — Fotografia que se sent real'};
-  document.title=t[l]||t.es;
+  document.querySelectorAll('.lt').forEach(function(el){
+    var v=el.dataset[l];
+    if(v===undefined)return;
+    el.style.transition='opacity .18s ease';
+    el.style.opacity='0';
+    setTimeout(function(){el.innerHTML=v;el.style.opacity='1';},190);
+  });
+  // Update input placeholders
+  document.querySelectorAll('[data-ph-'+l+']').forEach(function(inp){
+    inp.placeholder=inp.getAttribute('data-ph-'+l)||inp.placeholder;
+  });
+  var T={es:'MarinaPhoto — Fotografía que se siente real',en:'MarinaPhoto — Photography that feels real',fr:'MarinaPhoto — Photographie qui se ressent vraiment',ca:'MarinaPhoto — Fotografia que se sent real'};
+  document.title=T[l]||T.es;
 }
 
 /* ── SMOOTH SCROLL ── */
-document.querySelectorAll('a[href^="#"]').forEach(function(a
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var id=a.getAttribute('href').slice(1);
+    if(!id)return;
+    var target=document.getElementById(id);
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+
+
+/* ═══════════════════════════════════════════
+   CMS — localStorage-based content manager
+   Access: #admin or ?admin=1  |  Password: admin
+   ═══════════════════════════════════════════ */
+var CMS_KEY = 'marinaphoto_cms_v2';
+var CMS_PASS = 'admin';
+
+// ── Apply saved content on load ──
+(function cmsApply(){
+  var raw = localStorage.getItem(CMS_KEY);
+  if(!raw) return;
+  var d;
+  try { d = JSON.parse(raw); } catch(e){ return; }
+
+  // Site title
+  if(d['site-title']) document.title = d['site-title'];
+
+  // Email links
+  if(d['email']){
+    document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){
+      a.href = 'mailto:' + d['email'];
+    });
+    document.querySelectorAll('.ft-email').forEach(function(el){
+      el.textContent = d['email'];
+    });
+  }
+
+  // Instagram
+  if(d['instagram']){
+    document.querySelectorAll('a[href*="instagram.com"]').forEach(function(a){
+      a.href = 'https://instagram.com/' + d['instagram'].replace('@','');
+    });
+  }
+
+  // Hero images
+  ['1','2','3','4'].forEach(function(n){
+    var url = d['hero-img-'+n];
+    if(!url) return;
+    var slide = document.querySelector('#hero .hsl:nth-child('+n+')');
+    if(slide) slide.style.backgroundImage = "url('"+url+"')";
+  });
+
+  // Hero texts (ES)
+  var heroEyeEs = d['hero-eye-es'];
+  if(heroEyeEs){
+    var eb = document.querySelector('.heb');
+    if(eb) eb.setAttribute('data-es', heroEyeEs);
+  }
+
+  // Service images
+  ['1','2','3'].forEach(function(n){
+    var url = d['svc'+n+'-img'];
+    if(!url) return;
+    var bg = document.querySelector('#sp-'+(n==='1'?'lugares':n==='2'?'artesanos':'memorias')+' .sp-bg');
+    if(bg) bg.style.backgroundImage = "url('"+url+"')";
+  });
+
+  // About texts
+  ['es','en','fr','ca'].forEach(function(l){
+    var p1 = d['about-p1-'+l], p2 = d['about-p2-'+l];
+    document.querySelectorAll('.about-p1').forEach(function(el){
+      if(p1) el.setAttribute('data-'+l, p1);
+    });
+    document.querySelectorAll('.about-p2').forEach(function(el){
+      if(p2) el.setAttribute('data-'+l, p2);
+    });
+  });
+
+  // Apply current language
+  var currentLang = document.documentElement.lang || 'es';
+  setLang(currentLang);
+})();
+
+// ── Load fields into CMS form ──
+function cmsLoadFields(){
+  var raw = localStorage.getItem(CMS_KEY);
+  var d = raw ? JSON.parse(raw) : {};
+  var fields = ['site-title','meta-desc','email','instagram','phone',
+    'hero-eye-es','hero-t1-es','hero-t2-es','hero-sub-es','hero-t1-en','hero-t2-en',
+    'hero-img-1','hero-img-2','hero-img-3','hero-img-4',
+    'svc1-img','svc1-desc-es','svc1-desc-en',
+    'svc2-img','svc2-desc-es','svc2-desc-en',
+    'svc3-img','svc3-desc-es','svc3-desc-en',
+    'about-p1-es','about-p2-es','about-p1-en','about-p2-en',
+    'footer-text-es','address','copyright'];
+  fields.forEach(function(k){
+    var el = document.getElementById('c-'+k);
+    if(el && d[k]) el.value = d[k];
+  });
+  // Portfolio items
+  cmsRenderPortfolio(d.portfolio||[]);
+}
+
+// ── Auth ──
+function cmsAuth(){
+  var pwd = document.getElementById('cms-pwd').value;
+  if(pwd === CMS_PASS){
+    document.getElementById('cms-login').classList.remove('open');
+    document.getElementById('cms-overlay').classList.add('open');
+    cmsLoadFields();
+  } else {
+    var err = document.getElementById('cms-err');
+    err.style.display = 'block';
+    setTimeout(function(){ err.style.display='none'; }, 2000);
+  }
+}
+document.getElementById('cms-pwd').addEventListener('keydown', function(e){
+  if(e.key==='Enter') cmsAuth();
+});
+
+function cmsOpen(){
+  document.getElementById('cms-login').classList.add('open');
+  document.getElementById('cms-pwd').value = '';
+}
+function cmsClose(){
+  document.getElementById('cms-overlay').classList.remove('open');
+  document.getElementById('cms-login').classList.remove('open');
+}
+
+// ── Tabs ──
+function cmsTab(btn, panelId){
+  document.querySelectorAll('.cms-tab').forEach(function(t){ t.classList.remove('on'); });
+  document.querySelectorAll('.cms-panel').forEach(function(p){ p.classList.remove('on'); });
+  btn.classList.add('on');
+  var panel = document.getElementById(panelId);
+  if(panel) panel.classList.add('on');
+}
+
+// ── Portfolio items ──
+function cmsRenderPortfolio(items){
+  var wrap = document.getElementById('cms-portfolio-items');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  (items||[]).forEach(function(item, i){
+    var row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:10px;align-items:start';
+    row.innerHTML =
+      '<input class="cms-input" placeholder="URL imagen o video" value="'+(item.src||'')+'" data-pi="'+i+'" data-pf="src">'+
+      '<input class="cms-input" placeholder="Categoría" value="'+(item.cat||'')+'" data-pi="'+i+'" data-pf="cat" style="font-size:11px">'+
+      '<input class="cms-input" placeholder="Etiqueta ES" value="'+(item.label||'')+'" data-pi="'+i+'" data-pf="label" style="font-size:11px">'+
+      '<button onclick="cmsRemovePortfolioItem('+i+')" style="background:rgba(200,50,50,.2);border:1px solid rgba(200,50,50,.3);color:rgba(255,100,100,.7);padding:10px 12px;border-radius:2px;cursor:pointer;font-size:12px">✕</button>';
+    wrap.appendChild(row);
+  });
+}
+function cmsAddPortfolioItem(){
+  var raw = localStorage.getItem(CMS_KEY);
+  var d = raw ? JSON.parse(raw) : {};
+  d.portfolio = d.portfolio || [];
+  d.portfolio.push({src:'',cat:'lugares',label:''});
+  localStorage.setItem(CMS_KEY, JSON.stringify(d));
+  cmsRenderPortfolio(d.portfolio);
+}
+function cmsRemovePortfolioItem(i){
+  var raw = localStorage.getItem(CMS_KEY);
+  var d = raw ? JSON.parse(raw) : {};
+  if(d.portfolio) d.portfolio.splice(i,1);
+  localStorage.setItem(CMS_KEY, JSON.stringify(d));
+  cmsRenderPortfolio(d.portfolio);
+}
+
+// ── Save ──
+function cmsSave(){
+  var raw = localStorage.getItem(CMS_KEY);
+  var d = raw ? JSON.parse(raw) : {};
+  var fields = ['site-title','meta-desc','email','instagram','phone',
+    'hero-eye-es','hero-t1-es','hero-t2-es','hero-sub-es','hero-t1-en','hero-t2-en',
+    'hero-img-1','hero-img-2','hero-img-3','hero-img-4',
+    'svc1-img','svc1-desc-es','svc1-desc-en',
+    'svc2-img','svc2-desc-es','svc2-desc-en',
+    'svc3-img','svc3-desc-es','svc3-desc-en',
+    'about-p1-es','about-p2-es','about-p1-en','about-p2-en',
+    'footer-text-es','address','copyright'];
+  fields.forEach(function(k){
+    var el = document.getElementById('c-'+k);
+    if(el && el.value.trim()) d[k] = el.value.trim();
+  });
+  // Collect portfolio items from DOM
+  var items = [];
+  document.querySelectorAll('[data-pi]').forEach(function(inp){
+    var i = parseInt(inp.dataset.pi);
+    var f = inp.dataset.pf;
+    if(!items[i]) items[i] = {};
+    items[i][f] = inp.value.trim();
+  });
+  if(items.length) d.portfolio = items;
+  localStorage.setItem(CMS_KEY, JSON.stringify(d));
+  var msg = document.getElementById('cms-saved-msg');
+  if(msg){ msg.classList.add('show'); setTimeout(function(){ msg.classList.remove('show'); }, 2500); }
+  // Apply immediately
+  location.reload();
+}
+
+// ── Open via URL ──
+(function(){
+  if(location.hash==='#admin'||location.search.indexOf('admin')>-1){
+    setTimeout(cmsOpen, 600);
+  }
+})();
+
+</script>
+</body>
+</html>
