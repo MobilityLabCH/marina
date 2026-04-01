@@ -3,8 +3,17 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#1C1208"><meta name="description" content="Fotografía profesional en Sitges y Barcelona. Hoteles, restaurantes, marcas y momentos que se sienten reales.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1C1208">
+<meta name="description" content="MarinaPhoto — Fotografía profesional en Sitges y Barcelona. Hoteles, restaurantes, marcas y momentos que se sienten reales.">
+<meta property="og:title" content="MarinaPhoto — Fotografía que se siente real">
+<meta property="og:description" content="Fotografía profesional en Sitges y Barcelona. Imágenes auténticas para marcas, lugares y momentos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://marina-beb.pages.dev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Marina Pérez — MarinaPhoto">
 <title>MarinaPhoto — Fotografía que se siente real</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 60'><circle cx='40' cy='9' r='8' fill='%23C4922A'/><path d='M4 54 L22 20 L40 34 L58 20 L76 54' stroke='%23C4922A' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -16,7 +25,7 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--espresso);overflow-x:hidden;cursor:none}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--espresso);overflow-x:hidden}
 
 /* GRAIN */
 body::after{content:’’;position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.025;
@@ -25,6 +34,7 @@ background-size:160px;animation:grain .12s steps(1) infinite}
 @keyframes grain{0%{background-position:0 0}25%{background-position:-42px 18px}50%{background-position:18px -28px}75%{background-position:-8px 38px}100%{background-position:28px -12px}}
 
 /* CURSOR */
+@media(hover:hover) and (pointer:fine){body{cursor:none}}
 @media(hover:none),(pointer:coarse){#loupe,#ldot{display:none!important;opacity:0!important;pointer-events:none!important}}
 #loupe{position:fixed;pointer-events:none;z-index:8999;transform:translate(-50%,-50%)}
 .lr{position:absolute;transform:translate(-50%,-50%);border-radius:50%;top:0;left:0;transition:width .35s cubic-bezier(.34,1.56,.64,1),height .35s cubic-bezier(.34,1.56,.64,1)}
@@ -33,27 +43,27 @@ background-size:160px;animation:grain .12s steps(1) infinite}
 #ldot{position:fixed;pointer-events:none;z-index:9001;transform:translate(-50%,-50%);width:5px;height:5px;background:var(–gold-lt);border-radius:50%;transition:transform .08s ease}
 
 /* LOADER */
-#loader{position:fixed;inset:0;z-index:10000;background:var(–espresso);display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden}
-#loader.out{animation:ldrOut .9s cubic-bezier(.76,0,.24,1) .05s forwards}
-@keyframes ldrOut{0%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 100% 0)}}
+#loader{position:fixed;inset:0;z-index:10000;background:var(–espresso);display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;transition:opacity .65s ease}
+#loader.out{opacity:0!important;pointer-events:none!important}
+/* ldrOut replaced with opacity fade */
 .blades{position:absolute;inset:0;display:grid;grid-template-columns:repeat(9,1fr);pointer-events:none}
-.blade{background:var(–espresso);animation:bopen .65s cubic-bezier(.76,0,.24,1) forwards}
-.blade:nth-child(odd){transform-origin:bottom center}
+.blade{background:var(–espresso);transform-origin:top center;animation:bopen .65s cubic-bezier(.76,0,.24,1) forwards}
+.blade:nth-child(even){transform-origin:bottom center}
 @keyframes bopen{0%{transform:scaleY(1)}100%{transform:scaleY(0)}}
 .lc{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px;opacity:0;animation:fdup .6s ease .2s forwards}
 @keyframes fdup{to{opacity:1;transform:translateY(0)}}
 .lwm{font-family:‘Cormorant Garamond’,serif;font-size:22px;font-weight:300;letter-spacing:.38em;color:var(–cream);text-transform:uppercase}
 .lbar{width:80px;height:1px;background:rgba(255,255,255,.1);overflow:hidden}
-.lfill{height:100%;width:0;background:var(–gold-lt);animation:lfill 1.8s cubic-bezier(.4,0,.2,1) .7s forwards}
+.lfill{height:100%;width:0;background:var(–gold-lt);animation:lfill 1.4s cubic-bezier(.4,0,.2,1) .5s forwards}
 @keyframes lfill{to{width:100%}}
 .lmono{font-family:‘DM Mono’,monospace;font-size:9px;letter-spacing:.22em;color:rgba(255,255,255,.28)}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:26px 48px;display:flex;align-items:center;justify-content:space-between;transition:padding .5s,background .5s}
 nav.solid{padding:15px 48px;background:rgba(239,232,220,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(196,146,42,.12)}
-.nlogo{display:flex;align-items:center;gap:12px;text-decoration:none}
-.nwm{font-family:‘Cormorant Garamond’,serif;font-size:17px;letter-spacing:.3em;text-transform:uppercase;font-weight:400;color:white;transition:color .4s}
-nav.solid .nwm{color:var(–brown)}
+.nlogo{display:flex;align-items:center;gap:12px;text-decoration:none;color:white}
+.nwm{font-family:‘Cormorant Garamond’,serif;font-size:14px;letter-spacing:.22em;text-transform:uppercase;font-weight:400;color:white;transition:color .4s}
+nav.solid .nwm{color:var(–brown)}nav.solid .nlogo{color:var(–brown)}
 .nlinks{display:flex;align-items:center;gap:38px;list-style:none}
 .nlinks a{font-family:‘Outfit’,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,.8);position:relative;transition:color .3s}
 nav.solid .nlinks a{color:var(–brown-mid)}
@@ -67,11 +77,12 @@ nav.solid .lbtn{color:rgba(58,41,16,.4)}
 .lbtn.on{background:var(–gold);color:white!important}
 
 /* HERO */
-#hero{position:relative;height:100vh;overflow:hidden;background:var(–espresso)}
-.hsl{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;opacity:0;transform:scale(1.07);will-change:opacity,transform;transition:opacity 1.6s cubic-bezier(.4,0,.2,1),transform 9s ease}
+#hero{position:relative;height:100vh;overflow:hidden;background:var(–espresso);min-height:100svh}
+#hero::before{content:’’;position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(14,7,2,.7) 0%,rgba(14,7,2,.2) 40%,transparent 70%);pointer-events:none}
+.hsl{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;background-color:var(–espresso);opacity:0;transform:scale(1.07);will-change:opacity,transform;transition:opacity 1.6s cubic-bezier(.4,0,.2,1),transform 9s ease}
 .hsl.on{opacity:1;transform:scale(1)}
 .hov{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(to right,rgba(14,7,2,.58) 0%,transparent 62%),linear-gradient(to top,rgba(14,7,2,.48) 0%,transparent 55%)}
-.hct{position:absolute;z-index:4;pointer-events:none;bottom:13vh;left:8vw;max-width:700px}
+.hct{position:absolute;z-index:5;pointer-events:none;bottom:13vh;left:8vw;max-width:700px}
 .heb{font-family:‘DM Mono’,monospace;font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(–gold-lt);margin-bottom:18px;display:flex;align-items:center;gap:14px;opacity:0;animation:su .9s ease 2.8s forwards}
 .heb::before{content:’’;width:22px;height:1px;background:var(–gold-lt);flex-shrink:0}
 .htitle{font-family:‘Cormorant Garamond’,serif;font-size:clamp(3.4rem,6.5vw,6.2rem);font-weight:300;line-height:1.06;color:white;letter-spacing:-.015em;opacity:0;animation:su 1.1s ease 3s forwards}
@@ -80,17 +91,17 @@ nav.solid .lbtn{color:rgba(58,41,16,.4)}
 .hcta{pointer-events:all;display:inline-flex;align-items:center;gap:12px;margin-top:44px;padding:14px 32px 14px 0;font-family:‘Outfit’,sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:white;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);opacity:0;animation:su .9s ease 3.5s forwards;transition:color .3s,border-color .3s,gap .3s}
 .hcta:hover{color:var(–gold-lt);border-color:var(–gold-lt);gap:20px}
 @keyframes su{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-.hdots{position:absolute;left:26px;top:50%;transform:translateY(-50%);z-index:4;display:flex;flex-direction:column;gap:8px}
+.hdots{position:absolute;left:26px;top:50%;transform:translateY(-50%);z-index:5;display:flex;flex-direction:column;gap:8px}
 .hdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.28);cursor:pointer;transition:all .4s}
 .hdot.on{background:var(–gold-lt);transform:scale(1.4)}
-.hctr{position:absolute;right:48px;bottom:44px;z-index:4;font-family:‘DM Mono’,monospace;font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.1em;opacity:0;animation:su .8s ease 3.8s forwards}
-.hpbar{position:absolute;bottom:0;left:0;right:0;height:2px;z-index:4;background:rgba(255,255,255,.07)}
+.hctr{position:absolute;right:48px;bottom:44px;z-index:5;font-family:‘DM Mono’,monospace;font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.1em;opacity:0;animation:su .8s ease 3.8s forwards}
+.hpbar{position:absolute;bottom:0;left:0;right:0;height:2px;z-index:5;background:rgba(255,255,255,.07)}
 .hpfill{height:100%;background:var(–gold);width:0;animation:hprog 5.5s linear infinite}
 @keyframes hprog{from{width:0}to{width:100%}}
 
 /* SPOTLIGHT */
-#spot{position:absolute;width:210px;height:210px;border-radius:50%;pointer-events:none;z-index:5;transform:translate(-50%,-50%);border:1.5px solid rgba(255,255,255,.22);overflow:hidden;opacity:0;transition:opacity .5s ease;box-shadow:inset 0 0 30px rgba(255,255,255,.06)}
-#hero:hover #spot{opacity:1}
+#spot{display:none;position:absolute;width:210px;height:210px;border-radius:50%;pointer-events:none;z-index:5;transform:translate(-50%,-50%);border:1.5px solid rgba(255,255,255,.22);overflow:hidden;opacity:0;transition:opacity .5s ease;box-shadow:inset 0 0 30px rgba(255,255,255,.06)}
+@media(hover:hover) and (pointer:fine){#spot{display:block}#hero:hover #spot{opacity:1}}
 .simg{position:absolute;inset:-28px;background-size:cover;background-position:center;transform:scale(1.15);filter:brightness(1.35) saturate(1.2) contrast(1.05)}
 
 /* QUOTE */
@@ -134,7 +145,7 @@ nav.solid .lbtn{color:rgba(58,41,16,.4)}
 .svc:hover .svchev{opacity:1;transform:translateY(0)}
 
 /* QUESTIONNAIRE */
-.qsection{min-height:100vh;background-size:cover;background-position:center;background-attachment:scroll;background-color:#1a1208;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.qsection{min-height:100vh;background-size:cover;background-position:center;background-color:#1a1208;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .qsection::before{content:’’;position:absolute;inset:0;background:linear-gradient(150deg,rgba(14,7,2,.82) 0%,rgba(14,7,2,.72) 100%);z-index:1}
 .qsection::after{content:’’;position:absolute;inset:0;background:var(–espresso);z-index:0;opacity:.4}
 .qbox{position:relative;z-index:3;width:100%;max-width:680px;padding:80px 48px;text-align:center}
@@ -168,7 +179,7 @@ nav.solid .lbtn{color:rgba(58,41,16,.4)}
 /* ABOUT */
 .about{display:grid;grid-template-columns:1fr 1fr;min-height:min(100vh,900px)}
 .aimg{position:relative;overflow:hidden;min-height:400px}
-.aimg img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform 10s ease}
+.aimg img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;transition:transform 10s ease}
 .about:hover .aimg img{transform:scale(1.04)}
 .atxt{background:var(–paper);display:flex;align-items:center;padding:80px 7vw}
 .ain{max-width:460px}
@@ -230,8 +241,9 @@ footer{background:var(–espresso);padding:72px 6vw 40px}
 /* RESPONSIVE */
 @media(max-width:1024px){.ftg{grid-template-columns:1fr 1fr;gap:40px}.svdsc{display:none}}
 @media(max-width:768px){
-nav{padding:18px 24px}nav.solid{padding:12px 24px}
+nav{padding:14px 16px}nav.solid{padding:12px 16px}
 .nlinks{display:none}
+.nwm{font-size:11px;letter-spacing:.14em}/* mobile nav hidden */
 .hct{left:6vw;bottom:10vh}
 .about{grid-template-columns:1fr}.aimg{height:65vw}.atxt{padding:60px 6vw}
 .pgrid{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}
@@ -245,8 +257,51 @@ nav{padding:18px 24px}nav.solid{padding:12px 24px}
 .pgrid .pgi:nth-child(1),.pgrid .pgi:nth-child(4){grid-row:auto!important;grid-column:auto!important}
 .hctr{display:none}.qform{flex-direction:column}
 }
-</style>
 
+/* ═══════════ CMS ADMIN ═══════════ */
+#cms-overlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(28,18,8,.97);backdrop-filter:blur(8px);overflow-y:auto;padding:0}
+#cms-overlay.open{display:flex;flex-direction:column}
+.cms-header{padding:24px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(196,146,42,.2);flex-shrink:0}
+.cms-logo{font-family:‘Cormorant Garamond’,serif;font-size:20px;letter-spacing:.3em;color:#DDB96A;text-transform:uppercase}
+.cms-close{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);padding:8px 18px;font-family:‘DM Mono’,monospace;font-size:10px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .3s}
+.cms-close:hover{border-color:#C4922A;color:#C4922A}
+.cms-body{flex:1;padding:40px;max-width:900px;margin:0 auto;width:100%}
+.cms-section{margin-bottom:48px}
+.cms-section-title{font-family:‘DM Mono’,monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;color:#C4922A;margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid rgba(196,146,42,.2)}
+.cms-field{margin-bottom:20px}
+.cms-label{font-family:‘DM Mono’,monospace;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.45);text-transform:uppercase;display:block;margin-bottom:8px}
+.cms-input,.cms-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:2px;color:rgba(255,255,255,.85);font-family:‘Outfit’,sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border-color .3s}
+.cms-input:focus,.cms-textarea:focus{border-color:#C4922A}
+.cms-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.cms-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cms-actions{display:flex;gap:12px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.cms-btn{padding:12px 28px;font-family:‘Outfit’,sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;border:none;border-radius:2px;cursor:pointer;transition:all .3s}
+.cms-btn-save{background:#C4922A;color:white}
+.cms-btn-save:hover{background:#DDB96A}
+.cms-btn-reset{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6)}
+.cms-btn-reset:hover{border-color:rgba(255,255,255,.5);color:white}
+.cms-saved{display:none;font-family:‘DM Mono’,monospace;font-size:10px;letter-spacing:.2em;color:#DDB96A;align-self:center}
+.cms-saved.show{display:block}
+/* Login */
+#cms-login{position:fixed;inset:0;z-index:100000;background:rgba(28,18,8,.98);display:none;align-items:center;justify-content:center}
+#cms-login.open{display:flex}
+.cms-login-box{text-align:center;width:320px}
+.cms-login-title{font-family:‘Cormorant Garamond’,serif;font-size:2rem;font-weight:300;color:white;margin-bottom:8px}
+.cms-login-sub{font-family:‘DM Mono’,monospace;font-size:9px;letter-spacing:.25em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:36px}
+.cms-login-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:white;font-family:‘Outfit’,sans-serif;font-size:14px;padding:13px 18px;outline:none;border-radius:2px;margin-bottom:12px;text-align:center;transition:border-color .3s;letter-spacing:.15em}
+.cms-login-input:focus{border-color:#C4922A}
+.cms-login-btn{width:100%;padding:13px;background:#C4922A;color:white;border:none;font-family:‘Outfit’,sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .3s}
+.cms-login-btn:hover{background:#DDB96A}
+.cms-login-err{font-family:‘DM Mono’,monospace;font-size:9px;color:#e05050;letter-spacing:.15em;margin-top:10px;display:none}
+.cms-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08)}
+.cms-tab{padding:10px 20px;font-family:‘DM Mono’,monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;transition:all .3s;border-bottom:2px solid transparent;margin-bottom:-1px}
+.cms-tab.on{color:#DDB96A;border-bottom-color:#DDB96A}
+.cms-tab:hover{color:rgba(255,255,255,.7)}
+.cms-panel{display:none}
+.cms-panel.on{display:block}
+@media(max-width:600px){.cms-row{grid-template-columns:1fr}.cms-body{padding:24px}.cms-header{padding:18px 24px}}
+
+</style>
 </head>
 <body>
 
@@ -260,14 +315,13 @@ nav{padding:18px 24px}nav.solid{padding:12px 24px}
 <div id="loader">
   <div class="blades" id="blades"></div>
   <div class="lc">
-    <svg width="62" height="52" viewBox="0 0 64 54" fill="none">
-      <circle cx="32" cy="13" r="6.5" stroke="#C4922A" stroke-width="1.5"/>
-      <path d="M4 50 C14 32 24 26 32 30 C40 26 50 32 60 50" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M12 50 C20 34 26 28 32 34 C38 28 44 34 52 50" stroke="rgba(196,146,42,.38)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <svg width="62" height="46" viewBox="0 0 80 60" fill="none">
+      <circle cx="40" cy="9" r="9" fill="#DDB96A"/>
+      <path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="#DDB96A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-    <div class="lwm">MarinaPhoto</div>
+    <div class="lwm" style="letter-spacing:.28em;font-size:18px">MarinaPhoto</div>
     <div class="lbar"><div class="lfill"></div></div>
-    <div class="lmono lt" data-es="Fotografía · Barcelona" data-en="Photography · Barcelona">Fotografía · Barcelona</div>
+    <div class="lmono">MarinaPhoto · Sitges</div>
   </div>
 </div>
 
@@ -275,12 +329,11 @@ nav{padding:18px 24px}nav.solid{padding:12px 24px}
 
 <nav id="nav">
   <a href="#" class="nlogo">
-    <svg width="34" height="28" viewBox="0 0 64 54" fill="none">
-      <circle cx="32" cy="13" r="6.5" stroke="currentColor" stroke-width="1.5"/>
-      <path d="M4 50 C14 32 24 26 32 30 C40 26 50 32 60 50" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M12 50 C20 34 26 28 32 34 C38 28 44 34 52 50" stroke="currentColor" stroke-width=".8" stroke-opacity=".4" fill="none" stroke-linecap="round"/>
+    <svg width="34" height="26" viewBox="0 0 80 60" fill="none">
+      <circle cx="40" cy="9" r="8" fill="currentColor"/>
+      <path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-    <span class="nwm">Marina</span>
+    <span class="nwm">MarinaPhoto</span>
   </a>
   <ul class="nlinks">
     <li><a href="#portfolio" class="lt" data-es="Portfolio" data-en="Portfolio">Portfolio</a></li>
@@ -491,7 +544,7 @@ nav{padding:18px 24px}nav.solid{padding:12px 24px}
 <footer id="contact">
   <div class="ftg">
     <div class="ftba">
-      <svg width="46" height="38" viewBox="0 0 64 54" fill="none"><circle cx="32" cy="13" r="6.5" stroke="#C4922A" stroke-width="1.5"/><path d="M4 50 C14 32 24 26 32 30 C40 26 50 32 60 50" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M12 50 C20 34 26 28 32 34 C38 28 44 34 52 50" stroke="rgba(196,146,42,.35)" stroke-width="1" fill="none" stroke-linecap="round"/></svg>
+      <svg width="46" height="34" viewBox="0 0 80 60" fill="none"><circle cx="40" cy="9" r="8" fill="#C4922A"/><path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="#C4922A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <p class="lt" data-es="Fotografía que se siente real. Basada en Sitges, trabajando por toda el área de Barcelona y el Mediterráneo." data-en="Photography that feels real. Based in Sitges, working throughout the Barcelona area and the Mediterranean." data-fr="Photographie qui se ressent vraiment. Basée à Sitges, travaillant dans toute la région de Barcelone." data-ca="Fotografia que se sent real. Basada a Sitges, treballant per tota l'àrea de Barcelona.">Fotografía que se siente real. Basada en Sitges, trabajando por toda el área de Barcelona y el Mediterráneo.</p>
     </div>
     <div class="ftc">
@@ -513,25 +566,152 @@ nav{padding:18px 24px}nav.solid{padding:12px 24px}
     </div>
     <div class="ftc">
       <h4>Contact</h4>
-      <address>marinaphotg@gmail.com<br>+34 600 000 000<br><br>Sitges, Barcelona<br>España</address>
+      <address><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7914180b1017180911160d1e391e14181015571a1614">[email&#160;protected]</a><br>+34 600 000 000<br><br>Sitges, Barcelona<br>España</address>
     </div>
   </div>
   <div class="ftbot">
     <p class="ftcpy lt" data-es="© 2025 MarinaPhoto. Todos los derechos reservados." data-en="© 2025 MarinaPhoto. All rights reserved." data-fr="© 2025 MarinaPhoto. Tous droits réservés." data-ca="© 2025 MarinaPhoto. Tots els drets reservats.">© 2025 MarinaPhoto. Todos los derechos reservados.</p>
     <div class="ftsocs">
-      <a href="https://instagram.com/marinaphotg" target="_blank" class="ftsoc"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>@marinaphotg</a>
+      <a href="https://instagram.com/marinaphotg" target="_blank" class="ftsoc" id="ig-link"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>@marinaphotg</a>
     </div>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+
+/* ═══════════ CMS ═══════════ */
+const CMS_KEY='marinaphoto_cms';
+const CMS_PASS='admin';
+
+// ── Init: apply saved content on load ──
+function cmsApply(){
+  const data=JSON.parse(localStorage.getItem(CMS_KEY)||'{}');
+  if(!Object.keys(data).length)return;
+  
+  // Apply each field
+  const apply=(sel,val,attr='textContent')=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      if(attr==='innerHTML')el.innerHTML=val;
+      else if(attr==='href')el.href=val;
+      else el.textContent=val;
+    });
+  };
+  
+  if(data.title) document.title=data.title;
+  if(data.metadesc){const m=document.querySelector('meta[name=description]');if(m)m.content=data.metadesc;}
+  if(data.instagram){document.querySelectorAll('.ftsoc').forEach(a=>{if(a.href.includes('instagram')){a.href='https://instagram.com/'+data.instagram.replace('@','');a.querySelector('span, .ig-handle')?.textContent && (a.querySelector('span, .ig-handle').textContent='@'+data.instagram.replace('@',''));}})}
+  if(data.email){document.querySelectorAll('address').forEach(el=>{el.innerHTML=el.innerHTML.replace(/[\w.]+@[\w.]+/g,data.email);})}
+  if(data.phone){document.querySelectorAll('address').forEach(el=>{el.innerHTML=el.innerHTML.replace(/\+34[\s\d]+/g,data.phone);})}
+  
+  // Hero texts
+  if(data['hero-eye-es']){
+    const eb=document.querySelector('.heb');
+    if(eb){const txt=eb.childNodes[eb.childNodes.length-1];if(txt.nodeType===3)txt.textContent=data['hero-eye-es'];}
+  }
+}
+cmsApply();
+
+// ── Load fields from storage ──
+function cmsLoadFields(){
+  const data=JSON.parse(localStorage.getItem(CMS_KEY)||'{}');
+  const fields={
+    'title':'f-title','metadesc':'f-metadesc','instagram':'f-instagram','email':'f-email','phone':'f-phone',
+    'hero-eye-es':'f-hero-eye-es','hero-t1-es':'f-hero-t1-es','hero-t2-es':'f-hero-t2-es','hero-sub-es':'f-hero-sub-es',
+    'hero-t1-en':'f-hero-t1-en','hero-t2-en':'f-hero-t2-en',
+    'about-p1-es':'f-about-p1-es','about-p2-es':'f-about-p2-es','about-sony-es':'f-about-sony-es',
+    'svc1-es':'f-svc1-es','svc2-es':'f-svc2-es','svc3-es':'f-svc3-es',
+    'contact-email':'f-contact-email','form-email':'f-form-email','city':'f-city','country':'f-country'
+  };
+  Object.entries(fields).forEach(([k,id])=>{
+    const el=document.getElementById(id);
+    if(el&&data[k])el.value=data[k];
+  });
+}
+
+// ── Auth ──
+function cmsAuth(){
+  const pwd=document.getElementById('cms-pwd').value;
+  if(pwd===CMS_PASS){
+    document.getElementById('cms-login').classList.remove('open');
+    document.getElementById('cms-overlay').classList.add('open');
+    cmsLoadFields();
+  }else{
+    const err=document.getElementById('cms-err');
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',2500);
+  }
+}
+
+// ── Open CMS ──
+function cmsOpen(){
+  document.getElementById('cms-login').classList.add('open');
+  document.getElementById('cms-pwd').value='';
+  document.getElementById('cms-err').style.display='none';
+}
+function cmsClose(){
+  document.getElementById('cms-overlay').classList.remove('open');
+  document.getElementById('cms-login').classList.remove('open');
+}
+
+// ── Tabs ──
+function cmsTab(id,btn){
+  document.querySelectorAll('.cms-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.cms-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('cms-'+id).classList.add('on');
+}
+
+// ── Save ──
+function cmsSave(){
+  const data={};
+  const fields=['title','metadesc','instagram','email','phone',
+    'hero-eye-es','hero-t1-es','hero-t2-es','hero-sub-es','hero-t1-en','hero-t2-en',
+    'about-p1-es','about-p2-es','about-sony-es','svc1-es','svc2-es','svc3-es',
+    'contact-email','form-email','city','country'];
+  fields.forEach(k=>{
+    const el=document.getElementById('f-'+k);
+    if(el&&el.value.trim())data[k]=el.value.trim();
+  });
+  localStorage.setItem(CMS_KEY,JSON.stringify(data));
+  cmsApply();
+  const s=document.getElementById('cms-saved');
+  s.classList.add('show');
+  setTimeout(()=>s.classList.remove('show'),2500);
+}
+
+// ── Reset ──
+function cmsReset(){
+  if(!confirm('¿Resetear todo el contenido personalizado?'))return;
+  localStorage.removeItem(CMS_KEY);
+  document.querySelectorAll('.cms-input,.cms-textarea').forEach(el=>el.value='');
+}
+
+// ── URL: /admin or ?admin ──
+(()=>{
+  const url=new URL(location.href);
+  if(url.hash==='#admin'||url.searchParams.has('admin')){
+    setTimeout(cmsOpen,500);
+  }
+})();
+
+// ── Enter key in password field ──
+document.getElementById('cms-pwd').addEventListener('keydown',e=>{if(e.key==='Enter')cmsAuth();});
+
+</script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 /* LOADER */
 const bl=document.getElementById(‘blades’);
 for(let i=0;i<9;i++){const d=document.createElement(‘div’);d.className=‘blade’;d.style.animationDelay=(i*.065)+‘s’;bl.appendChild(d);}
-window.addEventListener(‘load’,()=>{setTimeout(()=>{document.getElementById(‘loader’).classList.add(‘out’);setTimeout(()=>document.getElementById(‘loader’).style.display=‘none’,950);},2500);});
+window.addEventListener(‘load’,()=>{setTimeout(()=>{
+const ldr=document.getElementById(‘loader’);
+if(!ldr)return;
+ldr.style.pointerEvents=‘none’;
+ldr.classList.add(‘out’);
+setTimeout(()=>{ldr.style.display=‘none’;ldr.remove();},800);
+},2200);});
 
 /* CURSOR */
+@media(hover:hover) and (pointer:fine){body{cursor:none}}
 @media(hover:none),(pointer:coarse){#loupe,#ldot{display:none!important;opacity:0!important;pointer-events:none!important}}
 let mx=0,my=0;
 const isTouchDevice=(‘ontouchstart’ in window)||navigator.maxTouchPoints>0;
@@ -693,8 +873,4 @@ el.style.transition=‘opacity .2s ease,transform .2s ease’;
 el.style.opacity=‘0’;el.style.transform=‘translateY(6px)’;
 setTimeout(()=>{el.innerHTML=v;el.style.opacity=‘1’;el.style.transform=‘translateY(0)’;},210);
 });
-document.title=l===‘es’?‘MarinaPhoto — Fotografía que se siente real’:l===‘fr’?‘MarinaPhoto — Photographie qui se ressent vraiment’:l===‘ca’?‘MarinaPhoto — Fotografia que se sent real’:‘MarinaPhoto — Photography that feels real’;
-}
-
-/* SMOOTH SCROLL */
-document.querySelectorA
+document.title=l===‘es’?’MarinaPhoto — Fotografía
