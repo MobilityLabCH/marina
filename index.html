@@ -43,8 +43,13 @@ background-size:160px;animation:grain .12s steps(1) infinite}
 #ldot{position:fixed;pointer-events:none;z-index:9001;transform:translate(-50%,-50%);width:5px;height:5px;background:var(–gold-lt);border-radius:50%;transition:transform .08s ease}
 
 /* LOADER */
-#loader{position:fixed;inset:0;z-index:10000;background:var(–espresso);display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;transition:opacity .65s ease}
-#loader.out{opacity:0!important;pointer-events:none!important}
+#loader{position:fixed;inset:0;z-index:10000;background:var(–espresso);display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;
+/* ← CRITICAL: loader never blocks clicks, from the very first ms */
+pointer-events:none!important;
+/* ← CSS-guaranteed fade at 2.2s — works even if JS fails completely */
+animation:loaderKill .6s ease 2.2s both}
+@keyframes loaderKill{0%{opacity:1}100%{opacity:0;visibility:hidden}}
+/* #loader.out: no longer used */
 /* ldrOut replaced with opacity fade */
 .blades{position:absolute;inset:0;display:grid;grid-template-columns:repeat(9,1fr);pointer-events:none}
 .blade{background:var(–espresso);transform-origin:top center;animation:bopen .65s cubic-bezier(.76,0,.24,1) forwards}
@@ -309,26 +314,6 @@ nav{padding:14px 16px}nav.solid{padding:12px 16px}
 .cms-panel.on{display:block}
 @media(max-width:600px){.cms-row{grid-template-columns:1fr}.cms-body{padding:24px}.cms-header{padding:18px 24px}}
 
-/* ─ HERO PARALLAX ON SCROLL ─ */
-(function(){
-const hero=document.getElementById(‘hero’);
-const hct=document.querySelector(’.hct’);
-let ticking=false;
-window.addEventListener(‘scroll’,function(){
-if(ticking)return;
-requestAnimationFrame(function(){
-const s=window.scrollY;
-if(s<window.innerHeight&&hct){
-hct.style.transform=‘translateY(’+s*.25+‘px)’;
-const slides=document.querySelectorAll(’.hsl.on’);
-slides.forEach(sl=>{sl.style.transform=‘scale(1) translateY(’+s*.12+‘px)’;});
-}
-ticking=false;
-});
-ticking=true;
-},{passive:true});
-})();
-
 /* ─ LIGHTBOX ─ */
 #lb{position:fixed;inset:0;z-index:9500;background:rgba(15,8,2,.96);display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .35s ease}
 #lb.open{display:flex;opacity:1}
@@ -347,11 +332,7 @@ ticking=true;
 .pgi{cursor:pointer}
 .pgi::after{content:’’;position:absolute;inset:0;background:transparent;z-index:2}
 
-/* LOADER DEAD STATE — overrides everything */
-#loader.dead,#loader[data-dead]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;position:fixed!important;width:0!important;height:0!important;overflow:hidden!important}
-#loader.dead *,#loader[data-dead] *{animation:none!important;transition:none!important;opacity:0!important;visibility:hidden!important;will-change:auto!important}
 </style>
-
 </head>
 <body>
 
@@ -847,62 +828,11 @@ document.getElementById('cms-pwd').addEventListener('keydown',e=>{if(e.key==='En
 /* LOADER */
 const bl=document.getElementById(‘blades’);
 for(let i=0;i<9;i++){const d=document.createElement(‘div’);d.className=‘blade’;d.style.animationDelay=(i*.065)+‘s’;bl.appendChild(d);}
-(function(){
-var _killed=false;
-function killLoader(){
-if(_killed)return;
-var ldr=document.getElementById(‘loader’);
-if(!ldr){_killed=true;return;}
-_killed=true;
-// Step 1: CSS class (stylesheet !important — reliable on all browsers)
-ldr.classList.add(‘dead’);
-ldr.setAttribute(‘data-dead’,‘1’);
-ldr.setAttribute(‘hidden’,’’);
-// Step 2: Direct property assignment (no cssText, no inline !important)
-ldr.style.display=‘none’;
-ldr.style.visibility=‘hidden’;
-ldr.style.opacity=‘0’;
-ldr.style.pointerEvents=‘none’;
-ldr.style.width=‘0’;
-ldr.style.height=‘0’;
-ldr.style.overflow=‘hidden’;
-ldr.style.position=‘fixed’;
-// Step 3: Stop child GPU layers (the iOS compositing layer escape fix)
-try{
-var kids=ldr.querySelectorAll(’*’);
-for(var i=0;i<kids.length;i++){
-kids[i].style.animation=‘none’;
-kids[i].style.transition=‘none’;
-kids[i].style.opacity=‘0’;
-kids[i].style.visibility=‘hidden’;
-kids[i].style.willChange=‘auto’;
-kids[i].style.transform=‘none’;
-}
-}catch(e){}
-// Step 4: Remove from DOM (use parentNode.removeChild for max compat)
-requestAnimationFrame(function(){
-requestAnimationFrame(function(){
-try{if(ldr.parentNode)ldr.parentNode.removeChild(ldr);}catch(e){}
-});
-});
-}
-// Trigger 1: immediate if already loaded
-if(document.readyState===‘complete’){setTimeout(killLoader,1400);}
-// Trigger 2: on load event
-window.addEventListener(‘load’,function(){setTimeout(killLoader,1400);},{once:true,capture:true});
-// Trigger 3: DOMContentLoaded fallback
-document.addEventListener(‘DOMContentLoaded’,function(){setTimeout(killLoader,1800);},{once:true});
-// Trigger 4: hard timeout (2.5s) — no matter what
-setTimeout(killLoader,2500);
-// Trigger 5: FIRST USER INTERACTION (scroll/touch/click)
-// This ensures loader dies the moment user tries to interact
-function onFirstInteract(){killLoader();}
-document.addEventListener(‘scroll’,onFirstInteract,{once:true,passive:true,capture:true});
-document.addEventListener(‘touchstart’,onFirstInteract,{once:true,passive:true,capture:true});
-document.addEventListener(‘click’,onFirstInteract,{once:true,passive:false,capture:true});
-document.addEventListener(‘touchmove’,onFirstInteract,{once:true,passive:true,capture:true});
-document.addEventListener(‘pointerdown’,onFirstInteract,{once:true,passive:true,capture:true});
-})();
+// Loader DOM cleanup — CSS animation handles visual disappearance
+// This just removes the DOM element after it’s gone visually
+setTimeout(function(){var l=document.getElementById(‘loader’);if(l)try{l.parentNode.removeChild(l);}catch(e){l.style.display=‘none’;}},3200);
+// Nuclear fallback at 5s
+setTimeout(function(){var l=document.getElementById(‘loader’);if(l){l.style.cssText=‘display:none’;try{l.parentNode.removeChild(l);}catch(e){}}},5000);
 
 /* CURSOR */
 @media(hover:hover) and (pointer:fine){body{cursor:none}}
