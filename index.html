@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1C1208">
-<meta name="description" content="MarinaPhoto — Fotografía profesional en Sitges y Barcelona. Hoteles, restaurantes, marcas y momentos que se sienten reales.">
+<meta name="description" content="MarinaPhoto — Fotografía profesional en Sitges y Barcelona. Imágenes que se sienten reales. Desde 300€.">
 <meta property="og:title" content="MarinaPhoto — Fotografía que se siente real">
-<meta property="og:description" content="Fotografía profesional en Sitges y Barcelona. Paquetes desde 300€.">
+<meta property="og:description" content="Fotografía comercial y personal en Sitges y Barcelona. Desde 300€.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://marina-beb.pages.dev">
 <title>MarinaPhoto — Fotografía que se siente real</title>
@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
+
 
 
 
@@ -141,8 +142,8 @@ nav.solid .lbtn:hover:not(.on){color:var(--brown);background:rgba(58,41,16,.06)}
 
 /* ── SERVICE PANELS ── */
 .sp{position:relative;height:100svh;min-height:600px;overflow:hidden;display:flex;align-items:flex-end}
-.sp-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.38) saturate(.78);will-change:filter;transition:filter 1.8s ease}
-.sp.entered .sp-bg{filter:brightness(.58) saturate(.95);animation:kbZoom 18s ease-out both}
+.sp-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.48) saturate(.85);will-change:filter;transition:filter 1.8s ease}
+.sp.entered .sp-bg{filter:brightness(.65) saturate(1);animation:kbZoom 18s ease-out both}
 @keyframes kbZoom{from{transform:scale(1.1)}to{transform:scale(1.02)}}
 /* Desktop: hover reveals image authenticity */
 @media(hover:hover)and(pointer:fine){
@@ -428,9 +429,76 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 .cms-lang-tab.on{background:rgba(196,146,42,.2);border-color:var(--gold);color:var(--gold-lt)}
 .cms-lang-panel{display:none}.cms-lang-panel.on{display:block}
 
+
+/* ═══ CMS ═══ */
+#cms-login{position:fixed;inset:0;z-index:100000;background:rgba(20,12,4,.98);display:none;align-items:center;justify-content:center}
+#cms-login.open{display:flex}
+.cms-login-box{text-align:center;width:280px}
+.cms-login-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:white;margin-bottom:6px}
+.cms-login-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:28px}
+.cms-pwd-input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:white;font-family:'Outfit',sans-serif;font-size:15px;padding:12px 16px;outline:none;border-radius:2px;text-align:center;letter-spacing:.15em;margin-bottom:10px;transition:border-color .3s;-webkit-text-security:disc}
+.cms-pwd-input:focus{border-color:var(--gold)}
+.cms-login-btn{width:100%;padding:13px;background:var(--gold);color:white;border:none;font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s}
+.cms-login-btn:hover{background:var(--gold-lt)}
+.cms-err{color:rgba(220,80,80,.9);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;margin-top:10px;display:none}
+
+#cms-overlay{display:none;position:fixed;inset:0;z-index:99999;background:#1a1008;overflow-y:auto}
+#cms-overlay.open{display:block}
+.cms-wrap{max-width:820px;margin:0 auto;padding:32px 24px 80px}
+.cms-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;margin-bottom:28px;border-bottom:1px solid rgba(196,146,42,.18)}
+.cms-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--gold-lt);letter-spacing:.05em}
+.cms-close-btn{background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.55);padding:7px 16px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .3s}
+.cms-close-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+.cms-tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.cms-tab{padding:10px 18px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .25s;touch-action:manipulation}
+.cms-tab.on{color:var(--gold-lt);border-bottom-color:var(--gold)}
+.cms-tab:hover:not(.on){color:rgba(255,255,255,.6)}
+
+.cms-panel{display:none}.cms-panel.on{display:block}
+.cms-section-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid rgba(196,146,42,.12)}
+.cms-hint{font-family:'Outfit',sans-serif;font-size:12px;color:rgba(255,255,255,.3);line-height:1.7;margin-bottom:16px}
+.cms-field{margin-bottom:14px}
+.cms-label{display:block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:6px}
+.cms-input,.cms-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:2px;color:rgba(255,255,255,.85);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 12px;outline:none;transition:border-color .25s}
+.cms-input:focus,.cms-textarea:focus{border-color:var(--gold)}
+.cms-textarea{resize:vertical;min-height:70px;line-height:1.6}
+.cms-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
+.cms-separator{height:1px;background:rgba(255,255,255,.07);margin:20px 0}
+
+/* Lang tabs inside CMS */
+.cms-lang-group{margin-bottom:4px}
+.cms-lang-tabs{display:flex;gap:4px;margin-bottom:12px}
+.cms-lt{padding:4px 12px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:2px;cursor:pointer;color:rgba(255,255,255,.35);transition:all .22s;touch-action:manipulation}
+.cms-lt.on{background:rgba(196,146,42,.18);border-color:rgba(196,146,42,.4);color:var(--gold-lt)}
+.cms-lp{display:none}.cms-lp.on{display:block}
+
+/* Portfolio items */
+.cms-pf-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center}
+.cms-col-header{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.cms-add-btn{width:100%;margin-top:8px;padding:10px;background:rgba(196,146,42,.1);border:1px solid rgba(196,146,42,.25);color:var(--gold-lt);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .25s}
+.cms-add-btn:hover{background:rgba(196,146,42,.2)}
+.cms-rm-btn{background:rgba(200,50,50,.1);border:1px solid rgba(200,50,50,.2);color:rgba(255,100,100,.6);padding:9px 10px;border-radius:2px;cursor:pointer;transition:all .25s;font-size:11px}
+.cms-rm-btn:hover{background:rgba(200,50,50,.2)}
+
+.cms-save-btn{background:var(--gold);color:white;border:none;padding:12px 28px;font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s}
+.cms-save-btn:hover{background:var(--gold-lt)}
+.cms-saved-msg{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gold-lt);opacity:0;transition:opacity .3s}
+.cms-saved-msg.show{opacity:1}
+
+code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,.08);padding:2px 6px;border-radius:2px;color:rgba(255,255,255,.6)}
+
+@media(max-width:600px){
+  .cms-row{grid-template-columns:1fr}
+  .cms-wrap{padding:20px 14px 60px}
+  .cms-pf-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+}
+
 </style>
 </head>
 <body>
+<div id="scrollProg"></div>
+
 <div id="scrollProg"></div>
 
 <div id="scrollProg"></div>
@@ -859,9 +927,9 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 
       <!-- Direct links -->
       <div class="contact-direct rv d2">
-        <a href="mailto:marinaphotg@gmail.com" class="contact-link">
+        <a href="/cdn-cgi/l/email-protection#7914180b1017180911160d1e391e14181015571a1614" class="contact-link">
           <svg viewBox="0 0 24 24"><path d="M3 8l9 6 9-6M3 8v10a1 1 0 001 1h16a1 1 0 001-1V8M3 8a1 1 0 011-1h16a1 1 0 011 1"/></svg>
-          marinaphotg@gmail.com
+          <span class="__cf_email__" data-cfemail="a7cac6d5cec9c6d7cfc8d3c0e7c0cac6cecb89c4c8ca">[email&#160;protected]</span>
         </a>
         <a href="https://instagram.com/marinaphotg" target="_blank" class="contact-link">
           <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
@@ -876,117 +944,65 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 
     <!-- RIGHT: Form -->
     <div class="rv d1">
-      <div class="contact-form" id="cf-wrap">
-        <div id="cf-form-inner">
+      <div class="contact-form">
+
+        <div data-fs-success style="display:none">
+          <div class="cf-success">
+            <div class="cf-success-icon">✦</div>
+            <h3 class="lt" data-es="¡Gracias!" data-en="Thank you!" data-fr="Merci!" data-ca="Gràcies!">¡Gracias!</h3>
+            <p class="lt"
+              data-es="Te respondo en menos de 24 horas."
+              data-en="I'll reply within 24 hours."
+              data-fr="Je vous réponds dans les 24 heures."
+              data-ca="Et respondré en menys de 24 hores.">Te respondo en menos de 24 horas.</p>
+          </div>
+        </div>
+
+        <div data-fs-error class="cf-error" style="display:none"></div>
+
+        <form id="contact-form">
           <div class="cf-row">
             <div class="cf-field">
-              <label class="cf-label lt"
-                data-es="Nombre" data-en="Name" data-fr="Nom" data-ca="Nom">Nombre</label>
-              <input class="cf-input" id="cf-name" type="text" autocomplete="name"
-                data-ph-es="Tu nombre" data-ph-en="Your name"
-                data-ph-fr="Votre nom" data-ph-ca="El teu nom"
+              <label class="cf-label lt" data-es="Nombre" data-en="Name" data-fr="Nom" data-ca="Nom">Nombre</label>
+              <input class="cf-input" type="text" name="name" data-fs-field
+                data-ph-es="Tu nombre" data-ph-en="Your name" data-ph-fr="Votre nom" data-ph-ca="El teu nom"
                 placeholder="Tu nombre" required>
             </div>
             <div class="cf-field">
-              <label class="cf-label lt"
-                data-es="Email" data-en="Email" data-fr="Email" data-ca="Email">Email</label>
-              <input class="cf-input" id="cf-email" type="email" autocomplete="email"
-                data-ph-es="Tu correo" data-ph-en="Your email"
-                data-ph-fr="Votre email" data-ph-ca="El teu correu"
+              <label class="cf-label lt" data-es="Email" data-en="Email" data-fr="Email" data-ca="Email">Email</label>
+              <input class="cf-input" type="email" name="email" data-fs-field
+                data-ph-es="Tu correo" data-ph-en="Your email" data-ph-fr="Votre email" data-ph-ca="El teu correu"
                 placeholder="Tu correo" required>
             </div>
           </div>
-
           <div class="cf-field">
-            <label class="cf-label lt"
-              data-es="Tipo de proyecto" data-en="Project type"
-              data-fr="Type de projet" data-ca="Tipus de projecte">Tipo de proyecto</label>
-            <select class="cf-select" id="cf-type">
-              <option value="" class="lt"
-                data-es="— Selecciona —" data-en="— Select —"
-                data-fr="— Sélectionner —" data-ca="— Selecciona —">— Selecciona —</option>
-              <option value="lugares" class="lt"
-                data-es="Lugares (hotel, restaurante, espacio)"
-                data-en="Places (hotel, restaurant, space)"
-                data-fr="Lieux (hôtel, restaurant, espace)"
-                data-ca="Llocs (hotel, restaurant, espai)">Lugares (hotel, restaurante, espacio)</option>
-              <option value="artesanos" class="lt"
-                data-es="Marca / Artesanos / Gastronomía"
-                data-en="Brand / Artisans / Gastronomy"
-                data-fr="Marque / Artisans / Gastronomie"
-                data-ca="Marca / Artesans / Gastronomia">Marca / Artesanos / Gastronomía</option>
-              <option value="memorias" class="lt"
-                data-es="Memorias (familia, pareja, viaje)"
-                data-en="Memories (family, couple, travel)"
-                data-fr="Souvenirs (famille, couple, voyage)"
-                data-ca="Memòries (família, parella, viatge)">Memorias (familia, pareja, viaje)</option>
-              <option value="video" class="lt"
-                data-es="Vídeo" data-en="Video"
-                data-fr="Vidéo" data-ca="Vídeo">Vídeo</option>
-              <option value="otro" class="lt"
-                data-es="Otro / No sé aún"
-                data-en="Other / Not sure yet"
-                data-fr="Autre / Je ne sais pas encore"
-                data-ca="Altre / Encara no ho sé">Otro / No sé aún</option>
+            <label class="cf-label lt" data-es="Tipo de proyecto" data-en="Project type" data-fr="Type de projet" data-ca="Tipus de projecte">Tipo de proyecto</label>
+            <select class="cf-select" name="type">
+              <option value="">—</option>
+              <option value="Hotel / Restaurante / Espacio">Hotel / Restaurante / Espacio</option>
+              <option value="Marca / Artesanos / Gastronomia">Marca / Artesanos / Gastronomía</option>
+              <option value="Memorias (familia, pareja, viaje)">Memorias — familia, pareja, viaje</option>
+              <option value="Video">Vídeo</option>
+              <option value="Otro">Otro / No sé aún</option>
             </select>
           </div>
-
           <div class="cf-field">
-            <label class="cf-label lt"
-              data-es="Presupuesto aproximado" data-en="Approximate budget"
-              data-fr="Budget approximatif" data-ca="Pressupost aproximat">Presupuesto aproximado</label>
-            <select class="cf-select" id="cf-budget">
-              <option value="" class="lt"
-                data-es="— Selecciona —" data-en="— Select —"
-                data-fr="— Sélectionner —" data-ca="— Selecciona —">— Selecciona —</option>
-              <option value="300-600">300€ – 600€</option>
-              <option value="600-1200">600€ – 1200€</option>
-              <option value="1200-2500">1200€ – 2500€</option>
-              <option value="2500+">+2500€</option>
-              <option value="discuss" class="lt"
-                data-es="Hablamos" data-en="Let's discuss"
-                data-fr="On en parle" data-ca="Parlem-ne">Hablamos</option>
-            </select>
+            <label class="cf-label lt" data-es="Mensaje" data-en="Message" data-fr="Message" data-ca="Missatge">Mensaje</label>
+            <textarea class="cf-textarea" name="message" data-fs-field rows="4"
+              data-ph-es="Cuéntame tu proyecto..." data-ph-en="Tell me about your project..."
+              data-ph-fr="Parlez-moi de votre projet..." data-ph-ca="Explica'm el teu projecte..."
+              placeholder="Cuéntame tu proyecto..." required></textarea>
           </div>
-
-          <div class="cf-field">
-            <label class="cf-label lt"
-              data-es="Mensaje" data-en="Message"
-              data-fr="Message" data-ca="Missatge">Mensaje</label>
-            <textarea class="cf-textarea" id="cf-message" rows="4"
-              data-ph-es="Cuéntame tu proyecto... ¿qué tienes en mente?"
-              data-ph-en="Tell me about your project... what do you have in mind?"
-              data-ph-fr="Parlez-moi de votre projet... qu'avez-vous en tête?"
-              data-ph-ca="Explica'm el teu projecte... que tens en ment?"
-              placeholder="Cuéntame tu proyecto... ¿qué tienes en mente?"></textarea>
-          </div>
-
-          <button class="cf-submit" id="cf-btn" onclick="cfSubmit()">
-            <span id="cf-btn-text" class="lt"
-              data-es="Enviar mensaje →"
-              data-en="Send message →"
-              data-fr="Envoyer le message →"
-              data-ca="Enviar missatge →">Enviar mensaje →</span>
+          <input type="hidden" name="_subject" value="[MarinaPhoto] Nuevo contacto">
+          <button class="cf-submit" type="submit" data-fs-submit-btn>
+            <span class="lt" id="cf-btn-text"
+              data-es="Enviar mensaje →" data-en="Send message →"
+              data-fr="Envoyer →" data-ca="Enviar →">Enviar mensaje →</span>
           </button>
-          <div class="cf-error" id="cf-error"></div>
-        </div>
-
-        <!-- Success state -->
-        <div class="cf-success" id="cf-success">
-          <div class="cf-success-icon">✦</div>
-          <h3 class="lt"
-            data-es="¡Gracias por escribirme!"
-            data-en="Thank you for reaching out!"
-            data-fr="Merci de m'avoir contactée!"
-            data-ca="Gràcies per escriure'm!">¡Gracias por escribirme!</h3>
-          <p class="lt"
-            data-es="Te respondo en menos de 24 horas. Mientras tanto, puedes ver más de mi trabajo en Instagram."
-            data-en="I'll reply within 24 hours. In the meantime, you can see more of my work on Instagram."
-            data-fr="Je vous réponds dans les 24 heures. En attendant, vous pouvez voir plus de mon travail sur Instagram."
-            data-ca="Et respondré en menys de 24 hores. Mentre tant, pots veure més de la meva feina a Instagram.">Te respondo en menos de 24 horas. Mientras tanto, puedes ver más de mi trabajo en Instagram.</p>
-        </div>
+        </form>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -1040,259 +1056,14 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
   </div>
 </div>
 
-<!-- CMS PANEL -->
-<div id="cms-overlay">
-  <div class="cms-wrap">
-    <div class="cms-header">
-      <div class="cms-title">MarinaPhoto CMS</div>
-      <button class="cms-close-btn" onclick="cmsClose()">✕ Cerrar</button>
-    </div>
-
-    <div class="cms-tabs">
-      <button class="cms-tab on" onclick="cmsTab(this,'tab-general')">⚙ General</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-hero')">🏠 Hero</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-services')">📷 Servicios</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-about')">👤 About</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-portfolio')">🖼 Portfolio</button>
-      <button class="cms-tab" onclick="cmsTab(this,'tab-contact')">✉ Contacto</button>
-    </div>
-
-    <!-- GENERAL -->
-    <div class="cms-panel on" id="tab-general">
-      <div class="cms-section-title">Marca</div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Título de página</label>
-          <input class="cms-input" id="c-site-title" type="text" placeholder="MarinaPhoto — Fotografía que se siente real">
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Meta descripción</label>
-          <input class="cms-input" id="c-meta-desc" type="text">
-        </div>
-      </div>
-      <div class="cms-section-title">Contacto</div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Email</label>
-          <input class="cms-input" id="c-email" type="email" placeholder="marinaphotg@gmail.com">
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Instagram (@handle)</label>
-          <input class="cms-input" id="c-instagram" type="text" placeholder="marinaphotg">
-        </div>
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Teléfono</label>
-        <input class="cms-input" id="c-phone" type="text" placeholder="+34 600 000 000" style="max-width:260px">
-      </div>
-    </div>
-
-    <!-- HERO -->
-    <div class="cms-panel" id="tab-hero">
-      <div class="cms-section-title">Texto Hero (ES)</div>
-      <div class="cms-field">
-        <label class="cms-label">Línea eyebrow</label>
-        <input class="cms-input" id="c-hero-eye-es" type="text" placeholder="Sitges · Barcelona · Mediterráneo">
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Título línea 1</label>
-          <input class="cms-input" id="c-hero-t1-es" type="text" placeholder="Fotografía que">
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Título línea 2 (cursiva dorada)</label>
-          <input class="cms-input" id="c-hero-t2-es" type="text" placeholder="se siente real.">
-        </div>
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Subtítulo</label>
-        <input class="cms-input" id="c-hero-sub-es" type="text">
-      </div>
-      <div class="cms-section-title">Texto Hero (EN)</div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Title line 1</label>
-          <input class="cms-input" id="c-hero-t1-en" type="text" placeholder="Photography that">
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Title line 2</label>
-          <input class="cms-input" id="c-hero-t2-en" type="text" placeholder="feels real.">
-        </div>
-      </div>
-      <div class="cms-section-title">Imágenes Hero</div>
-      <div class="cms-field">
-        <label class="cms-label">Slide 1 — URL imagen</label>
-        <input class="cms-input" id="c-hero-img-1" type="text" placeholder="https://...">
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Slide 2 — URL imagen</label>
-        <input class="cms-input" id="c-hero-img-2" type="text" placeholder="https://...">
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Slide 3 — URL imagen</label>
-        <input class="cms-input" id="c-hero-img-3" type="text" placeholder="https://...">
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Slide 4 — URL imagen</label>
-        <input class="cms-input" id="c-hero-img-4" type="text" placeholder="https://...">
-      </div>
-    </div>
-
-    <!-- SERVICES -->
-    <div class="cms-panel" id="tab-services">
-      <div class="cms-section-title">Lugares / Places / Lieux (01)</div>
-      <div class="cms-field">
-        <label class="cms-label">URL imagen de fondo</label>
-        <input class="cms-input" id="c-svc1-img" type="text" placeholder="https://images.unsplash.com/...">
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Descripción ES</label>
-          <textarea class="cms-textarea" id="c-svc1-desc-es"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Description EN</label>
-          <textarea class="cms-textarea" id="c-svc1-desc-en"></textarea>
-        </div>
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Description FR</label>
-          <textarea class="cms-textarea" id="c-svc1-desc-fr"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Descripció CA</label>
-          <textarea class="cms-textarea" id="c-svc1-desc-ca"></textarea>
-        </div>
-      </div>
-      <div class="cms-section-title">Artesanos / Artisans (02)</div>
-      <div class="cms-field">
-        <label class="cms-label">URL imagen de fondo</label>
-        <input class="cms-input" id="c-svc2-img" type="text" placeholder="https://images.unsplash.com/...">
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Descripción ES</label>
-          <textarea class="cms-textarea" id="c-svc2-desc-es"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Description EN</label>
-          <textarea class="cms-textarea" id="c-svc2-desc-en"></textarea>
-        </div>
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Description FR</label>
-          <textarea class="cms-textarea" id="c-svc2-desc-fr"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Descripció CA</label>
-          <textarea class="cms-textarea" id="c-svc2-desc-ca"></textarea>
-        </div>
-      </div>
-      <div class="cms-section-title">Memorias / Memories (03)</div>
-      <div class="cms-field">
-        <label class="cms-label">URL imagen de fondo</label>
-        <input class="cms-input" id="c-svc3-img" type="text" placeholder="https://images.unsplash.com/...">
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Descripción ES</label>
-          <textarea class="cms-textarea" id="c-svc3-desc-es"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Description EN</label>
-          <textarea class="cms-textarea" id="c-svc3-desc-en"></textarea>
-        </div>
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Description FR</label>
-          <textarea class="cms-textarea" id="c-svc3-desc-fr"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Descripció CA</label>
-          <textarea class="cms-textarea" id="c-svc3-desc-ca"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABOUT -->
-    <div class="cms-panel" id="tab-about">
-      <div class="cms-section-title">Texto (ES)</div>
-      <div class="cms-field">
-        <label class="cms-label">Párrafo 1</label>
-        <textarea class="cms-textarea" id="c-about-p1-es"></textarea>
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Párrafo 2</label>
-        <textarea class="cms-textarea" id="c-about-p2-es"></textarea>
-      </div>
-      <div class="cms-section-title">Text (EN)</div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Paragraph 1 (EN)</label>
-          <textarea class="cms-textarea" id="c-about-p1-en"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Paragraphe 1 (FR)</label>
-          <textarea class="cms-textarea" id="c-about-p1-fr"></textarea>
-        </div>
-      </div>
-      <div class="cms-row">
-        <div class="cms-field">
-          <label class="cms-label">Paragraph 2 (EN)</label>
-          <textarea class="cms-textarea" id="c-about-p2-en"></textarea>
-        </div>
-        <div class="cms-field">
-          <label class="cms-label">Paràgraf 1 (CA)</label>
-          <textarea class="cms-textarea" id="c-about-p1-ca"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- PORTFOLIO -->
-    <div class="cms-panel" id="tab-portfolio">
-      <div class="cms-section-title">Imágenes Portfolio</div>
-      <p style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.15em;margin-bottom:20px;line-height:1.8">
-        Para cada elemento: URL imagen, categoría (lugares / artesanos / memorias / video) y etiqueta visible.
-      </p>
-      <div id="cms-portfolio-items"></div>
-      <button class="cms-save-btn" style="background:rgba(255,255,255,.08);margin-top:12px" onclick="cmsAddPortfolioItem()">+ Añadir elemento</button>
-    </div>
-
-    <!-- CONTACT -->
-    <div class="cms-panel" id="tab-contact">
-      <div class="cms-section-title">Footer</div>
-      <div class="cms-field">
-        <label class="cms-label">Texto footer (ES)</label>
-        <textarea class="cms-textarea" id="c-footer-text-es"></textarea>
-      </div>
-      <div class="cms-field">
-        <label class="cms-label">Dirección</label>
-        <input class="cms-input" id="c-address" type="text" placeholder="Sitges, Barcelona, España">
-      </div>
-      <div class="cms-section-title">Copyright</div>
-      <div class="cms-field">
-        <label class="cms-label">Texto copyright</label>
-        <input class="cms-input" id="c-copyright" type="text" placeholder="© 2025 MarinaPhoto">
-      </div>
-    </div>
-
-    <button class="cms-save-btn" onclick="cmsSave()">Guardar cambios</button>
-    <p class="cms-saved-msg" id="cms-saved-msg">✓ Cambios guardados correctamente</p>
-  </div>
-</div>
-
-
 
 
 <!-- ═══ CMS LOGIN ═══ -->
 <div id="cms-login">
   <div class="cms-login-box">
     <div class="cms-login-title">Admin</div>
-    <p class="cms-login-sub">MarinaPhoto CMS</p>
-    <input id="cms-pwd" class="cms-pwd-input" type="password" placeholder="••••••••" autocomplete="current-password">
+    <p class="cms-login-sub">MarinaPhoto</p>
+    <input id="cms-pwd" class="cms-pwd-input" type="password" placeholder="Contraseña">
     <button class="cms-login-btn" onclick="cmsAuth()">Entrar →</button>
     <p class="cms-err" id="cms-err">Contraseña incorrecta</p>
   </div>
@@ -1301,271 +1072,219 @@ footer{background:var(--espresso);padding:72px 6vw 40px}
 <!-- ═══ CMS PANEL ═══ -->
 <div id="cms-overlay">
   <div class="cms-wrap">
+
     <div class="cms-header">
       <div class="cms-title">
-        <svg width="18" height="14" viewBox="0 0 80 60" fill="none" style="vertical-align:middle;margin-right:10px"><circle cx="40" cy="9" r="8" fill="#DDB96A"/><path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="#DDB96A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="16" height="12" viewBox="0 0 80 60" fill="none" style="vertical-align:middle;margin-right:8px"><circle cx="40" cy="9" r="8" fill="#DDB96A"/><path d="M4 54 L22 20 L40 34 L58 20 L76 54" stroke="#DDB96A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         MarinaPhoto CMS
-        <span class="cms-badge">v4</span>
       </div>
-      <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
         <span class="cms-saved-msg" id="cms-saved-msg">✓ Guardado</span>
         <button class="cms-close-btn" onclick="cmsClose()">✕ Cerrar</button>
       </div>
     </div>
 
     <div class="cms-tabs">
-      <button class="cms-tab on" onclick="cmsTab(this,'cms-general')">⚙ General</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-hero')">🏠 Hero</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-services')">📷 Servicios</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-about')">👤 About</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-manifesto')">✦ Manifesto</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-portfolio')">🖼 Portfolio</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-pricing')">💶 Precios</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-contact')">✉ Contacto</button>
-      <button class="cms-tab" onclick="cmsTab(this,'cms-settings')">🔧 Ajustes</button>
+      <button class="cms-tab on"  onclick="cmsTab(this,'ct-site')">Sitio</button>
+      <button class="cms-tab"     onclick="cmsTab(this,'ct-hero')">Hero</button>
+      <button class="cms-tab"     onclick="cmsTab(this,'ct-servicios')">Servicios</button>
+      <button class="cms-tab"     onclick="cmsTab(this,'ct-about')">About</button>
+      <button class="cms-tab"     onclick="cmsTab(this,'ct-portfolio')">Portfolio</button>
+      <button class="cms-tab"     onclick="cmsTab(this,'ct-contacto')">Contacto</button>
     </div>
 
-    <!-- GENERAL -->
-    <div class="cms-panel on" id="cms-general">
-      <div class="cms-section-title">Identidad</div>
-      <div class="cms-section-desc">Información global del sitio web.</div>
+    <!-- ── SITIO ── -->
+    <div class="cms-panel on" id="ct-site">
+      <div class="cms-section-title">Identidad del sitio</div>
       <div class="cms-row">
         <div class="cms-field">
-          <label class="cms-label">Título de página</label>
-          <input class="cms-input" id="c-site-title" type="text" placeholder="MarinaPhoto — Fotografía que se siente real">
+          <label class="cms-label">Título (pestaña del navegador)</label>
+          <input class="cms-input" id="cv-site-title" placeholder="MarinaPhoto — Fotografía que se siente real">
         </div>
         <div class="cms-field">
-          <label class="cms-label">Meta descripción (SEO)</label>
-          <input class="cms-input" id="c-meta-desc" type="text" placeholder="Fotografía profesional en Sitges...">
+          <label class="cms-label">Descripción SEO</label>
+          <input class="cms-input" id="cv-meta-desc" placeholder="Fotografía profesional en Sitges y Barcelona...">
         </div>
       </div>
-      <div class="cms-section-title">Contacto</div>
+      <div class="cms-section-title">Contacto & Redes</div>
       <div class="cms-row">
         <div class="cms-field">
-          <label class="cms-label">Email principal</label>
-          <input class="cms-input" id="c-email" type="email" placeholder="marinaphotg@gmail.com">
-          <div class="cms-field-hint">Aparece en el footer y links de contacto</div>
+          <label class="cms-label">Email</label>
+          <input class="cms-input" id="cv-email" type="email" placeholder="marinaphotg@gmail.com">
         </div>
-        <div class="cms-field">
-          <label class="cms-label">Formspree Form ID</label>
-          <input class="cms-input" id="c-formspree" type="text" placeholder="xrgjkpqb">
-          <div class="cms-field-hint">ID del formulario en formspree.io → los emails llegan directamente</div>
-        </div>
-      </div>
-      <div class="cms-row">
         <div class="cms-field">
           <label class="cms-label">Instagram (sin @)</label>
-          <input class="cms-input" id="c-instagram" type="text" placeholder="marinaphotg">
+          <input class="cms-input" id="cv-instagram" placeholder="marinaphotg">
+        </div>
+      </div>
+      <div class="cms-row">
+        <div class="cms-field">
+          <label class="cms-label">WhatsApp (formato: +34600000000)</label>
+          <input class="cms-input" id="cv-whatsapp" placeholder="+34600000000">
         </div>
         <div class="cms-field">
-          <label class="cms-label">WhatsApp (+34...)</label>
-          <input class="cms-input" id="c-whatsapp" type="text" placeholder="+34600000000">
+          <label class="cms-label">Precio base (aparece en contacto)</label>
+          <input class="cms-input" id="cv-price-base" placeholder="300€">
         </div>
+      </div>
+      <div class="cms-section-title">Contraseña CMS</div>
+      <div class="cms-field" style="max-width:300px">
+        <label class="cms-label">Nueva contraseña (dejar vacío = sin cambios)</label>
+        <input class="cms-input" id="cv-cms-pass" type="password" placeholder="••••••••">
       </div>
     </div>
 
-    <!-- HERO -->
-    <div class="cms-panel" id="cms-hero">
-      <div class="cms-section-title">Imágenes del Slider</div>
-      <div class="cms-section-desc">URLs de las 4 fotos del slider. Recomendado: mínimo 1920×1080px, formato JPG optimizado.</div>
-      <div class="cms-field"><label class="cms-label">Slide 1 (primera imagen)</label><input class="cms-input" id="c-hero-img-1" type="text" placeholder="https://images.unsplash.com/..."></div>
-      <div class="cms-field"><label class="cms-label">Slide 2</label><input class="cms-input" id="c-hero-img-2" type="text" placeholder="https://..."></div>
-      <div class="cms-field"><label class="cms-label">Slide 3</label><input class="cms-input" id="c-hero-img-3" type="text" placeholder="https://..."></div>
-      <div class="cms-field"><label class="cms-label">Slide 4</label><input class="cms-input" id="c-hero-img-4" type="text" placeholder="https://..."></div>
+    <!-- ── HERO ── -->
+    <div class="cms-panel" id="ct-hero">
+      <div class="cms-section-title">Fotos del slider (4 imágenes)</div>
+      <p class="cms-hint">URLs de imágenes. Recomendado: 1920×1080px mínimo. Puedes usar Unsplash, Cloudinary, o subir tus fotos a Cloudflare Images.</p>
+      <div class="cms-field"><label class="cms-label">Slide 1</label><input class="cms-input" id="cv-hero-1" placeholder="https://images.unsplash.com/..."></div>
+      <div class="cms-field"><label class="cms-label">Slide 2</label><input class="cms-input" id="cv-hero-2" placeholder="https://..."></div>
+      <div class="cms-field"><label class="cms-label">Slide 3</label><input class="cms-input" id="cv-hero-3" placeholder="https://..."></div>
+      <div class="cms-field"><label class="cms-label">Slide 4</label><input class="cms-input" id="cv-hero-4" placeholder="https://..."></div>
       <div class="cms-section-title">Textos del Hero</div>
-      <div id="hero-lang-group" class="cms-field">
+      <div class="cms-lang-group" id="lg-hero">
         <div class="cms-lang-tabs">
-          <button class="cms-lang-tab on" onclick="cmsLangTab(this,'es','hero-lang-group')">ES</button>
-          <button class="cms-lang-tab" onclick="cmsLangTab(this,'en','hero-lang-group')">EN</button>
-          <button class="cms-lang-tab" onclick="cmsLangTab(this,'fr','hero-lang-group')">FR</button>
-          <button class="cms-lang-tab" onclick="cmsLangTab(this,'ca','hero-lang-group')">CA</button>
+          <button class="cms-lt on" onclick="cmsLT(this,'lg-hero','es')">ES</button>
+          <button class="cms-lt"    onclick="cmsLT(this,'lg-hero','en')">EN</button>
+          <button class="cms-lt"    onclick="cmsLT(this,'lg-hero','fr')">FR</button>
+          <button class="cms-lt"    onclick="cmsLT(this,'lg-hero','ca')">CA</button>
         </div>
-        <div class="cms-lang-panel on" data-lang="es">
+        <div class="cms-lp on" data-l="es">
           <div class="cms-row">
-            <div class="cms-field"><label class="cms-label">Título línea 1 (ES)</label><input class="cms-input" id="c-hero-t1-es" type="text" placeholder="Fotografía que"></div>
-            <div class="cms-field"><label class="cms-label">Título línea 2 cursiva (ES)</label><input class="cms-input" id="c-hero-t2-es" type="text" placeholder="se siente real."></div>
+            <div class="cms-field"><label class="cms-label">Título línea 1</label><input class="cms-input" id="cv-hero-t1-es" placeholder="Fotografía que"></div>
+            <div class="cms-field"><label class="cms-label">Título línea 2 (cursiva dorada)</label><input class="cms-input" id="cv-hero-t2-es" placeholder="se siente real."></div>
           </div>
-          <div class="cms-field"><label class="cms-label">Eyebrow (ES)</label><input class="cms-input" id="c-hero-eye-es" type="text" placeholder="Sitges · Barcelona · Mediterráneo"></div>
-          <div class="cms-field"><label class="cms-label">Subtítulo (ES)</label><input class="cms-input" id="c-hero-sub-es" type="text"></div>
+          <div class="cms-field"><label class="cms-label">Subtítulo</label><input class="cms-input" id="cv-hero-sub-es" placeholder="Imágenes que respiran..."></div>
         </div>
-        <div class="cms-lang-panel" data-lang="en">
+        <div class="cms-lp" data-l="en">
           <div class="cms-row">
-            <div class="cms-field"><label class="cms-label">Title line 1 (EN)</label><input class="cms-input" id="c-hero-t1-en" type="text" placeholder="Photography that"></div>
-            <div class="cms-field"><label class="cms-label">Title line 2 (EN)</label><input class="cms-input" id="c-hero-t2-en" type="text" placeholder="feels real."></div>
+            <div class="cms-field"><label class="cms-label">Title line 1</label><input class="cms-input" id="cv-hero-t1-en" placeholder="Photography that"></div>
+            <div class="cms-field"><label class="cms-label">Title line 2</label><input class="cms-input" id="cv-hero-t2-en" placeholder="feels real."></div>
           </div>
-          <div class="cms-field"><label class="cms-label">Eyebrow (EN)</label><input class="cms-input" id="c-hero-eye-en" type="text"></div>
-          <div class="cms-field"><label class="cms-label">Subtitle (EN)</label><input class="cms-input" id="c-hero-sub-en" type="text"></div>
+          <div class="cms-field"><label class="cms-label">Subtitle</label><input class="cms-input" id="cv-hero-sub-en"></div>
         </div>
-        <div class="cms-lang-panel" data-lang="fr">
+        <div class="cms-lp" data-l="fr">
           <div class="cms-row">
-            <div class="cms-field"><label class="cms-label">Titre ligne 1 (FR)</label><input class="cms-input" id="c-hero-t1-fr" type="text" placeholder="Photographie qui"></div>
-            <div class="cms-field"><label class="cms-label">Titre ligne 2 (FR)</label><input class="cms-input" id="c-hero-t2-fr" type="text" placeholder="se ressent vraiment."></div>
+            <div class="cms-field"><label class="cms-label">Titre ligne 1</label><input class="cms-input" id="cv-hero-t1-fr" placeholder="Photographie qui"></div>
+            <div class="cms-field"><label class="cms-label">Titre ligne 2</label><input class="cms-input" id="cv-hero-t2-fr" placeholder="se ressent vraiment."></div>
           </div>
-          <div class="cms-field"><label class="cms-label">Accroche (FR)</label><input class="cms-input" id="c-hero-eye-fr" type="text"></div>
-          <div class="cms-field"><label class="cms-label">Sous-titre (FR)</label><input class="cms-input" id="c-hero-sub-fr" type="text"></div>
+          <div class="cms-field"><label class="cms-label">Sous-titre</label><input class="cms-input" id="cv-hero-sub-fr"></div>
         </div>
-        <div class="cms-lang-panel" data-lang="ca">
+        <div class="cms-lp" data-l="ca">
           <div class="cms-row">
-            <div class="cms-field"><label class="cms-label">Títol línia 1 (CA)</label><input class="cms-input" id="c-hero-t1-ca" type="text" placeholder="Fotografia que"></div>
-            <div class="cms-field"><label class="cms-label">Títol línia 2 (CA)</label><input class="cms-input" id="c-hero-t2-ca" type="text" placeholder="se sent real."></div>
+            <div class="cms-field"><label class="cms-label">Títol línia 1</label><input class="cms-input" id="cv-hero-t1-ca" placeholder="Fotografia que"></div>
+            <div class="cms-field"><label class="cms-label">Títol línia 2</label><input class="cms-input" id="cv-hero-t2-ca" placeholder="se sent real."></div>
           </div>
-          <div class="cms-field"><label class="cms-label">Eyebrow (CA)</label><input class="cms-input" id="c-hero-eye-ca" type="text"></div>
-          <div class="cms-field"><label class="cms-label">Subtítol (CA)</label><input class="cms-input" id="c-hero-sub-ca" type="text"></div>
+          <div class="cms-field"><label class="cms-label">Subtítol</label><input class="cms-input" id="cv-hero-sub-ca"></div>
         </div>
       </div>
     </div>
 
-    <!-- SERVICES -->
-    <div class="cms-panel" id="cms-services">
-      <div class="cms-section-title">Lugares <span class="cms-badge">01</span></div>
-      <div class="cms-field"><label class="cms-label">Imagen de fondo (URL)</label><input class="cms-input" id="c-svc1-img" type="text" placeholder="https://..."></div>
-      <div id="svc1-lang-group">
-        <div class="cms-lang-tabs"><button class="cms-lang-tab on" onclick="cmsLangTab(this,'es','svc1-lang-group')">ES</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'en','svc1-lang-group')">EN</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'fr','svc1-lang-group')">FR</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'ca','svc1-lang-group')">CA</button></div>
-        <div class="cms-lang-panel on" data-lang="es"><div class="cms-field"><label class="cms-label">Descripción ES</label><textarea class="cms-textarea" id="c-svc1-desc-es"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="en"><div class="cms-field"><label class="cms-label">Description EN</label><textarea class="cms-textarea" id="c-svc1-desc-en"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="fr"><div class="cms-field"><label class="cms-label">Description FR</label><textarea class="cms-textarea" id="c-svc1-desc-fr"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="ca"><div class="cms-field"><label class="cms-label">Descripció CA</label><textarea class="cms-textarea" id="c-svc1-desc-ca"></textarea></div></div>
+    <!-- ── SERVICIOS ── -->
+    <div class="cms-panel" id="ct-servicios">
+      <p class="cms-hint">Imagen de fondo (URL) y descripción en 4 idiomas para cada servicio.</p>
+
+      <div class="cms-section-title">01 — Lugares</div>
+      <div class="cms-field"><label class="cms-label">Imagen de fondo</label><input class="cms-input" id="cv-svc1-img" placeholder="https://..."></div>
+      <div class="cms-lang-group" id="lg-svc1">
+        <div class="cms-lang-tabs"><button class="cms-lt on" onclick="cmsLT(this,'lg-svc1','es')">ES</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc1','en')">EN</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc1','fr')">FR</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc1','ca')">CA</button></div>
+        <div class="cms-lp on" data-l="es"><div class="cms-field"><label class="cms-label">Descripción</label><textarea class="cms-textarea" id="cv-svc1-es" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="en"><div class="cms-field"><label class="cms-label">Description</label><textarea class="cms-textarea" id="cv-svc1-en" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="fr"><div class="cms-field"><label class="cms-label">Description</label><textarea class="cms-textarea" id="cv-svc1-fr" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="ca"><div class="cms-field"><label class="cms-label">Descripció</label><textarea class="cms-textarea" id="cv-svc1-ca" rows="2"></textarea></div></div>
       </div>
-      <div class="cms-separator"></div>
-      <div class="cms-section-title">Artesanos <span class="cms-badge">02</span></div>
-      <div class="cms-field"><label class="cms-label">Imagen de fondo (URL)</label><input class="cms-input" id="c-svc2-img" type="text" placeholder="https://..."></div>
-      <div id="svc2-lang-group">
-        <div class="cms-lang-tabs"><button class="cms-lang-tab on" onclick="cmsLangTab(this,'es','svc2-lang-group')">ES</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'en','svc2-lang-group')">EN</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'fr','svc2-lang-group')">FR</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'ca','svc2-lang-group')">CA</button></div>
-        <div class="cms-lang-panel on" data-lang="es"><div class="cms-field"><label class="cms-label">Descripción ES</label><textarea class="cms-textarea" id="c-svc2-desc-es"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="en"><div class="cms-field"><label class="cms-label">Description EN</label><textarea class="cms-textarea" id="c-svc2-desc-en"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="fr"><div class="cms-field"><label class="cms-label">Description FR</label><textarea class="cms-textarea" id="c-svc2-desc-fr"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="ca"><div class="cms-field"><label class="cms-label">Descripció CA</label><textarea class="cms-textarea" id="c-svc2-desc-ca"></textarea></div></div>
+
+      <div class="cms-section-title" style="margin-top:28px">02 — Artesanos</div>
+      <div class="cms-field"><label class="cms-label">Imagen de fondo</label><input class="cms-input" id="cv-svc2-img" placeholder="https://..."></div>
+      <div class="cms-lang-group" id="lg-svc2">
+        <div class="cms-lang-tabs"><button class="cms-lt on" onclick="cmsLT(this,'lg-svc2','es')">ES</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc2','en')">EN</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc2','fr')">FR</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc2','ca')">CA</button></div>
+        <div class="cms-lp on" data-l="es"><div class="cms-field"><label class="cms-label">Descripción</label><textarea class="cms-textarea" id="cv-svc2-es" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="en"><div class="cms-field"><label class="cms-label">Description</label><textarea class="cms-textarea" id="cv-svc2-en" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="fr"><div class="cms-field"><label class="cms-label">Description</label><textarea class="cms-textarea" id="cv-svc2-fr" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="ca"><div class="cms-field"><label class="cms-label">Descripció</label><textarea class="cms-textarea" id="cv-svc2-ca" rows="2"></textarea></div></div>
       </div>
-      <div class="cms-separator"></div>
-      <div class="cms-section-title">Memorias <span class="cms-badge">03</span></div>
-      <div class="cms-field"><label class="cms-label">Imagen de fondo (URL)</label><input class="cms-input" id="c-svc3-img" type="text" placeholder="https://..."></div>
-      <div id="svc3-lang-group">
-        <div class="cms-lang-tabs"><button class="cms-lang-tab on" onclick="cmsLangTab(this,'es','svc3-lang-group')">ES</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'en','svc3-lang-group')">EN</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'fr','svc3-lang-group')">FR</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'ca','svc3-lang-group')">CA</button></div>
-        <div class="cms-lang-panel on" data-lang="es"><div class="cms-field"><label class="cms-label">Descripción ES</label><textarea class="cms-textarea" id="c-svc3-desc-es"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="en"><div class="cms-field"><label class="cms-label">Description EN</label><textarea class="cms-textarea" id="c-svc3-desc-en"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="fr"><div class="cms-field"><label class="cms-label">Description FR</label><textarea class="cms-textarea" id="c-svc3-desc-fr"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="ca"><div class="cms-field"><label class="cms-label">Descripció CA</label><textarea class="cms-textarea" id="c-svc3-desc-ca"></textarea></div></div>
+
+      <div class="cms-section-title" style="margin-top:28px">03 — Memorias</div>
+      <div class="cms-field"><label class="cms-label">Imagen de fondo</label><input class="cms-input" id="cv-svc3-img" placeholder="https://..."></div>
+      <div class="cms-lang-group" id="lg-svc3">
+        <div class="cms-lang-tabs"><button class="cms-lt on" onclick="cmsLT(this,'lg-svc3','es')">ES</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc3','en')">EN</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc3','fr')">FR</button><button class="cms-lt" onclick="cmsLT(this,'lg-svc3','ca')">CA</button></div>
+        <div class="cms-lp on" data-l="es"><div class="cms-field"><label class="cms-label">Descripción</label><textarea class="cms-textarea" id="cv-svc3-es" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="en"><div class="cms-field"><label class="cms-label">Description</label><textarea class="cms-textarea" id="cv-svc3-en" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="fr"><div class="cms-field"><label class="cms-label">Description</label><textarea class="cms-textarea" id="cv-svc3-fr" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="ca"><div class="cms-field"><label class="cms-label">Descripció</label><textarea class="cms-textarea" id="cv-svc3-ca" rows="2"></textarea></div></div>
       </div>
     </div>
 
-    <!-- ABOUT -->
-    <div class="cms-panel" id="cms-about">
-      <div id="about-lang-group">
-        <div class="cms-lang-tabs"><button class="cms-lang-tab on" onclick="cmsLangTab(this,'es','about-lang-group')">ES</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'en','about-lang-group')">EN</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'fr','about-lang-group')">FR</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'ca','about-lang-group')">CA</button></div>
-        <div class="cms-lang-panel on" data-lang="es">
-          <div class="cms-field"><label class="cms-label">Título ES</label><input class="cms-input" id="c-about-h-es" type="text" placeholder="Soy Marina, fotógrafa profesional."></div>
-          <div class="cms-field"><label class="cms-label">Párrafo 1 ES</label><textarea class="cms-textarea" id="c-about-p1-es"></textarea></div>
-          <div class="cms-field"><label class="cms-label">Párrafo 2 ES</label><textarea class="cms-textarea" id="c-about-p2-es"></textarea></div>
+    <!-- ── ABOUT ── -->
+    <div class="cms-panel" id="ct-about">
+      <div class="cms-lang-group" id="lg-about">
+        <div class="cms-lang-tabs"><button class="cms-lt on" onclick="cmsLT(this,'lg-about','es')">ES</button><button class="cms-lt" onclick="cmsLT(this,'lg-about','en')">EN</button><button class="cms-lt" onclick="cmsLT(this,'lg-about','fr')">FR</button><button class="cms-lt" onclick="cmsLT(this,'lg-about','ca')">CA</button></div>
+        <div class="cms-lp on" data-l="es">
+          <div class="cms-field"><label class="cms-label">Párrafo 1 (ES)</label><textarea class="cms-textarea" id="cv-about-p1-es" rows="3"></textarea></div>
+          <div class="cms-field"><label class="cms-label">Párrafo 2 (ES)</label><textarea class="cms-textarea" id="cv-about-p2-es" rows="3"></textarea></div>
         </div>
-        <div class="cms-lang-panel" data-lang="en">
-          <div class="cms-field"><label class="cms-label">Title EN</label><input class="cms-input" id="c-about-h-en" type="text"></div>
-          <div class="cms-field"><label class="cms-label">Paragraph 1 EN</label><textarea class="cms-textarea" id="c-about-p1-en"></textarea></div>
-          <div class="cms-field"><label class="cms-label">Paragraph 2 EN</label><textarea class="cms-textarea" id="c-about-p2-en"></textarea></div>
+        <div class="cms-lp" data-l="en">
+          <div class="cms-field"><label class="cms-label">Paragraph 1 (EN)</label><textarea class="cms-textarea" id="cv-about-p1-en" rows="3"></textarea></div>
+          <div class="cms-field"><label class="cms-label">Paragraph 2 (EN)</label><textarea class="cms-textarea" id="cv-about-p2-en" rows="3"></textarea></div>
         </div>
-        <div class="cms-lang-panel" data-lang="fr">
-          <div class="cms-field"><label class="cms-label">Titre FR</label><input class="cms-input" id="c-about-h-fr" type="text"></div>
-          <div class="cms-field"><label class="cms-label">Paragraphe 1 FR</label><textarea class="cms-textarea" id="c-about-p1-fr"></textarea></div>
-          <div class="cms-field"><label class="cms-label">Paragraphe 2 FR</label><textarea class="cms-textarea" id="c-about-p2-fr"></textarea></div>
+        <div class="cms-lp" data-l="fr">
+          <div class="cms-field"><label class="cms-label">Paragraphe 1 (FR)</label><textarea class="cms-textarea" id="cv-about-p1-fr" rows="3"></textarea></div>
+          <div class="cms-field"><label class="cms-label">Paragraphe 2 (FR)</label><textarea class="cms-textarea" id="cv-about-p2-fr" rows="3"></textarea></div>
         </div>
-        <div class="cms-lang-panel" data-lang="ca">
-          <div class="cms-field"><label class="cms-label">Títol CA</label><input class="cms-input" id="c-about-h-ca" type="text"></div>
-          <div class="cms-field"><label class="cms-label">Paràgraf 1 CA</label><textarea class="cms-textarea" id="c-about-p1-ca"></textarea></div>
-          <div class="cms-field"><label class="cms-label">Paràgraf 2 CA</label><textarea class="cms-textarea" id="c-about-p2-ca"></textarea></div>
+        <div class="cms-lp" data-l="ca">
+          <div class="cms-field"><label class="cms-label">Paràgraf 1 (CA)</label><textarea class="cms-textarea" id="cv-about-p1-ca" rows="3"></textarea></div>
+          <div class="cms-field"><label class="cms-label">Paràgraf 2 (CA)</label><textarea class="cms-textarea" id="cv-about-p2-ca" rows="3"></textarea></div>
         </div>
       </div>
     </div>
 
-    <!-- MANIFESTO -->
-    <div class="cms-panel" id="cms-manifesto">
-      <div class="cms-section-title">Frase manifesto</div>
-      <div class="cms-section-desc">La frase grande que aparece en la sección oscura entre el hero y los servicios.</div>
-      <div class="cms-field"><label class="cms-label">Frase ES</label><input class="cms-input" id="c-mnf-phrase-es" type="text" placeholder="Se lo que significa una imagen para ti."></div>
-      <div class="cms-field"><label class="cms-label">Phrase EN</label><input class="cms-input" id="c-mnf-phrase-en" type="text" placeholder="I know what an image means to you."></div>
-      <div class="cms-field"><label class="cms-label">Phrase FR</label><input class="cms-input" id="c-mnf-phrase-fr" type="text"></div>
-      <div class="cms-field"><label class="cms-label">Frase CA</label><input class="cms-input" id="c-mnf-phrase-ca" type="text"></div>
-    </div>
-
-    <!-- PORTFOLIO -->
-    <div class="cms-panel" id="cms-portfolio">
-      <div class="cms-section-title">Imágenes del Portfolio</div>
-      <div class="cms-section-desc">URL de imagen o video, categoría y etiqueta. Puedes añadir tantos como quieras. Orden: de arriba a abajo.</div>
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:6px;padding:0 2px">
-        <span style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-transform:uppercase">URL</span>
-        <span style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-transform:uppercase">Categoría</span>
-        <span style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-transform:uppercase">Etiqueta</span>
+    <!-- ── PORTFOLIO ── -->
+    <div class="cms-panel" id="ct-portfolio">
+      <p class="cms-hint">Añade, edita o elimina imágenes y vídeos del portfolio. La URL puede ser de Unsplash, Cloudinary, o cualquier imagen pública.</p>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;padding:0 2px;margin-bottom:8px">
+        <span class="cms-col-header">URL imagen o video</span>
+        <span class="cms-col-header">Categoría</span>
+        <span class="cms-col-header">Etiqueta (ES)</span>
         <span></span>
       </div>
-      <div id="cms-portfolio-items"></div>
-      <button onclick="cmsAddPortfolioItem()" style="margin-top:10px;background:rgba(196,146,42,.15);border:1px solid rgba(196,146,42,.3);color:var(--gold-lt);padding:10px 20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;cursor:pointer;border-radius:2px;width:100%;transition:all .3s">+ Añadir elemento</button>
+      <div id="cms-pf-items"></div>
+      <button class="cms-add-btn" onclick="cmsAddPF()">+ Añadir imagen</button>
     </div>
 
-    <!-- PRICING -->
-    <div class="cms-panel" id="cms-pricing">
-      <div class="cms-section-title">Paquetes de precios</div>
-      <div class="cms-section-desc">Los 3 paquetes que aparecen en la sección de contacto.</div>
-      <div class="cms-row">
-        <div class="cms-field"><label class="cms-label">Paquete 1 — Nombre</label><input class="cms-input" id="c-pricing-1-label" type="text" placeholder="Sesión básica"></div>
-        <div class="cms-field"><label class="cms-label">Paquete 1 — Precio</label><input class="cms-input" id="c-pricing-1-price" type="text" placeholder="300€"></div>
-      </div>
-      <div class="cms-row">
-        <div class="cms-field"><label class="cms-label">Paquete 2 — Nombre</label><input class="cms-input" id="c-pricing-2-label" type="text" placeholder="Marca / Negocio"></div>
-        <div class="cms-field"><label class="cms-label">Paquete 2 — Precio</label><input class="cms-input" id="c-pricing-2-price" type="text" placeholder="600€"></div>
-      </div>
-      <div class="cms-row">
-        <div class="cms-field"><label class="cms-label">Paquete 3 — Nombre (destacado)</label><input class="cms-input" id="c-pricing-3-label" type="text" placeholder="Proyecto completo"></div>
-        <div class="cms-field"><label class="cms-label">Paquete 3 — Precio</label><input class="cms-input" id="c-pricing-3-price" type="text" placeholder="desde 1200€"></div>
-      </div>
-    </div>
-
-    <!-- CONTACT/FOOTER -->
-    <div class="cms-panel" id="cms-contact">
+    <!-- ── CONTACTO ── -->
+    <div class="cms-panel" id="ct-contacto">
       <div class="cms-section-title">Footer</div>
-      <div id="footer-lang-group">
-        <div class="cms-lang-tabs"><button class="cms-lang-tab on" onclick="cmsLangTab(this,'es','footer-lang-group')">ES</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'en','footer-lang-group')">EN</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'fr','footer-lang-group')">FR</button><button class="cms-lang-tab" onclick="cmsLangTab(this,'ca','footer-lang-group')">CA</button></div>
-        <div class="cms-lang-panel on" data-lang="es"><div class="cms-field"><label class="cms-label">Texto footer ES</label><textarea class="cms-textarea" id="c-footer-text-es"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="en"><div class="cms-field"><label class="cms-label">Footer text EN</label><textarea class="cms-textarea" id="c-footer-text-en"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="fr"><div class="cms-field"><label class="cms-label">Texte footer FR</label><textarea class="cms-textarea" id="c-footer-text-fr"></textarea></div></div>
-        <div class="cms-lang-panel" data-lang="ca"><div class="cms-field"><label class="cms-label">Text footer CA</label><textarea class="cms-textarea" id="c-footer-text-ca"></textarea></div></div>
+      <div class="cms-lang-group" id="lg-footer">
+        <div class="cms-lang-tabs"><button class="cms-lt on" onclick="cmsLT(this,'lg-footer','es')">ES</button><button class="cms-lt" onclick="cmsLT(this,'lg-footer','en')">EN</button><button class="cms-lt" onclick="cmsLT(this,'lg-footer','fr')">FR</button><button class="cms-lt" onclick="cmsLT(this,'lg-footer','ca')">CA</button></div>
+        <div class="cms-lp on" data-l="es"><div class="cms-field"><textarea class="cms-textarea" id="cv-footer-es" rows="2" placeholder="Fotografía que se siente real..."></textarea></div></div>
+        <div class="cms-lp" data-l="en"><div class="cms-field"><textarea class="cms-textarea" id="cv-footer-en" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="fr"><div class="cms-field"><textarea class="cms-textarea" id="cv-footer-fr" rows="2"></textarea></div></div>
+        <div class="cms-lp" data-l="ca"><div class="cms-field"><textarea class="cms-textarea" id="cv-footer-ca" rows="2"></textarea></div></div>
       </div>
+      <div class="cms-field" style="margin-top:16px"><label class="cms-label">Dirección</label><input class="cms-input" id="cv-address" placeholder="Sitges, Barcelona — España"></div>
       <div class="cms-separator"></div>
-      <div class="cms-row">
-        <div class="cms-field"><label class="cms-label">Dirección</label><input class="cms-input" id="c-address" type="text" placeholder="Sitges, Barcelona — España"></div>
-        <div class="cms-field"><label class="cms-label">Copyright</label><input class="cms-input" id="c-copyright" type="text" placeholder="© 2025 MarinaPhoto."></div>
+      <div class="cms-section-title">Cloudflare Pages — Instrucciones</div>
+      <div class="cms-hint" style="line-height:2;font-size:12px">
+        <b style="color:rgba(255,255,255,.6)">Despliegue directo (sin GitHub):</b><br>
+        1. Instala Wrangler: <code>npm install -g wrangler</code><br>
+        2. Autentícate: <code>wrangler login</code><br>
+        3. Despliega: <code>wrangler pages deploy . --project-name marinaphoto</code><br>
+        4. Pon el archivo en una carpeta, ejecuta el comando en esa carpeta.<br><br>
+        <b style="color:rgba(255,255,255,.6)">Formulario Formspree:</b><br>
+        El formulario ya está conectado a <code>xnjobjge</code> → los emails llegan a marinaphotg@gmail.com directamente.
       </div>
     </div>
 
-    <!-- SETTINGS -->
-    <div class="cms-panel" id="cms-settings">
-      <div class="cms-section-title">Seguridad</div>
-      <div class="cms-field">
-        <label class="cms-label">Nueva contraseña CMS</label>
-        <input class="cms-input" id="c-cms-password" type="text" placeholder="Dejar vacío para mantener la actual">
-        <div class="cms-field-hint">La contraseña actual es: admin</div>
-      </div>
-      <div class="cms-separator"></div>
-      <div class="cms-section-title">Cloudflare Pages</div>
-      <div class="cms-section-desc" style="line-height:1.9;font-size:13px">
-        <strong style="color:rgba(255,255,255,.7)">Despliegue en Cloudflare Pages:</strong><br>
-        1. Sube el archivo <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:2px">marinaphoto.html</code> a un repositorio GitHub<br>
-        2. En Cloudflare → Pages → Create a project → Connect to Git<br>
-        3. Build command: (vacío) · Output directory: <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:2px">/</code><br>
-        4. O bien: sube directamente con <code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:2px">wrangler pages deploy .</code><br>
-        <br>
-        <strong style="color:rgba(255,255,255,.7)">Formulario de contacto (Formspree):</strong><br>
-        1. Regístrate en <a href="https://formspree.io" target="_blank" style="color:var(--gold-lt)">formspree.io</a> (gratis: 50 envíos/mes)<br>
-        2. Crea un formulario → apunta a marinaphotg@gmail.com<br>
-        3. Copia el Form ID (ej: xrgjkpqb) → pégalo en General → Formspree Form ID<br>
-        4. Guarda y listo. Los emails llegan directamente sin abrir cliente de correo.
-      </div>
+    <div style="margin-top:32px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:16px">
+      <button class="cms-save-btn" onclick="cmsSave()">Guardar cambios</button>
+      <span class="cms-saved-msg" id="cms-saved-msg2">✓ Guardado</span>
     </div>
 
-    <div style="margin-top:32px;display:flex;align-items:center;gap:16px">
-      <button class="cms-save-btn" onclick="cmsSave()">Guardar todos los cambios</button>
-      <span class="cms-saved-msg" id="cms-saved-msg" style="position:static;transform:none">✓ Guardado correctamente</span>
-    </div>
   </div>
 </div>
 
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 <script>
 /* ═══════════════════════════════════════════════════════════
    MARINAPHOTO — Complete JS v4
@@ -1827,10 +1546,10 @@ function qsub(){
    3. Copy the form ID (e.g. xrgjkpqb) and replace below
    Cloudflare Pages: No server needed, Formspree handles delivery.
 */
-var FORMSPREE_ID='xrgjkpqb'; // ← Replace with your Formspree form ID
+var FORMSPREE_ID='xnjobjge'; // ← Replace with your Formspree form ID
 
 function cfSendEmail(data,callback){
-  var endpoint='https://formspree.io/f/'+FORMSPREE_ID;
+  var endpoint='https://formspree.io/f/xnjobjge';
   fetch(endpoint,{
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
@@ -2023,54 +1742,58 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
   });
 });
 
-/* ═══════════════════════════════════════════════════════════
-   CMS — Complete content manager
-   Access: marina-beb.pages.dev/#admin  |  Password: admin
-   ═══════════════════════════════════════════════════════════ */
-var CMS_KEY='marinaphoto_cms_v4';
+/* ═══════════════════
+
+/* ═══ CMS v5 ═══ */
+var CMS_KEY='marina_cms5';
 var CMS_PASS='admin';
 
-(function cmsApply(){
+/* Apply saved content on page load */
+(function(){
   var raw=localStorage.getItem(CMS_KEY);
   if(!raw)return;
-  var saved;
-  try{saved=JSON.parse(raw);}catch(e){return;}
-  if(saved['site-title'])document.title=saved['site-title'];
-  if(saved.email){document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){a.href='mailto:'+saved.email;});}
-  if(saved.phone){document.querySelectorAll('a[href^="https://wa.me"]').forEach(function(a){a.href='https://wa.me/'+saved.phone.replace(/\D/g,'');});}
-  if(saved.instagram){document.querySelectorAll('a[href*="instagram.com"]').forEach(function(a){a.href='https://instagram.com/'+saved.instagram.replace('@','');});}
-  if(saved.formspree){window.FORMSPREE_ID=saved.formspree;}
+  var d;try{d=JSON.parse(raw);}catch(e){return;}
+  if(d['site-title'])document.title=d['site-title'];
+  if(d.email)document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){a.href='mailto:'+d.email;});
+  if(d.instagram)document.querySelectorAll('a[href*="instagram.com"]').forEach(function(a){a.href='https://instagram.com/'+d.instagram;});
+  if(d.whatsapp)document.querySelectorAll('a[href*="wa.me"]').forEach(function(a){a.href='https://wa.me/'+d.whatsapp.replace(/\D/g,'');});
   ['1','2','3','4'].forEach(function(n){
-    var url=saved['hero-img-'+n];if(!url)return;
-    var s=document.querySelector('#hero .hsl:nth-child('+n+')');if(s)s.style.backgroundImage="url('"+url+"')";
+    if(!d['hero-'+n])return;
+    var s=document.querySelector('#hero .hsl:nth-child('+n+')');
+    if(s)s.style.backgroundImage="url('"+d['hero-'+n]+"')";
   });
   ['1','2','3'].forEach(function(n){
-    var url=saved['svc'+n+'-img'];if(!url)return;
+    if(!d['svc'+n+'-img'])return;
     var ids=['sp-lugares','sp-artesanos','sp-memorias'];
-    var bg=document.querySelector('#'+ids[n-1]+' .sp-bg');if(bg)bg.style.backgroundImage="url('"+url+"')";
+    var bg=document.querySelector('#'+ids[parseInt(n)-1]+' .sp-bg');
+    if(bg)bg.style.backgroundImage="url('"+d['svc'+n+'-img']+"')";
   });
+  if(d['cms-pass'])window.CMS_PASS=d['cms-pass'];
 })();
 
 function cmsOpen(){
-  var login=document.getElementById('cms-login');
-  if(login){login.classList.add('open');var pwd=document.getElementById('cms-pwd');if(pwd)pwd.value='';}
+  var l=document.getElementById('cms-login');
+  if(l){l.classList.add('open');var p=document.getElementById('cms-pwd');if(p)p.value='';}
 }
 function cmsClose(){
-  var overlay=document.getElementById('cms-overlay');if(overlay)overlay.classList.remove('open');
-  var login=document.getElementById('cms-login');if(login)login.classList.remove('open');
+  var o=document.getElementById('cms-overlay');if(o)o.classList.remove('open');
+  var l=document.getElementById('cms-login');if(l)l.classList.remove('open');
 }
 function cmsAuth(){
-  var pwd=document.getElementById('cms-pwd');if(!pwd)return;
-  if(pwd.value===CMS_PASS){
-    var login=document.getElementById('cms-login');if(login)login.classList.remove('open');
-    var overlay=document.getElementById('cms-overlay');if(overlay)overlay.classList.add('open');
+  var p=document.getElementById('cms-pwd');if(!p)return;
+  if(p.value===window.CMS_PASS||p.value===CMS_PASS){
+    document.getElementById('cms-login').classList.remove('open');
+    document.getElementById('cms-overlay').classList.add('open');
     cmsLoad();
   }else{
-    var err=document.getElementById('cms-err');
-    if(err){err.style.display='block';setTimeout(function(){err.style.display='none';},2000);}
+    var e=document.getElementById('cms-err');
+    if(e){e.style.display='block';setTimeout(function(){e.style.display='none';},1800);}
   }
 }
-(function(){var p=document.getElementById('cms-pwd');if(p)p.addEventListener('keydown',function(e){if(e.key==='Enter')cmsAuth();});})();
+(function(){
+  var p=document.getElementById('cms-pwd');
+  if(p)p.addEventListener('keydown',function(e){if(e.key==='Enter')cmsAuth();});
+})();
 
 function cmsTab(btn,id){
   document.querySelectorAll('.cms-tab').forEach(function(t){t.classList.remove('on');});
@@ -2078,114 +1801,116 @@ function cmsTab(btn,id){
   if(btn)btn.classList.add('on');
   var p=document.getElementById(id);if(p)p.classList.add('on');
 }
-
-function cmsLangTab(btn,lang,groupId){
-  var group=document.getElementById(groupId);if(!group)return;
-  group.querySelectorAll('.cms-lang-tab').forEach(function(t){t.classList.remove('on');});
-  group.querySelectorAll('.cms-lang-panel').forEach(function(p){p.classList.remove('on');});
+function cmsLT(btn,groupId,lang){
+  var g=document.getElementById(groupId);if(!g)return;
+  g.querySelectorAll('.cms-lt').forEach(function(t){t.classList.remove('on');});
+  g.querySelectorAll('.cms-lp').forEach(function(p){p.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  var p=group.querySelector('.cms-lang-panel[data-lang="'+lang+'"]');if(p)p.classList.add('on');
+  var p=g.querySelector('.cms-lp[data-l="'+lang+'"]');if(p)p.classList.add('on');
 }
 
 function cmsLoad(){
   var raw=localStorage.getItem(CMS_KEY);
   var d=raw?JSON.parse(raw):{};
-  var ids=['site-title','meta-desc','formspree','email','instagram','phone','whatsapp',
-    'hero-img-1','hero-img-2','hero-img-3','hero-img-4',
-    'svc1-img','svc2-img','svc3-img',
-    'hero-eye-es','hero-eye-en','hero-eye-fr','hero-eye-ca',
-    'hero-t1-es','hero-t1-en','hero-t1-fr','hero-t1-ca',
-    'hero-t2-es','hero-t2-en','hero-t2-fr','hero-t2-ca',
-    'hero-sub-es','hero-sub-en','hero-sub-fr','hero-sub-ca',
-    'svc1-desc-es','svc1-desc-en','svc1-desc-fr','svc1-desc-ca',
-    'svc2-desc-es','svc2-desc-en','svc2-desc-fr','svc2-desc-ca',
-    'svc3-desc-es','svc3-desc-en','svc3-desc-fr','svc3-desc-ca',
-    'about-h-es','about-h-en','about-h-fr','about-h-ca',
-    'about-p1-es','about-p1-en','about-p1-fr','about-p1-ca',
-    'about-p2-es','about-p2-en','about-p2-fr','about-p2-ca',
-    'mnf-phrase-es','mnf-phrase-en','mnf-phrase-fr','mnf-phrase-ca',
-    'pricing-1-label','pricing-1-price','pricing-2-label','pricing-2-price','pricing-3-label','pricing-3-price',
-    'footer-text-es','footer-text-en','footer-text-fr','footer-text-ca',
-    'address','copyright','cms-password'];
-  ids.forEach(function(k){var el=document.getElementById('c-'+k);if(el)el.value=d[k]||'';});
-  cmsRenderPortfolio(d.portfolio||[]);
+  var fields=['site-title','meta-desc','email','instagram','whatsapp','price-base',
+    'hero-1','hero-2','hero-3','hero-4',
+    'hero-t1-es','hero-t2-es','hero-sub-es',
+    'hero-t1-en','hero-t2-en','hero-sub-en',
+    'hero-t1-fr','hero-t2-fr','hero-sub-fr',
+    'hero-t1-ca','hero-t2-ca','hero-sub-ca',
+    'svc1-img','svc1-es','svc1-en','svc1-fr','svc1-ca',
+    'svc2-img','svc2-es','svc2-en','svc2-fr','svc2-ca',
+    'svc3-img','svc3-es','svc3-en','svc3-fr','svc3-ca',
+    'about-p1-es','about-p2-es','about-p1-en','about-p2-en',
+    'about-p1-fr','about-p2-fr','about-p1-ca','about-p2-ca',
+    'footer-es','footer-en','footer-fr','footer-ca',
+    'address'];
+  fields.forEach(function(k){
+    var el=document.getElementById('cv-'+k);
+    if(el)el.value=d[k]||'';
+  });
+  cmsPFRender(d.portfolio||[]);
 }
 
 function cmsSave(){
   var raw=localStorage.getItem(CMS_KEY);
   var d=raw?JSON.parse(raw):{};
-  var ids=['site-title','meta-desc','formspree','email','instagram','phone','whatsapp',
-    'hero-img-1','hero-img-2','hero-img-3','hero-img-4',
-    'svc1-img','svc2-img','svc3-img',
-    'hero-eye-es','hero-eye-en','hero-eye-fr','hero-eye-ca',
-    'hero-t1-es','hero-t1-en','hero-t1-fr','hero-t1-ca',
-    'hero-t2-es','hero-t2-en','hero-t2-fr','hero-t2-ca',
-    'hero-sub-es','hero-sub-en','hero-sub-fr','hero-sub-ca',
-    'svc1-desc-es','svc1-desc-en','svc1-desc-fr','svc1-desc-ca',
-    'svc2-desc-es','svc2-desc-en','svc2-desc-fr','svc2-desc-ca',
-    'svc3-desc-es','svc3-desc-en','svc3-desc-fr','svc3-desc-ca',
-    'about-h-es','about-h-en','about-h-fr','about-h-ca',
-    'about-p1-es','about-p1-en','about-p1-fr','about-p1-ca',
-    'about-p2-es','about-p2-en','about-p2-fr','about-p2-ca',
-    'mnf-phrase-es','mnf-phrase-en','mnf-phrase-fr','mnf-phrase-ca',
-    'pricing-1-label','pricing-1-price','pricing-2-label','pricing-2-price','pricing-3-label','pricing-3-price',
-    'footer-text-es','footer-text-en','footer-text-fr','footer-text-ca',
-    'address','copyright','cms-password'];
-  ids.forEach(function(k){var el=document.getElementById('c-'+k);if(el&&el.value.trim())d[k]=el.value.trim();});
-  // Portfolio
-  var items=[];
-  document.querySelectorAll('[data-pi]').forEach(function(inp){
-    var i=parseInt(inp.dataset.pi),f=inp.dataset.pf;
-    if(!items[i])items[i]={};items[i][f]=inp.value.trim();
+  var fields=['site-title','meta-desc','email','instagram','whatsapp','price-base',
+    'hero-1','hero-2','hero-3','hero-4',
+    'hero-t1-es','hero-t2-es','hero-sub-es',
+    'hero-t1-en','hero-t2-en','hero-sub-en',
+    'hero-t1-fr','hero-t2-fr','hero-sub-fr',
+    'hero-t1-ca','hero-t2-ca','hero-sub-ca',
+    'svc1-img','svc1-es','svc1-en','svc1-fr','svc1-ca',
+    'svc2-img','svc2-es','svc2-en','svc2-fr','svc2-ca',
+    'svc3-img','svc3-es','svc3-en','svc3-fr','svc3-ca',
+    'about-p1-es','about-p2-es','about-p1-en','about-p2-en',
+    'about-p1-fr','about-p2-fr','about-p1-ca','about-p2-ca',
+    'footer-es','footer-en','footer-fr','footer-ca',
+    'address'];
+  fields.forEach(function(k){
+    var el=document.getElementById('cv-'+k);
+    if(el&&el.value.trim())d[k]=el.value.trim();
   });
-  if(items.length)d.portfolio=items;
+  var newPass=document.getElementById('cv-cms-pass');
+  if(newPass&&newPass.value.trim())d['cms-pass']=newPass.value.trim();
+  /* Portfolio */
+  var items=[];
+  document.querySelectorAll('.pfi-row').forEach(function(row){
+    var src=row.querySelector('[data-f="src"]');
+    var cat=row.querySelector('[data-f="cat"]');
+    var lbl=row.querySelector('[data-f="lbl"]');
+    items.push({src:src?src.value:'',cat:cat?cat.value:'lugares',label:lbl?lbl.value:''});
+  });
+  d.portfolio=items;
   localStorage.setItem(CMS_KEY,JSON.stringify(d));
-  var msg=document.getElementById('cms-saved-msg');
-  if(msg){msg.classList.add('show');setTimeout(function(){msg.classList.remove('show');},2500);}
-  // Update formspree ID
-  if(d.formspree)window.FORMSPREE_ID=d.formspree;
-  // Update new password if set
-  if(d['cms-password'])window.CMS_PASS=d['cms-password'];
+  var msgs=[document.getElementById('cms-saved-msg'),document.getElementById('cms-saved-msg2')];
+  msgs.forEach(function(m){if(!m)return;m.classList.add('show');setTimeout(function(){m.classList.remove('show');},2200);});
 }
 
-function cmsRenderPortfolio(items){
-  var wrap=document.getElementById('cms-portfolio-items');if(!wrap)return;
+function cmsPFRender(items){
+  var wrap=document.getElementById('cms-pf-items');if(!wrap)return;
   wrap.innerHTML='';
-  (items||[]).forEach(function(item,i){
+  items.forEach(function(item,i){
     var row=document.createElement('div');
-    row.style.cssText='display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:10px;align-items:center';
-    row.innerHTML='<input class="cms-input" placeholder="URL imagen / video" value="'+(item.src||'')+'" data-pi="'+i+'" data-pf="src">'+
-      '<select class="cms-input" data-pi="'+i+'" data-pf="cat" style="padding:9px 10px">'+
+    row.className='pfi-row cms-pf-row';
+    row.innerHTML='<input class="cms-input" data-f="src" placeholder="URL imagen" value="'+(item.src||'').replace(/"/g,'&quot;')+'" style="font-size:11px">'+
+      '<select class="cms-input" data-f="cat" style="padding:9px 8px;font-size:11px">'+
       '<option value="lugares"'+(item.cat==='lugares'?' selected':'')+'>Lugares</option>'+
       '<option value="artesanos"'+(item.cat==='artesanos'?' selected':'')+'>Artesanos</option>'+
       '<option value="memorias"'+(item.cat==='memorias'?' selected':'')+'>Memorias</option>'+
       '<option value="video"'+(item.cat==='video'?' selected':'')+'>Video</option>'+
       '</select>'+
-      '<input class="cms-input" placeholder="Etiqueta ES" value="'+(item.label||'')+'" data-pi="'+i+'" data-pf="label">'+
-      '<button onclick="cmsRemovePortfolioItem('+i+')" style="background:rgba(200,50,50,.15);border:1px solid rgba(200,50,50,.25);color:rgba(255,100,100,.7);padding:9px 12px;border-radius:2px;cursor:pointer;white-space:nowrap">✕</button>';
+      '<input class="cms-input" data-f="lbl" placeholder="Etiqueta" value="'+(item.label||'').replace(/"/g,'&quot;')+'" style="font-size:11px">'+
+      '<button class="cms-rm-btn" onclick="cmsPFRemove('+i+')">✕</button>';
     wrap.appendChild(row);
   });
 }
-function cmsAddPortfolioItem(){
+function cmsAddPF(){
   var raw=localStorage.getItem(CMS_KEY);
   var d=raw?JSON.parse(raw):{};
   d.portfolio=d.portfolio||[];
   d.portfolio.push({src:'',cat:'lugares',label:''});
   localStorage.setItem(CMS_KEY,JSON.stringify(d));
-  cmsRenderPortfolio(d.portfolio);
+  cmsPFRender(d.portfolio);
 }
-function cmsRemovePortfolioItem(i){
+function cmsPFRemove(i){
   var raw=localStorage.getItem(CMS_KEY);
   var d=raw?JSON.parse(raw):{};
-  if(d.portfolio)d.portfolio.splice(i,1);
-  localStorage.setItem(CMS_KEY,JSON.stringify(d));
-  cmsRenderPortfolio(d.portfolio);
+  if(d.portfolio){d.portfolio.splice(i,1);localStorage.setItem(CMS_KEY,JSON.stringify(d));cmsPFRender(d.portfolio);}
 }
 
+/* Open CMS on #admin */
 (function(){
-  if(location.hash==='#admin'||location.search.indexOf('admin')>-1){
+  if(location.hash==='#admin'||new URLSearchParams(location.search).has('admin')){
     setTimeout(cmsOpen,600);
   }
+})();
+
+/* ── FORMSPREE INIT ── */
+(function(){
+  window.formspree=window.formspree||function(){(formspree.q=formspree.q||[]).push(arguments);};
+  formspree('initForm',{formElement:'#contact-form',formId:'xnjobjge'});
 })();
 
 </script>
