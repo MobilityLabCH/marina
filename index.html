@@ -1110,7 +1110,7 @@ code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,
       <div class="cms-row">
         <div class="cms-field">
           <label class="cms-label">Email</label>
-          <input class="cms-input" id="cv-email" type="email" placeholder="marinaphotg@gmail.com">
+          <input class="cms-input" id="cv-email" type="email" placeholder="info@marinaphoto.es">
         </div>
         <div class="cms-field">
           <label class="cms-label">Instagram (sin @)</label>
@@ -1272,7 +1272,7 @@ code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,
         3. Despliega: <code>wrangler pages deploy . --project-name marinaphoto</code><br>
         4. Pon el archivo en una carpeta, ejecuta el comando en esa carpeta.<br><br>
         <b style="color:rgba(255,255,255,.6)">Formulario Formspree:</b><br>
-        El formulario ya está conectado a <code>xnjobjge</code> → los emails llegan a marinaphotg@gmail.com directamente.
+        El formulario ya está conectado a <code>xnjobjge</code> → los emails llegan info@marinaphoto.es directamente.
       </div>
     </div>
 
@@ -1542,7 +1542,7 @@ function qsub(){
 /* 
    SETUP: Replace FORMSPREE_ID below with your form ID from formspree.io
    1. Go to https://formspree.io/register (free)
-   2. Create a new form pointing to marinaphotg@gmail.com
+   2. Create a new form pointing to info@marinaphoto.es
    3. Copy the form ID (e.g. xrgjkpqb) and replace below
    Cloudflare Pages: No server needed, Formspree handles delivery.
 */
@@ -1605,7 +1605,7 @@ function cfSubmit(){
       if(success)success.style.display='block';
     }else{
       if(errEl){
-        var failMsgs={es:'Error al enviar. Escríbeme directamente a marinaphotg@gmail.com',en:'Send failed. Please email marinaphotg@gmail.com directly.',fr:'Echec. Ecrivez directement a marinaphotg@gmail.com',ca:'Error. Escriu directament a marinaphotg@gmail.com'};
+        var failMsgs={es:'Error al enviar. Escríbeme directamente a info@marinaphoto.es',en:'Send failed. Please email info@marinaphoto.es directly.',fr:'Echec. Ecrivez directement a info@marinaphoto.es com',ca:'Error. Escriu directament a info@marinaphoto.es'};
         errEl.textContent=failMsgs[qLang]||failMsgs.es;errEl.style.display='block';
       }
       if(btnText)btnText.textContent=document.getElementById('cf-btn').dataset['text-'+qLang]||'Enviar mensaje →';
